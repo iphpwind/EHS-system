@@ -1,0 +1,200 @@
+.energy .paihang .gailan-right .el-input__inner{
+	padding: 0 16px 0 0!important;border: 0;text-align: right;height: 24px;line-height: 24px;
+}
+.energy .paihang .gailan-right .el-input__suffix{right: 0;}
+.energy .paihang .el-table__inner-wrapper::before{display: none;}
+.energy .gailan .el-card{border: 0;}
+.energy .gailanbox .el-card{height: 100%;}
+.energy .gailanbox2 .el-card{height: 100%;}
+.energy .gailanbox3 .el-card{height: 100%;}
+.energy .jiancedian .el-card{height: 100%;}
+
+.home .el-table{--el-table-border-color:transparent;background-color:transparent}
+
+.down-tree{
+	height:calc(100vh - 160px);
+	overflow-y:scroll;
+}
+.down-tree::-webkit-scrollbar {display:none}
+.el-table{
+	height: calc(100vh - 360px);
+}
+
+//Tree 树形控件
+
+	.tree h4 {
+		margin: 20px 0 10px;
+		color: #09bec5;
+		font-weight: bold;
+		font-size: 16px;
+		border-bottom: 1px solid #e7e8ed;
+		padding: 0 0 15px;
+	}
+
+	.tree .el-tree-node__content{
+		height: 38px;
+		font-size: 14px;
+	}
+	.tree .el-tree {
+		background-color: transparent;
+		color: #36404a;
+		//三角形图标颜色
+	}
+	.tree .el-tree-node__expand-icon{
+		color:#09bec5;
+	}
+	//设置节点鼠标悬浮三角图标鼠标悬浮的样式
+	.tree .el-tree-node__content:hover .el-tree-node__expand-icon{
+		// color:#ffffff
+	}
+	//节点鼠标悬浮改变背景颜色 和字体
+	.tree .el-tree-node__content:hover{
+		background:transparent;
+		color:#36404a;
+	}
+	//改变被点击节点背景的颜色
+	.tree .el-tree--highlight-current .el-tree-node.is-current > .el-tree-node__content{
+		background-color: rgba($color:#09bec5, $alpha:0.2) !important;
+		color: #09bec5 !important;
+		border-left: 4px solid #09bec5;
+	}
+	//被选中时，节点三角形的颜色
+	.tree .el-tree--highlight-current .el-tree-node.is-current > .el-tree-node__content .el-tree-node__expand-icon{
+		color:#09bec5;
+	}
+	.tree .el-tree--highlight-current .el-tree-node.is-current>.el-tree-node__content {
+		background:rgba($color: #3C66B4, $alpha:0.3);
+		color: white;
+	}
+
+	.tab-mheight{
+		min-height: calc(100vh - 250px);
+	}
+
+
+// 右上角告警弹出
+.navbardrawer .el-drawer__header{
+	position: absolute;
+	top: 25px;right: 25px;
+	z-index: 99;
+	padding: 0;
+	color: #aaddff;
+}
+.navbardrawer .el-drawer__body{
+	padding: 0;
+}
+.navbardrawer .el-drawer{
+	background: transparent;
+	width: 24% !important;
+}
+
+
+// 福记商贸地图
+.allmap .BMap_Marker{
+  width: 35px !important;
+  height: 50px !important;
+}
+
+.allmap .BMap_Marker img{
+  // display: none !important;
+  width: 100% !important;
+}
+
+.allmap .BMap_bubble_pop{
+  width: 315px !important;
+	background: transparent !important;
+	border: 0 !important;
+	margin-left: 180px;margin-top: 60px;
+}
+.allmap .BMap_bubble_pop>img{
+	display: none;
+}
+.allmap .BMap_bubble_pop .BMap_bubble_top {
+    border: 0 !important;
+    background:transparent !important;
+		position: absolute;
+		top: 24px;right: 5px;z-index: 999;
+}
+
+.allmap .BMap_bubble_pop .BMap_bubble_center {
+    border: 0 !important;
+    background:transparent !important;
+
+}
+
+.allmap .BMap_bubble_pop .BMap_bubble_bottom {
+    border: 0 !important;
+    background:transparent !important;
+    pointer-events: none;
+}
+
+
+
+.allmap .shadow{display: none !important;}
+
+/*关闭按钮*/
+
+.allmap .BMap_bubble_content{
+  background: url("../../../src/assets/images/fuji/map-infowindow-bg.png") no-repeat;
+  background-size: 100% 100% !important;
+  padding: 30px 25px;
+  width: 315px !important;
+  box-sizing: border-box;
+  position: relative;
+	overflow: initial !important;
+	height: 210px !important;
+}
+// 底部箭头
+.allmap .BMap_bubble_content::after{
+  content:'';
+  width: 200px !important;
+  height: 50px !important;
+  background: url("../images/fuji/map-line.png") no-repeat !important;
+  background-size: 100% 100% !important;
+  position: absolute;
+  left: -40px !important;
+  top: calc(100% - 5px) !important;
+  pointer-events: none;
+}
+
+.allmap .BMap_bubble_content ul{
+  list-style: none;padding-left: 0;
+}
+.allmap .BMap_bubble_content ul li{
+  margin: 0 0 8px;
+}
+
+.allmap .BMap_bubble_content ul li span{
+  color: #fff;font-size: 12px;
+}
+.allmap .map-conline{
+  width: 100%;height: 1px;background: url("../images/fuji/map-conline.png") no-repeat;
+  background-size: 100%;margin-top: 15px;
+}
+.allmap #map-btn{
+  color:#fff;width: 100px;text-align: center;margin: 15px auto 0;
+  background: url("../images/fuji/map-btn-bg.png");background-size: 100% 100%;
+  border-radius: 6px;padding: 5px 0;
+  cursor: pointer;
+}
+.allmap #map-btn span{
+  font-size: 12px;
+}
+
+
+//1366屏幕响应 页面滚动条隐藏
+@media screen and (max-width: 1366px) {
+	/* 谷歌与苹果自带浏览器 隐藏浏览器自带滚动条 */
+	body::-webkit-scrollbar {
+		display: none;
+	}
+	/* 火狐浏览器 隐藏浏览器自带滚动条 */
+	body {
+		scrollbar-width: none;
+	}
+	/* IE 与微软浏览器 隐藏浏览器自带滚动条 */
+	body {
+		-ms-overflow-style: none;
+	}
+
+}

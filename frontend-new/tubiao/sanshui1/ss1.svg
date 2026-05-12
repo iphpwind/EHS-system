@@ -1,0 +1,339 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Create with Visual Graph (http://www.visual-graph.com/) -->
+<svg AoP="0" onload="" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:cge="http://iec.ch/TC57/2005/SVG-schema#" xmlns:cim="http://iec.ch/TC57/2003/CIM-schema-cim10#" xmlns:xlink="http://www.w3.org/1999/xlink" style="background-color:#000000;overflow:hidden;" id="main" viewBox="0.000000 0.000000 2000.000000 1500.000000" width="2000.000000" height="1500.000000">
+<script type="text/javascript" xlink:href="vg.js"/>
+<script type="text/javascript" xlink:href="../js/SVGPan.js"/>
+<defs/>
+<g id="viewport" transform="translate(200,200)">
+<g id="BK-222:Breaker_Point_Tab:Value" transform="translate(-1394.370026,925.068335) " devAlias="217" devName="217" qname="Manual_SetData_Flag|Caution_Flag|Alarm_Inhibit_Flag|Inhibit_FEP_Data|Bypass_Flag|Invalid_Flag|Cal_Suspend|Test_Flag|Debug_Flag|TS_Suspect_Flag" qvalue="0" x1="2187" y1="-97">
+<g fill="none" stroke="#836FFF" transform="translate(2187.820001,97.132999) ">
+<rect x="1.5665" y="13.073" width="31.33" height="52.292" transform="translate(0.000000,-78.438000) "/>
+</g>
+<g>
+<g ObjectID="217" ObjectName="217"/>
+<g ObjectID="222"/>
+</g>
+</g>
+<g id="BK-212:Breaker_Point_Tab:Value" transform="translate(-1333.634177,925.068335) " devAlias="207" devName="207" qname="Manual_SetData_Flag|Caution_Flag|Alarm_Inhibit_Flag|Inhibit_FEP_Data|Bypass_Flag|Invalid_Flag|Cal_Suspend|Test_Flag|Debug_Flag|TS_Suspect_Flag" qvalue="0" x1="1820" y1="-97">
+<g fill="none" stroke="#836FFF" transform="translate(1820.410000,97.132999) ">
+<rect x="1.52174" y="13.073" width="30.4348" height="52.292" transform="translate(0.000000,-78.438000) "/>
+</g>
+<g>
+<g ObjectID="207" ObjectName="207"/>
+<g ObjectID="212"/>
+</g>
+</g>
+<g id="BK-142:Breaker_Point_Tab:Value" transform="translate(-71.887149,925.068335) " devAlias="137" devName="137" qname="Manual_SetData_Flag|Caution_Flag|Alarm_Inhibit_Flag|Inhibit_FEP_Data|Bypass_Flag|Invalid_Flag|Cal_Suspend|Test_Flag|Debug_Flag|TS_Suspect_Flag" qvalue="0" x1="248" y1="-96">
+<g fill="none" stroke="#836FFF" transform="translate(248.647999,96.843799) ">
+<rect x="1.5665" y="13.0068" width="31.33" height="52.027" transform="translate(0.000000,-78.040500) "/>
+</g>
+<g>
+<g ObjectID="137" ObjectName="137"/>
+<g ObjectID="142"/>
+</g>
+</g>
+<g id="BK-110:Breaker_Point_Tab:Value" transform="translate(-1394.370026,925.068335) " devAlias="105" devName="105" qname="Manual_SetData_Flag|Caution_Flag|Alarm_Inhibit_Flag|Inhibit_FEP_Data|Bypass_Flag|Invalid_Flag|Cal_Suspend|Test_Flag|Debug_Flag|TS_Suspect_Flag" qvalue="0" x1="1882" y1="380">
+<g fill="none" stroke="#836FFF" transform="translate(1882.540000,-379.102000) ">
+<rect x="1.5665" y="13.073" width="31.33" height="52.292" transform="translate(0.000000,-78.438000) "/>
+</g>
+<g>
+<g ObjectID="105" ObjectName="105"/>
+<g ObjectID="110"/>
+</g>
+</g>
+<g id="BK-109:Breaker_Point_Tab:Value" transform="translate(-1392.970026,925.068335) " devAlias="104" devName="104" qname="Manual_SetData_Flag|Caution_Flag|Alarm_Inhibit_Flag|Inhibit_FEP_Data|Bypass_Flag|Invalid_Flag|Cal_Suspend|Test_Flag|Debug_Flag|TS_Suspect_Flag" qvalue="0" x1="1870" y1="617">
+<g fill="none" stroke="#FF0000" transform="translate(1870.720000,-616.611999) ">
+<rect x="15.1904" y="58.59" width="27.619" height="37.8" transform="translate(0.000000,-145.530000) "/>
+<line x1="27.619" y1="137.97" x2="1.38095" y2="117.18" fill="none" stroke-width="1.88096" transform="translate(0.000000,-145.530000) "/>
+<line x1="27.619" y1="124.74" x2="1.38095" y2="103.95" fill="none" stroke-width="1.88096" transform="translate(0.000000,-145.530000) "/>
+<line x1="55.238" y1="28.35" x2="28.9999" y2="7.56" fill="none" stroke-width="1.88096" transform="translate(0.000000,-145.530000) "/>
+<line x1="55.238" y1="41.58" x2="28.9999" y2="20.79" fill="none" stroke-width="1.88096" transform="translate(0.000000,-145.530000) "/>
+<line x1="28.9999" y1="7.56" x2="2.7619" y2="28.35" fill="none" stroke-width="1.88096" transform="translate(0.000000,-145.530000) "/>
+<line x1="28.9999" y1="20.79" x2="2.7619" y2="41.58" fill="none" stroke-width="1.88096" transform="translate(0.000000,-145.530000) "/>
+<line x1="55.238" y1="103.95" x2="28.9999" y2="124.74" fill="none" stroke-width="1.88096" transform="translate(0.000000,-145.530000) "/>
+<line x1="55.238" y1="117.18" x2="28.9999" y2="137.97" fill="none" stroke-width="1.88096" transform="translate(0.000000,-145.530000) "/>
+<line x1="27.619" y1="136.08" x2="27.619" y2="96.39" fill="none" stroke-width="1.88096" transform="translate(0.000000,-145.530000) "/>
+<line x1="27.619" y1="58.59" x2="27.619" y2="9.45" fill="none" stroke-width="1.88096" transform="translate(0.000000,-145.530000) "/>
+</g>
+<g>
+<g ObjectID="104" ObjectName="104"/>
+<g ObjectID="109"/>
+</g>
+</g>
+<g id="AC-540013" transform="translate(-1394.370026,925.068335) " devAlias="540013" devName="540013" x1="209" y1="134">
+<g fill="none" stroke="#836FFF" transform="translate(1453.010839,-140.000000) ">
+<line x1="78.9446" y1="0" x2="881.989" y2="0" fill="none" stroke-width="5"/>
+</g>
+<g>
+<g ObjectID="540013" ObjectName="540013"/>
+</g>
+</g>
+<g id="AC-540011" transform="translate(-2404.402288,925.068335) " devAlias="540011" devName="540011" x1="-92" y1="837">
+<g fill="none" stroke="#FF0000" transform="translate(2685.457552,-843.000000) ">
+<line x1="-18.2281" y1="0" x2="663.542" y2="0" fill="none" stroke-width="5"/>
+</g>
+<g>
+<g ObjectID="540011" ObjectName="540011"/>
+</g>
+</g>
+<g id="CB-575005" transform="translate(-71.887149,925.068335) " devAlias="575005" devName="575005" x1="242" y1="-232">
+<g fill="none" stroke="#836FFF" transform="translate(241.032000,233.000000) ">
+<line x1="20" y1="2" x2="20" y2="19" fill="none" stroke-width="1" transform="translate(0.000000,-67.000000) "/>
+<line x1="29" y1="2" x2="29" y2="19" fill="none" stroke-width="1" transform="translate(0.000000,-67.000000) "/>
+<line x1="20" y1="10" x2="2" y2="10" fill="none" stroke-width="1" transform="translate(0.000000,-67.000000) "/>
+<line x1="29" y1="10" x2="48" y2="10" fill="none" stroke-width="1" transform="translate(0.000000,-67.000000) "/>
+<line x1="46" y1="30" x2="31" y2="22" fill="none" stroke-width="1" transform="translate(0.000000,-67.000000) "/>
+<line x1="41" y1="38" x2="26" y2="30" fill="none" stroke-width="1" transform="translate(0.000000,-67.000000) "/>
+<line x1="38" y1="26" x2="48" y2="10" fill="none" stroke-width="1" transform="translate(0.000000,-67.000000) "/>
+<line x1="34" y1="34" x2="25" y2="50" fill="none" stroke-width="1" transform="translate(0.000000,-67.000000) "/>
+<line x1="19" y1="22" x2="4" y2="31" fill="none" stroke-width="1" transform="translate(0.000000,-67.000000) "/>
+<line x1="23" y1="30" x2="8" y2="39" fill="none" stroke-width="1" transform="translate(0.000000,-67.000000) "/>
+<line x1="11" y1="27" x2="2" y2="11" fill="none" stroke-width="1" transform="translate(0.000000,-67.000000) "/>
+<line x1="16" y1="35" x2="25" y2="51" fill="none" stroke-width="1" transform="translate(0.000000,-67.000000) "/>
+<line x1="25" y1="65" x2="25" y2="49" fill="none" stroke-width="1" transform="translate(0.000000,-67.000000) "/>
+</g>
+<g transform="translate(0.000000,-0.000000) ">
+<g ObjectID="575005" ObjectName="575005"/>
+</g>
+</g>
+<g id="EC-585126" transform="translate(-1336.063611,925.068335) " devAlias="585126" devName="585126" x1="1832" y1="-303">
+<g fill="#836FFF" stroke="#836FFF" transform="translate(1831.690000,302.600000) ">
+<line x1="6" y1="36" x2="6" y2="10" fill="none" stroke-width="1.00257" transform="translate(0.000000,-36.000000) "/>
+<polyline points="1.000000,10.000000 6.000000,0.000000 11.000000,10.000000 1.000000,10.000000" fill="none" transform="translate(0.000000,-36.000000) "/>
+</g>
+<g>
+<g ObjectID="585126" ObjectName="585126"/>
+</g>
+</g>
+<g id="EC-585128" transform="translate(-1394.370026,925.068335) " devAlias="585128" devName="585128" x1="2200" y1="-303">
+<g fill="#836FFF" stroke="#836FFF" transform="translate(2199.290000,302.600000) ">
+<line x1="6" y1="36" x2="6" y2="10" fill="none" stroke-width="1.00257" transform="translate(0.000000,-36.000000) "/>
+<polyline points="1.000000,10.000000 6.000000,0.000000 11.000000,10.000000 1.000000,10.000000" fill="none" transform="translate(0.000000,-36.000000) "/>
+</g>
+<g>
+<g ObjectID="585128" ObjectName="585128"/>
+</g>
+</g>
+<g id="TF-500007" transform="translate(-1394.370026,925.068335) " devAlias="500007" devName="500007" x1="1875" y1="502">
+<g id="WD-5000070">
+<g>
+<g ObjectID="260"/>
+</g>
+<g fill="none" stroke="#836FFF" transform="translate(1875.320000,-501.560001) ">
+<ellipse cx="25.4223" cy="27.1159" rx="24.8445" ry="20.6316" transform="translate(0.000000,-54.231700) "/>
+<line x1="34.6668" y1="33.0106" x2="25.4223" y2="27.1159" fill="none" stroke-width="1" transform="translate(0.000000,-54.231700) "/>
+<line x1="25.4223" y1="27.1159" x2="25.4223" y2="20.0421" fill="none" stroke-width="1" transform="translate(0.000000,-54.231700) "/>
+<line x1="15.0223" y1="33.0106" x2="24.2668" y2="27.1159" fill="none" stroke-width="1" transform="translate(0.000000,-54.231700) "/>
+</g>
+</g>
+<g id="WD-5000071">
+<g>
+<g ObjectID="261"/>
+</g>
+<g fill="none" stroke="#FF0000" transform="translate(1875.320000,-501.560001) ">
+<ellipse cx="24.2668" cy="61.3054" rx="24.8445" ry="21.2211" transform="translate(0.000000,-122.610800) "/>
+<line x1="16.1778" y1="56.5896" x2="25.4223" y2="62.4843" fill="none" stroke-width="1" transform="translate(0.000000,-122.610800) "/>
+<line x1="25.4223" y1="62.4843" x2="25.4223" y2="69.558" fill="none" stroke-width="1" transform="translate(0.000000,-122.610800) "/>
+<line x1="35.8224" y1="56.5896" x2="26.5779" y2="62.4843" fill="none" stroke-width="1" transform="translate(0.000000,-122.610800) "/>
+</g>
+</g>
+<g>
+<g ObjectID="500007" ObjectName="500007"/>
+</g>
+</g>
+<g id="540011,104" transform="translate(-1394.370026,925.068335) " x1="1898" y1="750">
+<g fill="none" stroke="#FF0000" BeginDevName="540011" BeginDevType="busSection" ConnectNodeId="CN-0" EndDevName="104" EndDevType="breaker">
+<line x1="1900" y1="-842" x2="1900" y2="-751" fill="none" stroke-width="1"/>
+</g>
+<g>
+<g connectDevID="540011,104"/>
+</g>
+</g>
+<g id="500007,104" transform="translate(-1394.370026,925.068335) " x1="1898" y1="584">
+<g fill="none" stroke="#FF0000" BeginDevName="500007" BeginDevType="transformer2" ConnectNodeId="CN-0" EndDevName="104" EndDevType="breaker">
+<line x1="1900" y1="-585" x2="1900" y2="-626" fill="none" stroke-width="1"/>
+</g>
+<g>
+<g connectDevID="500007,104"/>
+</g>
+</g>
+<g id="575005,137" transform="translate(-71.887149,925.068335) " x1="264" y1="-169">
+<g fill="none" stroke="#836FFF" BeginDevName="575005" BeginDevType="capacitor" ConnectNodeId="CN-0" EndDevName="137" EndDevType="breaker">
+<line x1="266" y1="168" x2="266" y2="84" fill="none" stroke-width="1"/>
+</g>
+<g>
+<g connectDevID="575005,137"/>
+</g>
+</g>
+<g id="137,540013" transform="translate(-71.887149,925.068335) " x1="264" y1="-33">
+<g fill="none" stroke="#836FFF" BeginDevName="137" BeginDevType="breaker" ConnectNodeId="CN-0" EndDevName="540013" EndDevType="busSection">
+<line x1="266" y1="32" x2="266" y2="-139" fill="none" stroke-width="1"/>
+</g>
+<g>
+<g connectDevID="137,540013"/>
+</g>
+</g>
+<g id="585126,207" transform="translate(-1333.634177,925.068335) " x1="1835" y1="-267">
+<g fill="none" stroke="#836FFF" BeginDevName="585126" BeginDevType="load" ConnectNodeId="CN-0" EndDevName="207" EndDevType="breaker">
+<line x1="1837" y1="266" x2="1837" y2="84" fill="none" stroke-width="1"/>
+</g>
+<g>
+<g connectDevID="585126,207"/>
+</g>
+</g>
+<g id="207,540013" transform="translate(-1331.204743,925.068335) " x1="1835" y1="-33">
+<g fill="none" stroke="#836FFF" BeginDevName="207" BeginDevType="breaker" ConnectNodeId="CN-0" EndDevName="540013" EndDevType="busSection">
+<line x1="1837" y1="32" x2="1837" y2="-139" fill="none" stroke-width="1"/>
+</g>
+<g>
+<g connectDevID="207,540013"/>
+</g>
+</g>
+<g id="585128,217" transform="translate(-1394.370026,925.068335) " x1="2203" y1="-267">
+<g fill="none" stroke="#836FFF" BeginDevName="585128" BeginDevType="load" ConnectNodeId="CN-0" EndDevName="217" EndDevType="breaker">
+<line x1="2205" y1="266" x2="2205" y2="84" fill="none" stroke-width="1"/>
+</g>
+<g>
+<g connectDevID="585128,217"/>
+</g>
+</g>
+<g id="217,540013" transform="translate(-1394.370026,925.068335) " x1="2203" y1="-33">
+<g fill="none" stroke="#836FFF" BeginDevName="217" BeginDevType="breaker" ConnectNodeId="CN-0" EndDevName="540013" EndDevType="busSection">
+<line x1="2205" y1="32" x2="2205" y2="-139" fill="none" stroke-width="1"/>
+</g>
+<g>
+<g connectDevID="217,540013"/>
+</g>
+</g>
+<g id="540013,223" transform="translate(-1389.511158,925.068335) " x1="2316" y1="137">
+<g fill="none" stroke="#836FFF" BeginDevName="540013" BeginDevType="busSection" ConnectNodeId="CN-0" EndDevName="223" EndDevType="breaker">
+<line x1="2317" y1="-139" x2="2382" y2="-139" fill="none" stroke-width="1"/>
+</g>
+<g>
+<g connectDevID="540013,223"/>
+</g>
+</g>
+<g id="500007,105" transform="translate(-1394.370026,925.068335) " x1="1898" y1="443">
+<g fill="none" stroke="#836FFF" BeginDevName="500007" BeginDevType="transformer2" ConnectNodeId="CN-0" EndDevName="105" EndDevType="breaker">
+<line x1="1900" y1="-508" x2="1900" y2="-444" fill="none" stroke-width="1"/>
+</g>
+<g>
+<g connectDevID="500007,105"/>
+</g>
+</g>
+<g id="105,540013" transform="translate(-1394.370026,925.068335) " x1="1898" y1="138">
+<g fill="none" stroke="#836FFF" BeginDevName="105" BeginDevType="breaker" ConnectNodeId="CN-0" EndDevName="540013" EndDevType="busSection">
+<line x1="1900" y1="-392" x2="1900" y2="-139" fill="none" stroke-width="1"/>
+</g>
+<g>
+<g connectDevID="105,540013"/>
+</g>
+</g>
+<g id="ME-99Ib:Analog_Tab:Value" transform="translate(-2321.801533,925.068335) " appendix="" decimal="2" prefix="Ib :" PreSymbol="0" qname="Manual_SetData_Flag|Over_Limit_Level|Alarm_Inhibit_Flag|Inhibit_FEP_Data|Dead_Data_Flag|Bypass_Flag|Invalid_Flag|Cal_Suspend|Override|Test_Flag|Debug_Flag" qvalue="0" termPos="">
+<rect x="3530" y="-726" width="127" height="28" fill-opacity="0" stroke-width="0"/>
+<text x="-8.41846" y="9.5" font-family="SimSun" font-size="34" text-anchor="start" fill="#00FF00" transform="translate(3538.418408,-695.500000) ">
+</text>
+<g>
+<g ObjectID="MEAS-99Ib" ObjectName="99Ib:Analog_Tab:Value"/>
+</g>
+</g>
+<g id="ME-99Ic:Analog_Tab:Value" transform="translate(-2321.801533,925.068335) " appendix="" decimal="2" prefix="Ic :" PreSymbol="0" qname="Manual_SetData_Flag|Over_Limit_Level|Alarm_Inhibit_Flag|Inhibit_FEP_Data|Dead_Data_Flag|Bypass_Flag|Invalid_Flag|Cal_Suspend|Override|Test_Flag|Debug_Flag" qvalue="0" termPos="">
+<rect x="3530" y="-698" width="127" height="28" fill-opacity="0" stroke-width="0"/>
+<text x="-8.41846" y="9.5" font-family="SimSun" font-size="34" text-anchor="start" fill="#00FF00" transform="translate(3538.418408,-661.500000) ">
+</text>
+<g>
+<g ObjectID="MEAS-99Ic" ObjectName="99Ic:Analog_Tab:Value"/>
+</g>
+</g>
+<g transform="translate(-1394.370026,925.068335) ">
+<g>
+<rect id="hot-img-0" x="1605" y="-202" width="650" height="56" fill-opacity="0" hot-rect-id="hot-rect-0"/>
+</g>
+</g>
+<text x="-34.6904" y="9.5" font-family="SimSun" font-size="34" text-anchor="start" fill="#FFFAFA" transform="translate(245.173264,765.168335) ">
+D002</text>
+<text x="-34.6904" y="9.5" font-family="SimSun" font-size="34" text-anchor="start" fill="#FFFAFA" transform="translate(857.491754,765.568335) ">
+D004</text>
+<text x="-34.6904" y="9.26789" font-family="SimSun" font-size="34" text-anchor="start" fill="#FFFAFA" transform="translate(570.329490,765.568335) ">
+D003</text>
+<text x="-69.7031" y="9.5" font-family="SimSun" font-size="34" text-anchor="start" fill="#FFFAFA" transform="translate(629.333124,310.168335) ">
+#1  主变</text>
+<text x="-166.05" y="9.5" font-family="SimSun" font-size="34" text-anchor="start" fill="#FFFAFA" transform="translate(725.680560,344.168335) ">
+SCB-1600/35 UK=6.5%</text>
+<text x="-166.042" y="9.5" font-family="SimSun" font-size="34" text-anchor="start" fill="#FFFAFA" transform="translate(725.671958,378.168335) ">
+35±5%/0.4kV D,yn11</text>
+<text x="-148.305" y="13.5" font-family="SimSun" font-size="48" text-anchor="start" fill="#FF4500" transform="translate(764.302843,55.568335) ">
+10kV母线</text>
+<text x="-34.6904" y="9.5" font-family="SimSun" font-size="34" text-anchor="start" fill="#FFFAFA" transform="translate(418.320434,511.968335) ">
+D001</text>
+<text x="-37.082" y="13.5" font-family="SimSun" font-size="48" text-anchor="start" fill="#FF4500" transform="translate(353.888756,63.568335) ">
+6GP</text>
+<text x="-69.6865" y="9.5" font-family="SimSun" font-size="34" text-anchor="start" fill="#FFFAFA" transform="translate(636.171053,207.350222) ">
+高压进线</text>
+<text x="-52.1802" y="9.5" font-family="SimSun" font-size="34" text-anchor="start" fill="#FFFAFA" transform="translate(621.094090,255.926826) ">
+开关柜</text>
+<rect x="1909" y="-504" width="127" height="28" fill-opacity="0" stroke-width="0" transform="translate(-1355.499083,925.068335) "/>
+<text id="yc_1127807130432717004" x="-78.4771" y="9.5" font-family="SimSun" font-size="34" text-anchor="start" fill="#00FF00" transform="translate(631.977919,445.568335) ">
+Ia : 0.00</text>
+<g transform="translate(-1355.499083,925.068335) ">
+<g ObjectID="MEAS-105Ia" ObjectName="105Ia:Analog_Tab:Value"/>
+</g>
+<text id="yc_1127807130432717006" x="-78.4771" y="9.5" font-family="SimSun" font-size="34" text-anchor="start" fill="#00FF00" transform="translate(631.977919,513.568335) ">
+Ic : 0.00</text>
+<g transform="translate(-1355.499083,925.068335) ">
+<g ObjectID="MEAS-105Ic" ObjectName="105Ic:Analog_Tab:Value"/>
+</g>
+<text id="yc_1127807130432717005" x="-78.4771" y="9.5" font-family="SimSun" font-size="34" text-anchor="start" fill="#00FF00" transform="translate(631.977919,479.568335) ">
+Ib : 0.00</text>
+<g transform="translate(-1355.499083,925.068335) ">
+<g ObjectID="MEAS-105Ib" ObjectName="105Ib:Analog_Tab:Value"/>
+</g>
+<g transform="translate(-1355.499083,925.068335) ">
+<g ObjectID="MEAS-105Q" ObjectName="105Q:Analog_Tab:Value"/>
+</g>
+<text id="yc_1127807130432717002" x="-78.4771" y="9.5" font-family="SimSun" font-size="34" text-anchor="start" fill="#00FF00" transform="translate(631.977919,583.973618) ">
+Vb : 0.00</text>
+<g transform="translate(-1355.499083,925.068335) ">
+<g ObjectID="MEAS-105Vb" ObjectName="105Vb:Analog_Tab:Value"/>
+</g>
+<text id="yc_1127807130432717003" x="-78.4771" y="9.5" font-family="SimSun" font-size="34" text-anchor="start" fill="#00FF00" transform="translate(631.977919,617.973618) ">
+Vc : 0.00</text>
+<g transform="translate(-1355.499083,925.068335) ">
+<g ObjectID="MEAS-105Vc" ObjectName="105Vc:Analog_Tab:Value"/>
+</g>
+<text id="yc_1127807130432717001" x="-78.4771" y="9.5" font-family="SimSun" font-size="34" text-anchor="start" fill="#00FF00" transform="translate(631.977919,549.973618) ">
+Va : 0.00</text>
+<g transform="translate(-1355.499083,925.068335) ">
+<g ObjectID="MEAS-105Va" ObjectName="105Va:Analog_Tab:Value"/>
+</g>
+<g transform="translate(-1355.499083,925.068335) ">
+<g ObjectID="MEAS-105P" ObjectName="105P:Analog_Tab:Value"/>
+</g>
+<rect x="1909" y="-504" width="127" height="28" fill-opacity="0" stroke-width="0" transform="translate(-1350.288253,1406.993962) "/>
+<text x="-78.4771" y="9.5" font-family="SimSun" font-size="34" text-anchor="start" fill="#00FF00" transform="translate(637.188749,927.493962) ">
+Ia : 10.02</text>
+<text x="-78.4771" y="9.5" font-family="SimSun" font-size="34" text-anchor="start" fill="#00FF00" transform="translate(637.188749,995.493962) ">
+Ic : 9.86</text>
+<text x="-78.4771" y="9.5" font-family="SimSun" font-size="34" text-anchor="start" fill="#00FF00" transform="translate(637.188749,961.493962) ">
+Ib : 9.46</text>
+<text x="-78.4771" y="9.5" font-family="SimSun" font-size="34" text-anchor="start" fill="#00FF00" transform="translate(637.188749,1065.899245) ">
+Vb : 236.00</text>
+<text x="-78.4771" y="9.5" font-family="SimSun" font-size="34" text-anchor="start" fill="#00FF00" transform="translate(637.188749,1099.899245) ">
+Vc : 234.00</text>
+<text x="-78.4771" y="9.5" font-family="SimSun" font-size="34" text-anchor="start" fill="#00FF00" transform="translate(637.188749,1031.899245) ">
+Va : 230.00</text>
+<rect x="1909" y="-504" width="127" height="28" fill-opacity="0" stroke-width="0" transform="translate(-1022.999951,1406.993962) "/>
+<text x="-78.4771" y="9.5" font-family="SimSun" font-size="34" text-anchor="start" fill="#00FF00" transform="translate(964.477051,927.493962) ">
+Ia : 9.02</text>
+<text x="-78.4771" y="9.5" font-family="SimSun" font-size="34" text-anchor="start" fill="#00FF00" transform="translate(964.477051,995.493962) ">
+Ic : 9.91</text>
+<text x="-78.4771" y="9.5" font-family="SimSun" font-size="34" text-anchor="start" fill="#00FF00" transform="translate(964.477051,961.493962) ">
+Ib : 9.65</text>
+<text x="-78.4771" y="9.5" font-family="SimSun" font-size="34" text-anchor="start" fill="#00FF00" transform="translate(964.477051,1065.899245) ">
+Vb : 232.42</text>
+<text x="-78.4771" y="9.5" font-family="SimSun" font-size="34" text-anchor="start" fill="#00FF00" transform="translate(964.477051,1099.899245) ">
+Vc : 233.12</text>
+<text x="-78.4771" y="9.5" font-family="SimSun" font-size="34" text-anchor="start" fill="#00FF00" transform="translate(964.477051,1031.899245) ">
+Va : 229.68</text>
+</g>
+</svg>

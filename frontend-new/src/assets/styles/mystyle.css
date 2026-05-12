@@ -1,0 +1,9 @@
+#app .main-container{
+	height: calc(100% - 84px);
+}
+
+@media (max-width: 1919px) and (min-width: 768px) {
+		html {
+				zoom: 66.66%;
+		}
+}

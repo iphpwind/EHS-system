@@ -1,0 +1,10 @@
+import { Router } from 'express';
+import { getPartyList, getPartyById, createParty, updateParty, deleteParty, getPartyStats } from '../controllers/relatedPartyController';
+const router = Router();
+router.get('/stats', getPartyStats);
+router.get('/', getPartyList);
+router.get('/:id', getPartyById);
+router.post('/', createParty);
+router.put('/:id', updateParty);
+router.delete('/:id', deleteParty);
+export default router;

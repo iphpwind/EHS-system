@@ -1,0 +1,10 @@
+import { Router } from 'express';
+import { getChangeList, getChangeById, createChange, updateChangeStatus, deleteChange, getChangeStats } from '../controllers/changeController';
+const router = Router();
+router.get('/stats', getChangeStats);
+router.put('/:id/status', updateChangeStatus);
+router.get('/', getChangeList);
+router.get('/:id', getChangeById);
+router.post('/', createChange);
+router.delete('/:id', deleteChange);
+export default router;

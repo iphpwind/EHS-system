@@ -1,0 +1,10 @@
+import { Router } from 'express';
+import { getSafetyArchiveList, getSafetyArchiveById, createSafetyArchive, updateSafetyArchive, deleteSafetyArchive, getSafetyArchiveStats } from '../controllers/safetyProductionController';
+const router = Router();
+router.get('/stats', getSafetyArchiveStats);
+router.get('/', getSafetyArchiveList);
+router.get('/:id', getSafetyArchiveById);
+router.post('/', createSafetyArchive);
+router.put('/:id', updateSafetyArchive);
+router.delete('/:id', deleteSafetyArchive);
+export default router;

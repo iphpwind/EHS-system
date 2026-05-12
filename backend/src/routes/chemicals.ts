@@ -1,0 +1,10 @@
+import { Router } from 'express';
+import { getChemicalList, getChemicalById, createChemical, updateChemical, deleteChemical, getChemicalStats } from '../controllers/chemicalController';
+const router = Router();
+router.get('/stats', getChemicalStats);
+router.get('/', getChemicalList);
+router.get('/:id', getChemicalById);
+router.post('/', createChemical);
+router.put('/:id', updateChemical);
+router.delete('/:id', deleteChemical);
+export default router;

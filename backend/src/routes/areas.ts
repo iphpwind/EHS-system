@@ -1,0 +1,10 @@
+import { Router } from 'express';
+import { getAreaList, getAreaById, createArea, updateArea, deleteArea, getAreaTree } from '../controllers/areaController';
+const router = Router();
+router.get('/tree', getAreaTree);
+router.get('/', getAreaList);
+router.get('/:id', getAreaById);
+router.post('/', createArea);
+router.put('/:id', updateArea);
+router.delete('/:id', deleteArea);
+export default router;

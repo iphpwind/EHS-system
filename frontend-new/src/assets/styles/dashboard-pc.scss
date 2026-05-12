@@ -1,0 +1,354 @@
+/* ============================================
+   PC 仪表盘专用样式 — 现代企业级蓝色主题
+   ============================================ */
+
+/* ----- 仪表盘整体容器（覆盖 layout 默认边距）----- */
+.dashboard-pc {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow-y: auto;
+  background: $slate-100;
+
+  /* 移除 Element Plus 的默认内边距 */
+  .app-container {
+    padding: 0 !important;
+  }
+}
+
+/* ========== KPI 统计卡片 ========== */
+.kpi-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 20px;
+  padding: 24px 24px 0;
+}
+
+.kpi-card {
+  background: #fff;
+  border-radius: $radius-3xl;
+  padding: 24px 28px;
+  border: 1px solid $slate-200;
+  box-shadow: $shadow-card;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  cursor: default;
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: $shadow-lg;
+  }
+
+  .kpi-label {
+    font-size: 14px;
+    color: $gray-500;
+    margin-bottom: 12px;
+    font-weight: 500;
+  }
+
+  .kpi-value {
+    font-size: 40px;
+    font-weight: 700;
+    line-height: 1;
+    color: $gray-800;
+
+    &.kpi-blue { color: $blue-primary; }
+    &.kpi-red { color: $danger-color; }
+    &.kpi-green { color: $success-color; }
+    &.kpi-orange { color: $orange-600; }
+  }
+
+  .kpi-sub {
+    font-size: 12px;
+    color: $gray-400;
+    margin-top: 8px;
+  }
+}
+
+/* ========== 板块头部栏 ========== */
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding: 20px 28px;
+  border-bottom: 1px solid $slate-200;
+
+  .section-title {
+    .section-name {
+      font-size: 20px;
+      font-weight: 700;
+      color: $gray-800;
+    }
+    .section-desc {
+      font-size: 13px;
+      color: $gray-500;
+      margin-top: 4px;
+    }
+  }
+
+  .section-action {
+    flex-shrink: 0;
+  }
+}
+
+/* ========== 作业票审批表格 ========== */
+.work-ticket-panel {
+  margin: 24px;
+  background: #fff;
+  border-radius: $radius-3xl;
+  border: 1px solid $slate-200;
+  box-shadow: $shadow-card;
+  overflow: hidden;
+
+  .work-table {
+    width: 100%;
+    border-collapse: collapse;
+
+    thead {
+      background: $slate-50;
+      th {
+        padding: 14px 24px;
+        font-size: 13px;
+        font-weight: 600;
+        color: $gray-500;
+        text-align: left;
+        border-bottom: 1px solid $slate-200;
+      }
+    }
+
+    tbody {
+      tr {
+        border-bottom: 1px solid $slate-100;
+        transition: background 0.15s;
+
+        &:hover {
+          background: $blue-50;
+        }
+
+        &:last-child {
+          border-bottom: none;
+        }
+
+        td {
+          padding: 18px 24px;
+          font-size: 14px;
+          color: $gray-700;
+        }
+      }
+    }
+  }
+}
+
+/* ----- 彩色标签 ----- */
+.tag {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 14px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 600;
+  white-space: nowrap;
+
+  &.tag-orange {
+    background: $orange-100;
+    color: $orange-600;
+  }
+  &.tag-blue {
+    background: $blue-100;
+    color: $blue-700;
+  }
+  &.tag-green {
+    background: $green-100;
+    color: $green-600;
+  }
+  &.tag-red {
+    background: $red-100;
+    color: $red-600;
+  }
+  &.tag-purple {
+    background: $purple-100;
+    color: $purple-500;
+  }
+}
+
+/* ----- 按钮系统 ----- */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px 22px;
+  border-radius: $radius-xl;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border: none;
+  outline: none;
+  user-select: none;
+  gap: 6px;
+
+  &:hover {
+    transform: translateY(-1px);
+  }
+  &:active {
+    transform: translateY(0);
+  }
+
+  &.btn-primary {
+    background: $blue-primary;
+    color: #fff;
+    box-shadow: 0 2px 8px rgba($blue-primary, 0.3);
+    &:hover {
+      background: $blue-hover;
+      box-shadow: 0 4px 16px rgba($blue-primary, 0.4);
+    }
+  }
+
+  &.btn-dark {
+    background: $slate-900;
+    color: #fff;
+    &:hover {
+      background: $slate-800;
+    }
+  }
+
+  &.btn-sm {
+    padding: 6px 16px;
+    font-size: 13px;
+    border-radius: 12px;
+  }
+
+  &.btn-lg {
+    padding: 14px 32px;
+    font-size: 16px;
+    border-radius: $radius-2xl;
+  }
+}
+
+/* ========== 底部双栏布局 ========== */
+.bottom-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+  padding: 0 24px 24px;
+}
+
+.info-panel {
+  background: #fff;
+  border-radius: $radius-3xl;
+  border: 1px solid $slate-200;
+  padding: 28px;
+  box-shadow: $shadow-card;
+
+  .panel-title {
+    font-size: 20px;
+    font-weight: 700;
+    color: $gray-800;
+    margin-bottom: 4px;
+  }
+
+  .panel-desc {
+    font-size: 13px;
+    color: $gray-500;
+    margin-bottom: 24px;
+  }
+
+  /* 隐患卡片 */
+  .hazard-item {
+    border: 1px solid $slate-200;
+    border-radius: $radius-xl;
+    padding: 18px 20px;
+    margin-bottom: 14px;
+    transition: all 0.15s;
+
+    &:hover {
+      border-color: $blue-200;
+      box-shadow: $shadow-sm;
+    }
+
+    &:last-child {
+      margin-bottom: 0;
+    }
+
+    .hazard-title {
+      font-weight: 600;
+      font-size: 15px;
+      color: $gray-800;
+    }
+
+    .hazard-meta {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 14px;
+
+      .hazard-level {
+        font-size: 13px;
+        font-weight: 600;
+        &.level-major { color: $danger-color; }
+        &.level-normal { color: $orange-600; }
+      }
+    }
+  }
+
+  /* 培训条目 */
+  .training-item {
+    background: $slate-50;
+    border-radius: $radius-xl;
+    padding: 18px 20px;
+    margin-bottom: 16px;
+
+    &:last-child {
+      margin-bottom: 0;
+    }
+
+    .training-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+
+      .training-name {
+        font-weight: 600;
+        font-size: 15px;
+        color: $gray-800;
+      }
+
+      .training-sub {
+        font-size: 12px;
+        color: $gray-500;
+        margin-top: 4px;
+      }
+
+      .training-val {
+        font-weight: 700;
+        font-size: 18px;
+        color: $blue-600;
+      }
+    }
+
+    .progress-bar {
+      width: 100%;
+      height: 8px;
+      background: $slate-200;
+      border-radius: 999px;
+      margin-top: 14px;
+      overflow: hidden;
+
+      .progress-fill {
+        height: 100%;
+        border-radius: 999px;
+        background: linear-gradient(90deg, $blue-primary, $blue-500);
+        transition: width 0.5s ease;
+      }
+    }
+  }
+}
+
+/* ========== 响应式 ========== */
+@media screen and (max-width: 1366px) {
+  .kpi-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .bottom-grid {
+    grid-template-columns: 1fr;
+  }
+}

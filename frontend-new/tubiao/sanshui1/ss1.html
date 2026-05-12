@@ -1,0 +1,817 @@
+<html xmlns:svg="http://www.w3.org/2000/svg" style="width:100%;height:100%;">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>三水电器一次接线图</title>
+    <script src="../js/vg.js"></script>
+    <script src="../js/jquery.min.js"></script>
+    <script src="../js/svg-pan-zoom.js"></script>
+    <script src="../js/hammer.min.js"></script>
+
+    <script>
+        var ServerIP = "119.254.89.99";
+        var ServerPort = "5804";
+        window.parent.postMessage("object",'*');//用于通知手机更改回退按纽事件
+        // Don't use window.onLoad like this in production, because it can only listen to one function.
+        window.onload = function() {
+            initData();
+            //启动WEBSOCKET
+            connect();
+            ReceiveHeart = new Date();
+            TimerWs = window.setInterval(TimerWs_tick, 10000);
+            //请求注册数据
+            //sendMyMessage({"type":"reg","sn":"30000001"});
+            //
+            var eventsHandler;
+            eventsHandler = {
+                haltEventListeners: ['touchstart', 'touchend', 'touchmove', 'touchleave', 'touchcancel']
+                , init: function(options) {
+                    var instance = options.instance
+                    , initialScale = 1
+                    , pannedX = 0
+                    , pannedY = 0
+
+                    // Init Hammer
+                    // Listen only for pointer and touch events
+                    this.hammer = Hammer(options.svgElement, {
+                    inputClass: Hammer.SUPPORT_POINTER_EVENTS ? Hammer.PointerEventInput : Hammer.TouchInput
+                    })
+
+                    // Enable pinch
+                    this.hammer.get('pinch').set({enable: true})
+
+                    // Handle double tap
+                    this.hammer.on('doubletap', function(ev){
+                    instance.zoomIn()
+                    })
+
+                    // Handle pan
+                    this.hammer.on('panstart panmove', function(ev){
+                    // On pan start reset panned variables
+                    if (ev.type === 'panstart') {
+                        pannedX = 0
+                        pannedY = 0
+                    }
+
+                    // Pan only the difference
+                    instance.panBy({x: ev.deltaX - pannedX, y: ev.deltaY - pannedY})
+                    pannedX = ev.deltaX
+                    pannedY = ev.deltaY
+                    })
+
+                    // Handle pinch
+                    this.hammer.on('pinchstart pinchmove', function(ev){
+                    // On pinch start remember initial zoom
+                    if (ev.type === 'pinchstart') {
+                        initialScale = instance.getZoom()
+                        instance.zoomAtPoint(initialScale * ev.scale, {x: ev.center.x, y: ev.center.y})
+                    }
+
+                    instance.zoomAtPoint(initialScale * ev.scale, {x: ev.center.x, y: ev.center.y})
+                    })
+
+                    // Prevent moving the page on some devices when panning over SVG
+                    options.svgElement.addEventListener('touchmove', function(e){ e.preventDefault(); });
+                }
+
+                , destroy: function(){
+                    this.hammer.destroy()
+                }
+            }
+
+            // Expose to window namespace for testing purposes
+            window.panZoom = svgPanZoom('#main', {
+            zoomEnabled: true
+            , controlIconsEnabled: true
+            , fit: 1
+            , center: 1
+            , customEventsHandler: eventsHandler
+            });
+        };
+        
+        var needwebsocket = 1;
+        //判断是否需要ws  1需要0不需要
+        if (needwebsocket == 1) {
+            var ws;
+            var Connected = false;
+            //var LoginOk = false;
+            var ReceiveHeart;//收到Heart的时间
+
+            var TimerWs;
+            //10秒定时器
+            function TimerWs_tick() {
+                //判断心跳是否超时 40秒
+                var InterS = ((new Date()).getTime() - ReceiveHeart.getTime()) / 1000;
+                //$("#spanLoginUser").text(InterS);
+                if (InterS > 35) {
+                    Wsclose();
+                    ReceiveHeart = new Date();
+                    //$("#spanLoginUser").text(InterS + "超时");
+                }
+                else {
+                    if (Connected) {
+                        //10秒发送一次心跳
+                        var strLoginPack = {"type":"heart","val":new Date().Format("yyyy-MM-dd hh:mm:ss")};
+                        sendMyMessage(strLoginPack);
+                    }
+                    else {
+                        connect(); 
+                    }
+                }
+            }
+        } else {
+            TimerWs = null;
+        }
+        function Wsclose() {
+            try {
+                if (ws != null) {
+                    ws.close();
+                }
+                ws = null;
+                Connected = false;
+            }
+            catch (ex) {
+            }
+        }
+
+        function initData(){
+            $.ajax({
+                url: '/jxt/sanshui1'
+                ,data: {}
+                ,type:'post'
+                ,success: function(data){
+                    if(data.yc&&data.yc.length>0){
+                        for(var i=0;i<data.yc.length;i++){
+                            var d1=document.getElementById(data.yc[i].id);
+                            //console.info(d1);
+                            if(d1){
+                                SetText(d1,data.yc[i].value);
+                            }
+                        }
+                    }
+                    if(data.yx&&data.yx.length>0){
+                        for(var i=0;i<data.yx.length;i++){
+                            if((parseInt(data.yx[i].value)%2)==1){
+                                if(document.getElementById(data.yx[i].id)){
+                                    SetPropertyValue(document.getElementById(data.yx[i].id),"xlink:href","#AlarmA_on");
+                                }
+                            }
+                            if((parseInt(data.yx[i].value)%2)==0){
+                                if(document.getElementById(data.yx[i].id)){
+                                    SetPropertyValue(document.getElementById(data.yx[i].id),"xlink:href","#AlarmA");
+                                }
+                            }
+                        }
+                    }
+                    if(data.yk&&data.yk.length>0){
+                        for(var i=0;i<data.yk.length;i++){
+                            if(document.getElementById(data.yk[i].id)){
+                                document.getElementById(data.yk[i].id).style.cursor="pointer";
+                                $("#"+data.yk[i].id).bind('click',data.yk[i].id,function(obj){ykClick(obj.data);});//ykClick(data.yk[i].id)
+                                if((parseInt(data.yk[i].value)%2)==1){
+                                    document.getElementById(data.yk[i].id).setAttribute("xlink:href","#SwitchC_on");
+                                    
+                                }
+                                if((parseInt(data.yk[i].value)%2)==0){
+                                    document.getElementById(data.yk[i].id).setAttribute("xlink:href","#SwitchC");
+                                    
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+        function ykClick(key){
+            var nowProp=document.getElementById(key).getAttribute("xlink:href");
+            var ykVal;
+            //console.info(nowProp);
+            if(nowProp.indexOf("on")<0){
+                ykVal=1;
+                //document.getElementById(key).setAttribute("xlink:href","#SwitchC_on");
+            }
+            else{
+                ykVal=0;
+                //document.getElementById(key).setAttribute("xlink:href","#SwitchC");
+            }
+            id=key.replace("yk_","");
+            //发送控制命令
+            sendMyMessage({"type":"cmd","ykKey":id,"ykVal":ykVal});
+            
+
+        }
+        //自定义请求
+        //请求WEBSOCKET
+      var ws = null;
+      var clientid=null;
+      function connect() {
+        var that=this;
+         var url = "ws://"+ ServerIP +":"+ ServerPort +"/wsudp";
+         if ('WebSocket' in window) {
+            ws = new WebSocket(url);
+         } else if ('MozWebSocket' in window) {
+            ws = new MozWebSocket(url);
+         } else {
+            alert('此浏览器不支持WebSokcet,请更换浏览器使用,谢谢！.');
+            return;
+         }
+         ws.onopen = function () {
+            Connected=true;
+         };
+         ws.onmessage = function (event) {
+            try {
+                if (typeof event.data == "string") {
+                    DealWsMsg(event.data);
+                }
+                else {
+                    // alert("非文本消息");
+                }
+            }
+            catch (ex) {
+            }
+         };
+         ws.onclose = function () {
+            Wsclose();
+            that.clientid=null;
+         };
+      }
+      function DealWsMsg(msg){
+        var data=JSON.parse(msg);
+        if(data&&data.type){
+            switch(data.type){
+                case "clientid":
+                    this.clientid=data.val;
+                    console.info("收到clientid,发送SN注册命令");
+                    sendMyMessage({"type":"regSn","val":"30000002"});
+                    break;
+                case "yc"://遥测值
+                    elm=document.getElementById(data.key);
+                    SetText(elm,data.val);
+                    break;
+                case "yx"://状态的反馈
+                    if(data.val=="1"){
+                        SetPropertyValue(document.getElementById(data.key),"xlink:href","#AlarmA_on");
+                    }
+                    if(data.val=="0"){
+                        SetPropertyValue(document.getElementById(data.key),"xlink:href","#AlarmA");
+                    }
+                    break;
+                case "yk"://确认成功的反馈
+                    if(data.val=="1"){
+                        SetPropertyValue(document.getElementById(data.key),"xlink:href","#SwitchC_on");
+                    }
+                    if(data.val=="0"){
+                        SetPropertyValue(document.getElementById(data.key),"xlink:href","#SwitchC");
+                    }
+                    break;
+                case "heart":
+                    ReceiveHeart = new Date();
+                    console.info("收到心跳");
+                    break;
+            }
+        }
+        else{
+            console.info(data);
+        }
+      }
+
+      function sendMyMessage(msg) {
+         var msg = JSON.stringify(msg);
+         ws.send(msg);
+      }
+      
+      Date.prototype.Format = function (fmt) { //author: meizz 
+            var o = {
+                "M+": this.getMonth() + 1, //月份 
+                "d+": this.getDate(), //日 
+                "h+": this.getHours(), //小时 
+                "m+": this.getMinutes(), //分 
+                "s+": this.getSeconds(), //秒 
+                "q+": Math.floor((this.getMonth() + 3) / 3), //季度 
+                "S": this.getMilliseconds() //毫秒 
+            };
+            if (/(y+)/.test(fmt)) fmt = fmt.replace(RegExp.$1, (this.getFullYear() + "").substr(4 - RegExp.$1.length));
+            for (var k in o)
+                if (new RegExp("(" + k + ")").test(fmt)) fmt = fmt.replace(RegExp.$1, (RegExp.$1.length == 1) ? (o[k]) : (("00" + o[k]).substr(("" + o[k]).length)));
+            return fmt;
+        }
+    </script>
+</head>
+<body style="margin:0;padding:0;background: #000000;width:100%;height:100%;overflow: hidden;">
+    <div id="demo" style="width: 100%; height: 100%; border:1px solid black; ">
+        <svg version="1.1" xmlns="http://www.w3.org/2000/svg"
+      id="main" style="background-color:#000000;display: block; width: inherit; min-width: inherit; max-width: inherit; height: inherit; min-height: inherit; max-height: inherit;" >
+            <defs>
+            <symbol id="SwitchC">
+            <g id="Element1" transform="translate(67.000000,103.000000) ">
+            <polygon id="Line1" points="-68.000000,-32.000000 10.000000,-32.000000 10.000000,70.000000 -68.000000,70.000000" fill="#E0E0E0" stroke="#100000" transform="translate(56.000000,19.000000) "/>
+            <polyline id="Line2" points="78.000000,-24.000000 0.000000,-24.000000 0.000000,78.000000" fill="none" stroke="#140000" transform="translate(-12.000000,11.000000) "/>
+            </g>
+            <g id="Frame1" transform="translate(94.000000,128.000000) ">
+            <polygon id="Line1" points="-68.000000,-32.000000 -12.000000,-32.000000 -12.000000,24.000000 -68.000000,24.000000" fill="#E0E0E0" stroke="#100000" transform="translate(40.000000,4.000000) "/>
+            <polyline id="Line2" points="56.000000,-24.000000 0.000000,-24.000000 0.000000,32.000000" fill="none" stroke="#140000" transform="translate(-28.000000,-4.000000) "/>
+            <polyline id="Line3" points="20.000000,-20.000000 -20.000000,-20.000000 -20.000000,20.000000" fill="none" stroke="#100000"/>
+            <polyline id="Line4" points="-20.000000,20.000000 20.000000,20.000000 20.000000,-20.000000" fill="none" stroke="#140000"/>
+            </g>
+            <text id="Text1" x="64" y="15.75" font-family="Arial" font-size="12" text-anchor="middle" fill="#000000" stroke="none" transform="translate(30.000000,161.000000) ">
+            Off</text>
+            <rect id="Rect1" x="-18" y="-20" width="39.5" height="39.5" fill="#FF0000" stroke="#000000" transform="translate(92.250000,128.250000) "/>
+            </symbol>
+
+            <symbol id="SwitchC_on">
+            <g id="Element1" transform="translate(67.000000,103.000000) ">
+            <polygon id="Line1" points="-68.000000,-32.000000 10.000000,-32.000000 10.000000,70.000000 -68.000000,70.000000" fill="#E0E0E0" stroke="#100000" transform="translate(56.000000,19.000000) "/>
+            <polyline id="Line2" points="78.000000,-24.000000 0.000000,-24.000000 0.000000,78.000000" fill="none" stroke="#140000" transform="translate(-12.000000,11.000000) "/>
+            </g>
+            <g id="Frame1" transform="translate(94.000000,128.000000) ">
+            <polygon id="Line1" points="-68.000000,-32.000000 -12.000000,-32.000000 -12.000000,24.000000 -68.000000,24.000000" fill="#E0E0E0" stroke="#100000" transform="translate(40.000000,4.000000) "/>
+            <polyline id="Line2" points="56.000000,-24.000000 0.000000,-24.000000 0.000000,32.000000" fill="none" stroke="#140000" transform="translate(-28.000000,-4.000000) "/>
+            <polyline id="Line3" points="20.000000,-20.000000 -20.000000,-20.000000 -20.000000,20.000000" fill="none" stroke="#100000"/>
+            <polyline id="Line4" points="-20.000000,20.000000 20.000000,20.000000 20.000000,-20.000000" fill="none" stroke="#140000"/>
+            </g>
+            <text id="Text1" x="64" y="15.75" font-family="Arial" font-size="12" text-anchor="middle" fill="#000000" stroke="none" transform="translate(30.000000,161.000000) ">
+            On</text>
+            <rect id="Rect1" x="-18" y="-20" width="39.5" height="39.5" fill="#00FF00" stroke="#000000" transform="translate(92.250000,128.250000) "/>
+            </symbol>
+            <symbol id="AlarmA">
+            <ellipse id="Circle1" cx="-28" cy="-28" rx="20" ry="20" fill="#808080" stroke="#000000" transform="translate(64.000000,72.000000) "/>
+            <ellipse id="Circle2" cx="-28" cy="-28" rx="20" ry="20" fill="#808080" stroke="#000000" transform="translate(65.000000,73.000000) "/>
+            <ellipse id="Circle3" cx="0" cy="0" rx="16" ry="16" fill="#00FF00" stroke="none" transform="translate(37.000000,45.000000) "/>
+            <path id="Line1" d="M-4.300000,8.300000 C-2.500000,-1.500000 4.517000,-3.381000 10.700000,-1.500000 5.300000,0.500000 3.500000,2.700000 3.300000,6.100000Z" fill="#FFFFFF" stroke="none" transform="translate(30.300000,36.100000) "/>
+            </symbol>
+            <symbol id="AlarmA_on">
+            <ellipse id="Circle1" cx="-28" cy="-28" rx="20" ry="20" fill="#808080" stroke="#000000" transform="translate(64.000000,72.000000) "/>
+            <ellipse id="Circle2" cx="-28" cy="-28" rx="20" ry="20" fill="#808080" stroke="#000000" transform="translate(65.000000,73.000000) "/>
+            <ellipse id="Circle3" cx="0" cy="0" rx="16" ry="16" fill="#FF0000" stroke="none" transform="translate(37.000000,45.000000) "/>
+            <path id="Line1" d="M-4.300000,8.300000 C-2.500000,-1.500000 4.517000,-3.381000 10.700000,-1.500000 5.300000,0.500000 3.500000,2.700000 3.300000,6.100000Z" fill="#FFFFFF" stroke="none" transform="translate(30.300000,36.100000) "/>
+            </symbol>
+            </defs>
+            <g id="viewport" class="svg-pan-zoom_viewport" transform="matrix(0.6133870509206076,0,0,0.6133870509206076,0.7331536106062191,-84.83000849216164)" style="transform: matrix(0.613387, 0, 0, 0.613387, 0.733154, -84.83);">
+                <g id="BK-222:Breaker_Point_Tab:Value" transform="translate(-952.213566,1102.416805) " devAlias="217" devName="217" qname="Manual_SetData_Flag|Caution_Flag|Alarm_Inhibit_Flag|Inhibit_FEP_Data|Bypass_Flag|Invalid_Flag|Cal_Suspend|Test_Flag|Debug_Flag|TS_Suspect_Flag" qvalue="0" x1="2187" y1="-97">
+                    <g fill="none" stroke="#836FFF" transform="translate(2187.820001,97.132999) ">
+                    <rect x="1.5665" y="13.073" width="31.33" height="52.292" transform="translate(0.000000,-78.438000) "/>
+                    </g>
+                    <g>
+                    <g ObjectID="217" ObjectName="217"/>
+                    <g ObjectID="222"/>
+                    </g>
+                    </g>
+                    <g id="BK-214:Breaker_Point_Tab:Value" transform="translate(-1187.868382,1102.416805) " devAlias="209" devName="209" qname="Manual_SetData_Flag|Caution_Flag|Alarm_Inhibit_Flag|Inhibit_FEP_Data|Bypass_Flag|Invalid_Flag|Cal_Suspend|Test_Flag|Debug_Flag|TS_Suspect_Flag" qvalue="0" x1="2007" y1="-102">
+                    <g fill="none" stroke="#836FFF" transform="translate(2007.290000,102.133001) ">
+                    <rect x="1.52685" y="13.073" width="30.537" height="52.292" transform="translate(0.000000,-78.438000) "/>
+                    </g>
+                    <g>
+                    <g ObjectID="209" ObjectName="209"/>
+                    <g ObjectID="214"/>
+                    </g>
+                    </g>
+                    <g id="BK-212:Breaker_Point_Tab:Value" transform="translate(-1700.478345,1109.705099) " devAlias="207" devName="207" qname="Manual_SetData_Flag|Caution_Flag|Alarm_Inhibit_Flag|Inhibit_FEP_Data|Bypass_Flag|Invalid_Flag|Cal_Suspend|Test_Flag|Debug_Flag|TS_Suspect_Flag" qvalue="0" x1="1820" y1="-97">
+                    <g fill="none" stroke="#836FFF" transform="translate(1820.410000,97.132999) ">
+                    <rect x="1.52174" y="13.073" width="30.4348" height="52.292" transform="translate(0.000000,-78.438000) "/>
+                    </g>
+                    <g>
+                    <g ObjectID="207" ObjectName="207"/>
+                    <g ObjectID="212"/>
+                    </g>
+                    </g>
+                    <g id="BK-142:Breaker_Point_Tab:Value" transform="translate(260.944912,1102.416805) " devAlias="137" devName="137" qname="Manual_SetData_Flag|Caution_Flag|Alarm_Inhibit_Flag|Inhibit_FEP_Data|Bypass_Flag|Invalid_Flag|Cal_Suspend|Test_Flag|Debug_Flag|TS_Suspect_Flag" qvalue="0" x1="248" y1="-96">
+                    <g fill="none" stroke="#836FFF" transform="translate(248.647999,96.843799) ">
+                    <rect x="1.5665" y="13.0068" width="31.33" height="52.027" transform="translate(0.000000,-78.040500) "/>
+                    </g>
+                    <g>
+                    <g ObjectID="137" ObjectName="137"/>
+                    <g ObjectID="142"/>
+                    </g>
+                    </g>
+                    <g id="BK-110:Breaker_Point_Tab:Value" transform="translate(-1204.874400,925.068335) " devAlias="105" devName="105" qname="Manual_SetData_Flag|Caution_Flag|Alarm_Inhibit_Flag|Inhibit_FEP_Data|Bypass_Flag|Invalid_Flag|Cal_Suspend|Test_Flag|Debug_Flag|TS_Suspect_Flag" qvalue="0" x1="1882" y1="380">
+                    <g fill="none" stroke="#836FFF" transform="translate(1882.540000,-379.102000) ">
+                    <rect x="1.5665" y="13.073" width="31.33" height="52.292" transform="translate(0.000000,-78.438000) "/>
+                    </g>
+                    <g>
+                    <g ObjectID="105" ObjectName="105"/>
+                    <g ObjectID="110"/>
+                    </g>
+                    </g>
+                    <g id="BK-109:Breaker_Point_Tab:Value" transform="translate(-1204.874400,925.068335) " devAlias="104" devName="104" qname="Manual_SetData_Flag|Caution_Flag|Alarm_Inhibit_Flag|Inhibit_FEP_Data|Bypass_Flag|Invalid_Flag|Cal_Suspend|Test_Flag|Debug_Flag|TS_Suspect_Flag" qvalue="0" x1="1870" y1="617">
+                    <g fill="none" stroke="#FF0000" transform="translate(1870.720000,-616.611999) ">
+                    <rect x="15.1904" y="58.59" width="27.619" height="37.8" transform="translate(0.000000,-145.530000) "/>
+                    <line x1="27.619" y1="137.97" x2="1.38095" y2="117.18" fill="none" stroke-width="1.88096" transform="translate(0.000000,-145.530000) "/>
+                    <line x1="27.619" y1="124.74" x2="1.38095" y2="103.95" fill="none" stroke-width="1.88096" transform="translate(0.000000,-145.530000) "/>
+                    <line x1="55.238" y1="28.35" x2="28.9999" y2="7.56" fill="none" stroke-width="1.88096" transform="translate(0.000000,-145.530000) "/>
+                    <line x1="55.238" y1="41.58" x2="28.9999" y2="20.79" fill="none" stroke-width="1.88096" transform="translate(0.000000,-145.530000) "/>
+                    <line x1="28.9999" y1="7.56" x2="2.7619" y2="28.35" fill="none" stroke-width="1.88096" transform="translate(0.000000,-145.530000) "/>
+                    <line x1="28.9999" y1="20.79" x2="2.7619" y2="41.58" fill="none" stroke-width="1.88096" transform="translate(0.000000,-145.530000) "/>
+                    <line x1="55.238" y1="103.95" x2="28.9999" y2="124.74" fill="none" stroke-width="1.88096" transform="translate(0.000000,-145.530000) "/>
+                    <line x1="55.238" y1="117.18" x2="28.9999" y2="137.97" fill="none" stroke-width="1.88096" transform="translate(0.000000,-145.530000) "/>
+                    <line x1="27.619" y1="136.08" x2="27.619" y2="96.39" fill="none" stroke-width="1.88096" transform="translate(0.000000,-145.530000) "/>
+                    <line x1="27.619" y1="58.59" x2="27.619" y2="9.45" fill="none" stroke-width="1.88096" transform="translate(0.000000,-145.530000) "/>
+                    </g>
+                    <g>
+                    <g ObjectID="104" ObjectName="104"/>
+                    <g ObjectID="109"/>
+                    </g>
+                    </g>
+                    <g id="AC-540013" transform="translate(-1394.370026,925.068335) " devAlias="540013" devName="540013" x1="209" y1="134">
+                    <g fill="none" stroke="#836FFF" transform="translate(1325.108435,-140.000000) ">
+                    <line x1="139.715" y1="0" x2="1560.93" y2="0" fill="none" stroke-width="5"/>
+                    </g>
+                    <g>
+                    <g ObjectID="540013" ObjectName="540013"/>
+                    </g>
+                    </g>
+                    <g id="AC-540011" transform="translate(-2321.801533,925.068335) " devAlias="540011" devName="540011" x1="-92" y1="837">
+                    <g fill="none" stroke="#FF0000" transform="translate(2491.755829,-843.000000) ">
+                    <line x1="-33.9062" y1="0" x2="1234.26" y2="0" fill="none" stroke-width="5"/>
+                    </g>
+                    <g>
+                    <g ObjectID="540011" ObjectName="540011"/>
+                    </g>
+                    </g>
+                    <g id="CB-575005" transform="translate(260.944912,1102.416805) " devAlias="575005" devName="575005" x1="242" y1="-232">
+                    <g fill="none" stroke="#836FFF" transform="translate(241.032000,233.000000) ">
+                    <line x1="20" y1="2" x2="20" y2="19" fill="none" stroke-width="1" transform="translate(0.000000,-67.000000) "/>
+                    <line x1="29" y1="2" x2="29" y2="19" fill="none" stroke-width="1" transform="translate(0.000000,-67.000000) "/>
+                    <line x1="20" y1="10" x2="2" y2="10" fill="none" stroke-width="1" transform="translate(0.000000,-67.000000) "/>
+                    <line x1="29" y1="10" x2="48" y2="10" fill="none" stroke-width="1" transform="translate(0.000000,-67.000000) "/>
+                    <line x1="46" y1="30" x2="31" y2="22" fill="none" stroke-width="1" transform="translate(0.000000,-67.000000) "/>
+                    <line x1="41" y1="38" x2="26" y2="30" fill="none" stroke-width="1" transform="translate(0.000000,-67.000000) "/>
+                    <line x1="38" y1="26" x2="48" y2="10" fill="none" stroke-width="1" transform="translate(0.000000,-67.000000) "/>
+                    <line x1="34" y1="34" x2="25" y2="50" fill="none" stroke-width="1" transform="translate(0.000000,-67.000000) "/>
+                    <line x1="19" y1="22" x2="4" y2="31" fill="none" stroke-width="1" transform="translate(0.000000,-67.000000) "/>
+                    <line x1="23" y1="30" x2="8" y2="39" fill="none" stroke-width="1" transform="translate(0.000000,-67.000000) "/>
+                    <line x1="11" y1="27" x2="2" y2="11" fill="none" stroke-width="1" transform="translate(0.000000,-67.000000) "/>
+                    <line x1="16" y1="35" x2="25" y2="51" fill="none" stroke-width="1" transform="translate(0.000000,-67.000000) "/>
+                    <line x1="25" y1="65" x2="25" y2="49" fill="none" stroke-width="1" transform="translate(0.000000,-67.000000) "/>
+                    </g>
+                    <g>
+                    <g ObjectID="575005" ObjectName="575005"/>
+                    </g>
+                    </g>
+                    <g id="EC-585126" transform="translate(-1700.478345,1107.275668) " devAlias="585126" devName="585126" x1="1832" y1="-303">
+                    <g fill="#836FFF" stroke="#836FFF" transform="translate(1831.690000,302.600000) ">
+                    <line x1="6" y1="36" x2="6" y2="10" fill="none" stroke-width="1.00257" transform="translate(0.000000,-36.000000) "/>
+                    <polyline points="1.000000,10.000000 6.000000,0.000000 11.000000,10.000000 1.000000,10.000000" fill="none" transform="translate(0.000000,-36.000000) "/>
+                    </g>
+                    <g>
+                    <g ObjectID="585126" ObjectName="585126"/>
+                    </g>
+                    </g>
+                    <g id="EC-585127" transform="translate(-1187.868382,1102.416805) " devAlias="585127" devName="585127" x1="2018" y1="-308">
+                    <g fill="#836FFF" stroke="#836FFF" transform="translate(2017.990000,307.600000) ">
+                    <line x1="6" y1="36" x2="6" y2="10" fill="none" stroke-width="1.00257" transform="translate(0.000000,-36.000000) "/>
+                    <polyline points="1.000000,10.000000 6.000000,0.000000 11.000000,10.000000 1.000000,10.000000" fill="none" transform="translate(0.000000,-36.000000) "/>
+                    </g>
+                    <g>
+                    <g ObjectID="585127" ObjectName="585127"/>
+                    </g>
+                    </g>
+                    <g id="EC-585128" transform="translate(-952.213566,1102.416805) " devAlias="585128" devName="585128" x1="2200" y1="-303">
+                    <g fill="#836FFF" stroke="#836FFF" transform="translate(2199.290000,302.600000) ">
+                    <line x1="6" y1="36" x2="6" y2="10" fill="none" stroke-width="1.00257" transform="translate(0.000000,-36.000000) "/>
+                    <polyline points="1.000000,10.000000 6.000000,0.000000 11.000000,10.000000 1.000000,10.000000" fill="none" transform="translate(0.000000,-36.000000) "/>
+                    </g>
+                    <g>
+                    <g ObjectID="585128" ObjectName="585128"/>
+                    </g>
+                    </g>
+                    <g id="TF-500007" transform="translate(-1204.874400,925.068335) " devAlias="500007" devName="500007" x1="1875" y1="502">
+                    <g id="WD-5000070">
+                    <g>
+                    <g ObjectID="260"/>
+                    </g>
+                    <g fill="none" stroke="#836FFF" transform="translate(1875.320000,-501.560001) ">
+                    <ellipse cx="25.4223" cy="27.1159" rx="24.8445" ry="20.6316" transform="translate(0.000000,-54.231700) "/>
+                    <line x1="34.6668" y1="33.0106" x2="25.4223" y2="27.1159" fill="none" stroke-width="1" transform="translate(0.000000,-54.231700) "/>
+                    <line x1="25.4223" y1="27.1159" x2="25.4223" y2="20.0421" fill="none" stroke-width="1" transform="translate(0.000000,-54.231700) "/>
+                    <line x1="15.0223" y1="33.0106" x2="24.2668" y2="27.1159" fill="none" stroke-width="1" transform="translate(0.000000,-54.231700) "/>
+                    </g>
+                    </g>
+                    <g id="WD-5000071">
+                    <g>
+                    <g ObjectID="261"/>
+                    </g>
+                    <g fill="none" stroke="#FF0000" transform="translate(1875.320000,-501.560001) ">
+                    <ellipse cx="24.2668" cy="61.3054" rx="24.8445" ry="21.2211" transform="translate(0.000000,-122.610800) "/>
+                    <line x1="16.1778" y1="56.5896" x2="25.4223" y2="62.4843" fill="none" stroke-width="1" transform="translate(0.000000,-122.610800) "/>
+                    <line x1="25.4223" y1="62.4843" x2="25.4223" y2="69.558" fill="none" stroke-width="1" transform="translate(0.000000,-122.610800) "/>
+                    <line x1="35.8224" y1="56.5896" x2="26.5779" y2="62.4843" fill="none" stroke-width="1" transform="translate(0.000000,-122.610800) "/>
+                    </g>
+                    </g>
+                    <g>
+                    <g ObjectID="500007" ObjectName="500007"/>
+                    </g>
+                    </g>
+                    <g id="540011,104" transform="translate(-1204.874400,925.068335) " x1="1898" y1="750">
+                    <g fill="none" stroke="#FF0000" BeginDevName="540011" BeginDevType="busSection" ConnectNodeId="CN-0" EndDevName="104" EndDevType="breaker">
+                    <line x1="1900" y1="-842" x2="1900" y2="-751" fill="none" stroke-width="1"/>
+                    </g>
+                    <g>
+                    <g connectDevID="540011,104"/>
+                    </g>
+                    </g>
+                    <g id="500007,104" transform="translate(-1204.874400,925.068335) " x1="1898" y1="584">
+                    <g fill="none" stroke="#FF0000" BeginDevName="500007" BeginDevType="transformer2" ConnectNodeId="CN-0" EndDevName="104" EndDevType="breaker">
+                    <line x1="1900" y1="-585" x2="1900" y2="-626" fill="none" stroke-width="1"/>
+                    </g>
+                    <g>
+                    <g connectDevID="500007,104"/>
+                    </g>
+                    </g>
+                    <g id="575005,137" transform="translate(260.944912,1102.416805) " x1="264" y1="-169">
+                    <g fill="none" stroke="#836FFF" BeginDevName="575005" BeginDevType="capacitor" ConnectNodeId="CN-0" EndDevName="137" EndDevType="breaker">
+                    <line x1="266" y1="168" x2="266" y2="84" fill="none" stroke-width="1"/>
+                    </g>
+                    <g>
+                    <g connectDevID="575005,137"/>
+                    </g>
+                    </g>
+                    <g id="137,540013" transform="translate(260.944912,1102.416805) " x1="264" y1="-33">
+                    <g fill="none" stroke="#836FFF" transform="translate(266.000000,-32.533651) " BeginDevName="137" BeginDevType="breaker" ConnectNodeId="CN-0" EndDevName="540013" EndDevType="busSection">
+                    <line x1="0" y1="64.5337" x2="0" y2="-280.318" fill="none" stroke-width="1"/>
+                    </g>
+                    <g>
+                    <g connectDevID="137,540013"/>
+                    </g>
+                    </g>
+                    <g id="585126,207" transform="translate(-1700.478345,1107.275668) " x1="1835" y1="-267">
+                    <g fill="none" stroke="#836FFF" BeginDevName="585126" BeginDevType="load" ConnectNodeId="CN-0" EndDevName="207" EndDevType="breaker">
+                    <line x1="1837" y1="266" x2="1837" y2="84" fill="none" stroke-width="1"/>
+                    </g>
+                    <g>
+                    <g connectDevID="585126,207"/>
+                    </g>
+                    </g>
+                    <g id="207,540013" transform="translate(-1700.478345,1107.275668) " x1="1835" y1="-33">
+                    <g fill="none" stroke="#836FFF" transform="translate(1837.000000,-33.897543) " BeginDevName="207" BeginDevType="breaker" ConnectNodeId="CN-0" EndDevName="540013" EndDevType="busSection">
+                    <line x1="0" y1="65.8975" x2="0" y2="-286.242" fill="none" stroke-width="1"/>
+                    </g>
+                    <g>
+                    <g connectDevID="207,540013"/>
+                    </g>
+                    </g>
+                    <g id="585127,209" transform="translate(-1187.868382,1102.416805) " x1="2022" y1="-272">
+                    <g fill="none" stroke="#836FFF" BeginDevName="585127" BeginDevType="load" ConnectNodeId="CN-0" EndDevName="209" EndDevType="breaker">
+                    <line x1="2024" y1="271" x2="2024" y2="89" fill="none" stroke-width="1"/>
+                    </g>
+                    <g>
+                    <g connectDevID="585127,209"/>
+                    </g>
+                    </g>
+                    <g id="209,540013" transform="translate(-1187.868382,1102.416805) " x1="2022" y1="-38">
+                    <g fill="none" stroke="#836FFF" transform="translate(2024.000000,-36.548368) " BeginDevName="209" BeginDevType="breaker" ConnectNodeId="CN-0" EndDevName="540013" EndDevType="busSection">
+                    <line x1="0" y1="73.5484" x2="0" y2="-276.303" fill="none" stroke-width="1"/>
+                    </g>
+                    <g>
+                    <g connectDevID="209,540013"/>
+                    </g>
+                    </g>
+                    <g id="585128,217" transform="translate(-952.213566,1102.416805) " x1="2203" y1="-267">
+                    <g fill="none" stroke="#836FFF" BeginDevName="585128" BeginDevType="load" ConnectNodeId="CN-0" EndDevName="217" EndDevType="breaker">
+                    <line x1="2205" y1="266" x2="2205" y2="84" fill="none" stroke-width="1"/>
+                    </g>
+                    <g>
+                    <g connectDevID="585128,217"/>
+                    </g>
+                    </g>
+                    <g id="217,540013" transform="translate(-952.213566,1102.416805) " x1="2203" y1="-33">
+                    <g fill="none" stroke="#836FFF" transform="translate(2205.000000,-32.533651) " BeginDevName="217" BeginDevType="breaker" ConnectNodeId="CN-0" EndDevName="540013" EndDevType="busSection">
+                    <line x1="0" y1="64.5337" x2="0" y2="-280.318" fill="none" stroke-width="1"/>
+                    </g>
+                    <g>
+                    <g connectDevID="217,540013"/>
+                    </g>
+                    </g>
+                    <g id="540013,223" transform="translate(-857.465753,925.068335) " x1="2316" y1="137">
+                    <g fill="none" stroke="#836FFF" transform="translate(-993.537651,-139.000000) " BeginDevName="540013" BeginDevType="busSection" ConnectNodeId="CN-0" EndDevName="223" EndDevType="breaker">
+                    <line x1="3310.54" y1="0" x2="3403.41" y2="0" fill="none" stroke-width="1"/>
+                    </g>
+                    <g>
+                    <g connectDevID="540013,223"/>
+                    </g>
+                    </g>
+                    <g id="500007,105" transform="translate(-1204.874400,925.068335) " x1="1898" y1="443">
+                    <g fill="none" stroke="#836FFF" BeginDevName="500007" BeginDevType="transformer2" ConnectNodeId="CN-0" EndDevName="105" EndDevType="breaker">
+                    <line x1="1900" y1="-508" x2="1900" y2="-444" fill="none" stroke-width="1"/>
+                    </g>
+                    <g>
+                    <g connectDevID="500007,105"/>
+                    </g>
+                    </g>
+                    <g id="105,540013" transform="translate(-1204.874400,925.068335) " x1="1898" y1="138">
+                    <g fill="none" stroke="#836FFF" BeginDevName="105" BeginDevType="breaker" ConnectNodeId="CN-0" EndDevName="540013" EndDevType="busSection">
+                    <line x1="1900" y1="-392" x2="1900" y2="-139" fill="none" stroke-width="1"/>
+                    </g>
+                    <g>
+                    <g connectDevID="105,540013"/>
+                    </g>
+                    </g>
+                    <g id="ME-99Ic:Analog_Tab:Value" transform="translate(-2321.801533,925.068335) " appendix="" decimal="2" prefix="Ic :" PreSymbol="0" qname="Manual_SetData_Flag|Over_Limit_Level|Alarm_Inhibit_Flag|Inhibit_FEP_Data|Dead_Data_Flag|Bypass_Flag|Invalid_Flag|Cal_Suspend|Override|Test_Flag|Debug_Flag" qvalue="0" termPos="">
+                    <rect x="3530" y="-698" width="127" height="28" fill-opacity="0" stroke-width="0"/>
+                    <text x="-8.41846" y="9.5" font-family="SimSun" font-size="34" text-anchor="start" fill="#00FF00" transform="translate(3538.418408,-661.500000) ">
+                    </text>
+                    <g>
+                    <g ObjectID="MEAS-99Ic" ObjectName="99Ic:Analog_Tab:Value"/>
+                    </g>
+                    </g>
+                    <g transform="translate(-1394.370026,925.068335) ">
+                    <g>
+                    <rect id="hot-img-0" x="1605" y="-202" width="650" height="56" fill-opacity="0" hot-rect-id="hot-rect-0"/>
+                    </g>
+                    </g>
+                    <text x="-34.6904" y="9.5" font-family="SimSun" font-size="34" text-anchor="start" fill="#FFFAFA" transform="translate(145.566603,765.168335) ">
+                    D01</text>
+                    <text x="-34.6904" y="9.5" font-family="SimSun" font-size="34" text-anchor="start" fill="#FFFAFA" transform="translate(1238.912343,767.997766) ">
+                    D03-2</text>
+                    <text x="-34.6904" y="6.83758" font-family="SimSun" font-size="34" text-anchor="start" fill="#FFFAFA" transform="translate(830.278664,765.568335) ">
+                    D03-1</text>
+                    <text x="-148.305" y="13.5" font-family="SimSun" font-size="48" text-anchor="start" fill="#FF4500" transform="translate(803.173741,55.568335) ">
+                    10kV母线</text>
+                    <text x="-34.6904" y="9.5" font-family="SimSun" font-size="34" text-anchor="start" fill="#FFFAFA" transform="translate(804.599979,419.649953) ">
+                    G01</text>
+                    <text x="-37.082" y="13.5" font-family="SimSun" font-size="48" text-anchor="start" fill="#FF4500" transform="translate(290.723578,63.568335) ">
+                    6GP</text>
+                    <text x="-34.6904" y="9.5" font-family="SimSun" font-size="34" text-anchor="start" fill="#FFFAFA" transform="translate(494.137914,762.493982) ">
+                    D02</text>
+                    <use x="-94.000000" y="-141.000000" xlink:href="#SwitchC" id="yk_1127807130432717112" transform="translate(1319.181087,1000.925613) scale(1.000000,1.000000) " OnOff="false"/>
+                    <use x="-36.500000" y="-44.500000" xlink:href="#AlarmA" id="yx_1127807130432717126" transform="translate(1321.610518,903.748369) " OnOff="true"/>
+                    <use x="-36.500000" y="-44.500000" xlink:href="#AlarmA" id="yx_1127807130432717125" transform="translate(917.506018,907.788293) " OnOff="true"/>
+                    <use x="-36.500000" y="-44.500000" xlink:href="#AlarmA" id="yx_1127807130432717124" transform="translate(604.280632,542.142781) " OnOff="false"/>
+                    <use x="-94.000000" y="-141.000000" xlink:href="#SwitchC" id="yk_1127807130432717111" transform="translate(919.000000,1003.711707) scale(1.000000,1.000000) " OnOff="false"/>
+                    <use x="-94.000000" y="-141.000000" xlink:href="#SwitchC" id="yk_1127807130432717110" transform="translate(605.774614,638.066195) " OnOff="true"/>
+                    <text id="yc_1127807130432217104" x="-78.4771" y="9.5" font-family="SimSun" font-size="34" text-anchor="start" fill="#00FF00" transform="translate(904.074157,494.156957) ">
+                    0.00</text>
+                    <g transform="translate(-1170.862365,980.945250) ">
+                    <g ObjectID="MEAS-105Ia" ObjectName="105Ia:Analog_Tab:Value"/>
+                    </g>
+                    <text id="yc_1127807130432217105" x="-78.4771" y="10.5971" font-family="SimSun" font-size="34" text-anchor="start" fill="#00FF00" transform="translate(901.644726,541.393963) ">
+                    0.00</text>
+                    <g transform="translate(-1170.862365,985.804113) ">
+                    <g ObjectID="MEAS-105Ib" ObjectName="105Ib:Analog_Tab:Value"/>
+                    </g>
+                    <text id="yc_1127807130432217101" x="-78.4771" y="9.5" font-family="SimSun" font-size="34" text-anchor="start" fill="#00FF00" transform="translate(901.644726,627.715491) ">
+                    0.00</text>
+                    <g transform="translate(-1170.862365,937.215491) ">
+                    <g ObjectID="MEAS-105Va" ObjectName="105Va:Analog_Tab:Value"/>
+                    </g>
+                    <text id="yc_1127807130432217106" x="-78.4771" y="10.8818" font-family="SimSun" font-size="34" text-anchor="start" fill="#00FF00" transform="translate(901.644726,580.535601) ">
+                    0.00</text>
+                    <g transform="translate(-1170.862365,990.662975) ">
+                    <g ObjectID="MEAS-105Ic" ObjectName="105Ic:Analog_Tab:Value"/>
+                    </g>
+                    <text id="yc_1127807130432217103" x="-78.4771" y="9.5" font-family="SimSun" font-size="34" text-anchor="start" fill="#00FF00" transform="translate(901.644726,710.292077) ">
+                    0.00</text>
+                    <g transform="translate(-1170.862365,949.362646) ">
+                    <g ObjectID="MEAS-105Vc" ObjectName="105Vc:Analog_Tab:Value"/>
+                    </g>
+                    <text id="yc_1127807130432217102" x="-78.4771" y="8.65432" font-family="SimSun" font-size="34" text-anchor="start" fill="#00FF00" transform="translate(901.644726,671.433215) ">
+                    0.00</text>
+                    <g transform="translate(-1170.862365,946.933215) ">
+                    <g ObjectID="MEAS-105Vb" ObjectName="105Vb:Analog_Tab:Value"/>
+                    </g>
+                    <text id="yc_1127807130432717004" x="-78.4771" y="9.5" font-family="SimSun" font-size="34" text-anchor="start" fill="#00FF00" transform="translate(347.642260,1174.166852) ">
+                    0.00</text>
+                    <g transform="translate(-1729.723693,1653.666852) ">
+                    <g ObjectID="MEAS-105Ia" ObjectName="105Ia:Analog_Tab:Value"/>
+                    </g>
+                    <text id="yc_1127807130432717005" x="-78.4771" y="9.5" font-family="SimSun" font-size="34" text-anchor="start" fill="#00FF00" transform="translate(347.642260,1213.025714) ">
+                    0.00</text>
+                    <g transform="translate(-1729.723693,1658.525714) ">
+                    <g ObjectID="MEAS-105Ib" ObjectName="105Ib:Analog_Tab:Value"/>
+                    </g>
+                    <text id="yc_1127807130432717006" x="-78.4771" y="9.5" font-family="SimSun" font-size="34" text-anchor="start" fill="#00FF00" transform="translate(347.642260,1254.314008) ">
+                    0.00</text>
+                    <g transform="translate(-1729.723693,1665.814008) ">
+                    <g ObjectID="MEAS-105Ic" ObjectName="105Ic:Analog_Tab:Value"/>
+                    </g>
+                    <text id="yc_1127807130432717001" x="-78.4771" y="9.5" font-family="SimSun" font-size="34" text-anchor="start" fill="#00FF00" transform="translate(347.642260,1300.437092) ">
+                    0.00</text>
+                    <g transform="translate(-1729.723693,1609.937092) ">
+                    <g ObjectID="MEAS-105Va" ObjectName="105Va:Analog_Tab:Value"/>
+                    </g>
+                    <text id="yc_1127807130432717002" x="-78.4771" y="9.5" font-family="SimSun" font-size="34" text-anchor="start" fill="#00FF00" transform="translate(347.642260,1344.154816) ">
+                    0.00</text>
+                    <g transform="translate(-1729.723693,1619.654816) ">
+                    <g ObjectID="MEAS-105Vb" ObjectName="105Vb:Analog_Tab:Value"/>
+                    </g>
+                    <text id="yc_1127807130432717003" x="-78.4771" y="9.5" font-family="SimSun" font-size="34" text-anchor="start" fill="#00FF00" transform="translate(347.642260,1385.443110) ">
+                    0.00</text>
+                    <g transform="translate(-1729.723693,1626.943110) ">
+                    <g ObjectID="MEAS-105Vc" ObjectName="105Vc:Analog_Tab:Value"/>
+                    </g>
+                    <text id="yc_1127807130432717144" x="-78.4771" y="9.5" font-family="SimSun" font-size="34" text-anchor="start" fill="#00FF00" transform="translate(1054.708454,1176.425057) ">
+                    0.00</text>
+                    <g transform="translate(-1029.945792,1655.925057) ">
+                    <g ObjectID="MEAS-105Ia" ObjectName="105Ia:Analog_Tab:Value"/>
+                    </g>
+                    <text id="yc_1127807130432717145" x="-78.4771" y="9.5" font-family="SimSun" font-size="34" text-anchor="start" fill="#00FF00" transform="translate(1054.708454,1225.001644) ">
+                    0.00</text>
+                    <g transform="translate(-1029.945792,1670.501644) ">
+                    <g ObjectID="MEAS-105Ib" ObjectName="105Ib:Analog_Tab:Value"/>
+                    </g>
+                    <text id="yc_1127807130432717146" x="-78.4771" y="9.5" font-family="SimSun" font-size="34" text-anchor="start" fill="#00FF00" transform="translate(1054.708454,1266.289937) ">
+                    0.00</text>
+                    <g transform="translate(-1029.945792,1677.789937) ">
+                    <g ObjectID="MEAS-105Ic" ObjectName="105Ic:Analog_Tab:Value"/>
+                    </g>
+                    <text id="yc_1127807130432717141" x="-78.4771" y="9.5" font-family="SimSun" font-size="34" text-anchor="start" fill="#00FF00" transform="translate(1054.708454,1309.983590) ">
+                    0.00</text>
+                    <g transform="translate(-1029.945792,1619.483590) ">
+                    <g ObjectID="MEAS-105Va" ObjectName="105Va:Analog_Tab:Value"/>
+                    </g>
+                    <text id="yc_1127807130432717142" x="-78.4771" y="9.5" font-family="SimSun" font-size="34" text-anchor="start" fill="#00FF00" transform="translate(1054.708454,1353.701314) ">
+                    0.00</text>
+                    <g transform="translate(-1029.945792,1629.201314) ">
+                    <g ObjectID="MEAS-105Vb" ObjectName="105Vb:Analog_Tab:Value"/>
+                    </g>
+                    <text id="yc_1127807130432717143" x="-78.4771" y="10.0957" font-family="SimSun" font-size="34" text-anchor="start" fill="#00FF00" transform="translate(1054.708454,1393.962348) ">
+                    0.00</text>
+                    <g transform="translate(-1029.945792,1621.913021) ">
+                    <g ObjectID="MEAS-105Vc" ObjectName="105Vc:Analog_Tab:Value"/>
+                    </g>
+                    <text id="yc_1127807130432317144" x="-78.4771" y="9.5" font-family="SimSun" font-size="34" text-anchor="start" fill="#00FF00" transform="translate(1464.597405,1172.695297) ">
+                    0.00</text>
+                    <g transform="translate(-603.050823,1652.195297) ">
+                    <g ObjectID="MEAS-105Ia" ObjectName="105Ia:Analog_Tab:Value"/>
+                    </g>
+                    <text id="yc_1127807130432317145" x="-78.4771" y="5.43765" font-family="SimSun" font-size="34" text-anchor="start" fill="#00FF00" transform="translate(1464.597405,1221.271884) ">
+                    0.00</text>
+                    <g transform="translate(-603.050823,1666.771884) ">
+                    <g ObjectID="MEAS-105Ib" ObjectName="105Ib:Analog_Tab:Value"/>
+                    </g>
+                    <text id="yc_1127807130432317146" x="-78.4771" y="9.5" font-family="SimSun" font-size="34" text-anchor="start" fill="#00FF00" transform="translate(1464.597405,1260.130746) ">
+                    0.00</text>
+                    <g transform="translate(-603.050823,1671.630746) ">
+                    <g ObjectID="MEAS-105Ic" ObjectName="105Ic:Analog_Tab:Value"/>
+                    </g>
+                    <text id="yc_1127807130432317141" x="-78.4771" y="7.91522" font-family="SimSun" font-size="34" text-anchor="start" fill="#00FF00" transform="translate(1464.597405,1303.824399) ">
+                    0.00</text>
+                    <g transform="translate(-603.050823,1613.324399) ">
+                    <g ObjectID="MEAS-105Va" ObjectName="105Va:Analog_Tab:Value"/>
+                    </g>
+                    <text id="yc_1127807130432317142" x="-78.4771" y="9.5" font-family="SimSun" font-size="34" text-anchor="start" fill="#00FF00" transform="translate(1464.597405,1349.971555) ">
+                    0.00</text>
+                    <g transform="translate(-603.050823,1625.471555) ">
+                    <g ObjectID="MEAS-105Vb" ObjectName="105Vb:Analog_Tab:Value"/>
+                    </g>
+                    <text id="yc_1127807130432317143" x="-78.4771" y="11.5433" font-family="SimSun" font-size="34" text-anchor="start" fill="#00FF00" transform="translate(1464.597405,1388.430730) ">
+                    0.00</text>
+                    <g transform="translate(-603.050823,1627.900986) ">
+                    <g ObjectID="MEAS-105Vc" ObjectName="105Vc:Analog_Tab:Value"/>
+                    </g>
+                    <text id="text1" x="-6.36305" y="11.994" font-family="SimSun" font-size="34" text-anchor="start" fill="#00FF00" transform="translate(733.904089,490.745082) ">
+                    Ia : </text>
+                    <text id="text2" x="-6.36305" y="11.994" font-family="SimSun" font-size="34" text-anchor="start" fill="#00FF00" transform="translate(732.363052,537.006017) ">
+                    Ib : </text>
+                    <text id="text3" x="-6.36305" y="11.994" font-family="SimSun" font-size="34" text-anchor="start" fill="#00FF00" transform="translate(732.363052,577.006017) ">
+                    Ic : </text>
+                    <text id="text4" x="-6.36305" y="11.994" font-family="SimSun" font-size="34" text-anchor="start" fill="#00FF00" transform="translate(732.363052,617.006017) ">
+                    Va : </text>
+                    <text id="text5" x="-6.36305" y="11.994" font-family="SimSun" font-size="34" text-anchor="start" fill="#00FF00" transform="translate(732.363052,657.006017) ">
+                    Vb : </text>
+                    <text id="text6" x="-6.36305" y="11.994" font-family="SimSun" font-size="34" text-anchor="start" fill="#00FF00" transform="translate(732.363052,697.006017) ">
+                    Vc : </text>
+                    <text id="text7" x="-6.36305" y="11.994" font-family="SimSun" font-size="34" text-anchor="start" fill="#00FF00" transform="translate(188.480676,1172.147155) ">
+                    Ia : </text>
+                    <text id="text8" x="-6.36305" y="11.994" font-family="SimSun" font-size="34" text-anchor="start" fill="#00FF00" transform="translate(186.939639,1218.408090) ">
+                    Ib : </text>
+                    <text id="text9" x="-6.36305" y="11.994" font-family="SimSun" font-size="34" text-anchor="start" fill="#00FF00" transform="translate(186.939639,1258.408090) ">
+                    Ic : </text>
+                    <text id="text10" x="-6.36305" y="11.994" font-family="SimSun" font-size="34" text-anchor="start" fill="#00FF00" transform="translate(186.939639,1298.408090) ">
+                    Va : </text>
+                    <text id="text11" x="-6.36305" y="11.994" font-family="SimSun" font-size="34" text-anchor="start" fill="#00FF00" transform="translate(186.939639,1338.408090) ">
+                    Vb : </text>
+                    <text id="text12" x="-6.36305" y="11.994" font-family="SimSun" font-size="34" text-anchor="start" fill="#00FF00" transform="translate(186.939639,1378.408090) ">
+                    Vc : </text>
+                    <text id="text13" x="-6.36305" y="11.994" font-family="SimSun" font-size="34" text-anchor="start" fill="#00FF00" transform="translate(896.333520,1179.435448) ">
+                    Ia : </text>
+                    <text id="text14" x="-6.36305" y="11.994" font-family="SimSun" font-size="34" text-anchor="start" fill="#00FF00" transform="translate(894.792483,1225.696383) ">
+                    Ib : </text>
+                    <text id="text15" x="-6.36305" y="11.994" font-family="SimSun" font-size="34" text-anchor="start" fill="#00FF00" transform="translate(894.792483,1265.696383) ">
+                    Ic : </text>
+                    <text id="text16" x="-6.36305" y="11.994" font-family="SimSun" font-size="34" text-anchor="start" fill="#00FF00" transform="translate(894.792483,1305.696383) ">
+                    Va : </text>
+                    <text id="text17" x="-6.36305" y="11.994" font-family="SimSun" font-size="34" text-anchor="start" fill="#00FF00" transform="translate(894.792483,1345.696383) ">
+                    Vb : </text>
+                    <text id="text18" x="-6.36305" y="11.994" font-family="SimSun" font-size="34" text-anchor="start" fill="#00FF00" transform="translate(894.792483,1385.696383) ">
+                    Vc : </text>
+                    <text id="text19" x="-6.36305" y="11.994" font-family="SimSun" font-size="34" text-anchor="start" fill="#00FF00" transform="translate(1298.762951,1174.576586) ">
+                    Ia : </text>
+                    <text id="text20" x="-6.36305" y="11.994" font-family="SimSun" font-size="34" text-anchor="start" fill="#00FF00" transform="translate(1297.221914,1220.837521) ">
+                    Ib : </text>
+                    <text id="text21" x="-6.36305" y="11.994" font-family="SimSun" font-size="34" text-anchor="start" fill="#00FF00" transform="translate(1297.221914,1260.837521) ">
+                    Ic : </text>
+                    <text id="text22" x="-6.36305" y="11.994" font-family="SimSun" font-size="34" text-anchor="start" fill="#00FF00" transform="translate(1297.221914,1300.837521) ">
+                    Va : </text>
+                    <text id="text23" x="-6.36305" y="11.994" font-family="SimSun" font-size="34" text-anchor="start" fill="#00FF00" transform="translate(1297.221914,1340.837521) ">
+                    Vb : </text>
+                    <text id="text24" x="-6.36305" y="11.994" font-family="SimSun" font-size="34" text-anchor="start" fill="#00FF00" transform="translate(1297.221914,1380.837521) ">
+                    Vc : </text>
+            </g>
+        </svg>
+        <div style="position:absolute;bottom:20px;">
+            <span>X</span>
+        </div>
+    </div>
+</body>
+</html>

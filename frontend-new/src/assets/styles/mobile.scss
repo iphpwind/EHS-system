@@ -1,0 +1,209 @@
+/* ============================================
+   移动端响应式适配
+   ============================================ */
+
+/* 小屏幕设备 (< 768px) */
+@media screen and (max-width: 768px) {
+  /* H5 全屏首页：完全隐藏导航栏和侧边栏 */
+  .app-wrapper.mobile {
+    .navbar {
+      display: none !important;
+    }
+    .sidebar-container {
+      display: none !important;
+    }
+    .main-container {
+      margin-left: 0 !important;
+      width: 100% !important;
+      padding-top: 0 !important;
+    }
+    .app-main {
+      padding-top: 0 !important;
+      height: 100vh !important;
+      height: 100dvh !important;
+      overflow-y: auto !important;
+    }
+    .hasTagsView .app-main {
+      height: 100vh !important;
+      height: 100dvh !important;
+      min-height: 100vh !important;
+    }
+    .fixed-header + .app-main {
+      padding-top: 0 !important;
+    }
+    .tags-view-container {
+      display: none !important;
+    }
+    /* 覆盖 drawer-bg 遮罩 */
+    .drawer-bg {
+      display: none !important;
+    }
+  }
+  /* 侧边栏变为抽屉式 */
+  .sidebar-container {
+    width: 210px !important;
+    position: fixed !important;
+    top: 0;
+    left: 0;
+    height: 100vh;
+    height: 100dvh;
+    z-index: 2000;
+    transform: translateX(-100%);
+    transition: transform 0.3s;
+    /* iPhone 安全区 */
+    padding-top: env(safe-area-inset-top, 0px);
+  }
+  .sidebar-container.open {
+    transform: translateX(0);
+  }
+  .main-container {
+    margin-left: 0 !important;
+    width: 100% !important;
+  }
+  .navbar {
+    padding: 0 8px;
+    /* iPhone 安全区 */
+    padding-top: env(safe-area-inset-top, 0px);
+  }
+  /* 移动端保留汉堡 + 头像 + 铃铛，隐藏其他 */
+  .navbar .right-menu {
+    display: flex;
+    align-items: center;
+  }
+  .navbar .right-menu .screenfull,
+  .navbar .right-menu .search-wrapper,
+  .navbar .right-menu .size-select,
+  .navbar .right-menu .ruo-yi-git,
+  .navbar .right-menu .ruo-yi-doc,
+  .navbar .right-menu .header-search {
+    display: none !important;
+  }
+  .navbar .right-menu .avatar-container {
+    margin-right: 12px !important;
+  }
+  .navbar .right-menu .bell {
+    margin-right: 8px !important;
+  }
+  /* 汉堡按钮 */
+  .navbar .hamburger-container {
+    display: flex;
+    align-items: center;
+  }
+  /* 表格横向滚动 */
+  .el-table {
+    width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+  /* 搜索表单改为垂直布局 */
+  .search-form .el-form-item {
+    margin-right: 0 !important;
+    width: 100% !important;
+  }
+  /* 操作按钮换行 */
+  .el-button + .el-button {
+    margin-left: 0;
+    margin-top: 8px;
+  }
+  /* 卡片内边距减小 */
+  .el-card__body {
+    padding: 10px !important;
+  }
+  /* 分页器简化 */
+  .el-pagination {
+    white-space: normal;
+  }
+  .el-pagination .el-pagination__sizes,
+  .el-pagination .el-pagination__jump {
+    display: none !important;
+  }
+  /* app-container 内边距 */
+  .app-container {
+    padding: 8px !important;
+  }
+  /* 弹窗最大化 */
+  .el-dialog {
+    width: 95% !important;
+    margin-top: 5vh !important;
+  }
+  /* 顶部导航隐藏 */
+  .topmenu-container {
+    display: none;
+  }
+  /* 面包屑简化 */
+  .breadcrumb-container {
+    font-size: 12px !important;
+  }
+  /* 垂直菜单栏弹出修复 */
+  .el-menu--vertical {
+    max-width: 210px !important;
+  }
+  /* 确保内容区不溢出 */
+  .app-main {
+    overflow-x: hidden !important;
+    -webkit-overflow-scrolling: touch;
+  }
+  /* 修复移动端100vh问题 — 使用动态视口高度 */
+  .hasTagsView .app-main {
+    min-height: calc(100dvh - 84px);
+    height: auto;
+  }
+  /* 底部安全区 */
+  .app-container {
+    padding-bottom: calc(8px + env(safe-area-inset-bottom, 0px)) !important;
+  }
+}
+
+/* 平板设备 (768px - 1024px) */
+@media screen and (min-width: 769px) and (max-width: 1024px) {
+  .sidebar-container {
+    width: 54px !important;
+  }
+  .sidebar-container .el-menu-item span,
+  .sidebar-container .el-sub-menu__title span {
+    display: none;
+  }
+  .main-container {
+    margin-left: 54px !important;
+  }
+  .el-dialog {
+    width: 80% !important;
+  }
+  /* 平板也使用动态视口高度 */
+  .hasTagsView .app-main {
+    min-height: calc(100dvh - 84px);
+    height: auto;
+  }
+}
+
+/* 触摸设备优化 */
+@media (hover: none) and (pointer: coarse) {
+  .el-button {
+    min-height: 36px;
+    min-width: 36px;
+  }
+  .el-table__row {
+    min-height: 44px;
+  }
+  .el-menu-item,
+  .el-sub-menu__title {
+    min-height: 48px;
+  }
+}
+
+/* 移动端菜单遮罩 */
+.mobile-sidebar-mask {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 1999;
+}
+@media screen and (max-width: 768px) {
+  .mobile-sidebar-mask.show {
+    display: block;
+  }
+}

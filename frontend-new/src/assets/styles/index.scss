@@ -1,0 +1,275 @@
+@import './variables.module.scss';
+@import './mixin.scss';
+@import './transition.scss';
+@import './element-ui.scss';
+@import './sidebar.scss';
+@import './btn.scss';
+@import './ruoyi.scss';
+@import './mystyle.scss';
+@import './mobile.scss';
+@import './dashboard-pc.scss';
+@import './soybean-theme.scss';
+
+/* ========================
+   全局 CSS 变量主题系统
+   ======================== */
+:root {
+  /* Element Plus 主题色覆盖 */
+  --el-color-primary: #{$--color-primary};
+  --el-color-primary-light-3: #2563eb;
+  --el-color-primary-light-5: #3b82f6;
+  --el-color-primary-light-7: #93c5fd;
+  --el-color-primary-light-8: #bfdbfe;
+  --el-color-primary-light-9: #eef2ff;
+  --el-color-primary-dark-2: #1648c0;
+
+  --primary-color: #{$--color-primary};
+  --primary-light: #{$blue-light};
+  --primary-hover: #{$blue-hover};
+  --primary-active: #{$blue-active};
+  --success-color: #{$--color-success};
+  --warning-color: #{$--color-warning};
+  --danger-color: #{$--color-danger};
+  --info-color: #{$--color-info};
+
+  --bg-body: #{$gray-100};
+  --bg-card: #ffffff;
+  --bg-sidebar: #{$base-menu-light-background};
+  --bg-navbar: rgba(255, 255, 255, 0.85);
+  --bg-overlay: rgba(0, 0, 0, 0.45);
+
+  --text-primary: #{$gray-800};
+  --text-secondary: #{$gray-600};
+  --text-tertiary: #{$gray-400};
+  --text-inverse: #ffffff;
+
+  --border-color: #{$gray-200};
+  --divider-color: #{$gray-200};
+
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.04);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.06);
+  --shadow-lg: 0 12px 40px rgba(0, 0, 0, 0.1);
+  --shadow-xl: 0 20px 60px rgba(0, 0, 0, 0.12);
+
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 16px;
+  --radius-xl: 20px;
+
+  --transition-fast: 0.15s ease;
+  --transition-base: 0.25s ease;
+  --transition-slow: 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+
+  --sidebar-width: #{$base-sidebar-width};
+  --sidebar-collapsed: #{$base-sidebar-collapsed-width};
+  --navbar-height: #{$base-navbar-height};
+
+  /* ===== Dashboard 专用色（PC 驾驶舱）===== */
+  --db-blue-900: #1e3a5f;
+  --db-blue-800: #1e40af;
+  --db-blue-700: #1d4ed8;
+  --db-blue-600: #2563eb;
+  --db-blue-500: #3b82f6;
+  --db-blue-100: #dbeafe;
+  --db-orange-600: #ea580c;
+  --db-orange-500: #f97316;
+  --db-red-600: #dc2626;
+  --db-red-500: #ef4444;
+  --db-green-600: #16a34a;
+  --db-green-500: #22c55e;
+  --db-purple-600: #7c3aed;
+  --db-purple-500: #a855f7;
+  --db-slate-900: #0f172a;
+  --db-slate-800: #1e293b;
+  --db-slate-500: #64748b;
+  --db-slate-400: #94a3b8;
+  --db-slate-200: #e2e8f0;
+  --db-slate-100: #f1f5f9;
+}
+
+/* 暗色模式 */
+html.dark {
+  --bg-body: #0f172a;
+  --bg-card: rgba(30, 41, 59, 0.9);
+  --bg-sidebar: #1e293b;
+  --bg-navbar: rgba(15, 23, 42, 0.85);
+  --bg-overlay: rgba(0, 0, 0, 0.65);
+
+  --text-primary: #f1f5f9;
+  --text-secondary: #94a3b8;
+  --text-tertiary: #64748b;
+  --text-inverse: #0f172a;
+
+  --border-color: rgba(255, 255, 255, 0.08);
+  --divider-color: rgba(255, 255, 255, 0.06);
+
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.2);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.25);
+  --shadow-lg: 0 12px 40px rgba(0, 0, 0, 0.3);
+  --shadow-xl: 0 20px 60px rgba(0, 0, 0, 0.35);
+
+  /* Dashboard 专用色（暗色模式）*/
+  --db-blue-900: #0f172a;
+  --db-blue-800: #1e3a5f;
+  --db-blue-700: #1e40af;
+  --db-blue-600: #1d4ed8;
+  --db-blue-500: #3b82f6;
+  --db-blue-100: #1e3a5f;
+  --db-orange-600: #9a3412;
+  --db-orange-500: #b45309;
+  --db-red-600: #991b1b;
+  --db-red-500: #dc2626;
+  --db-green-600: #166534;
+  --db-green-500: #16a34a;
+  --db-purple-600: #6b21a8;
+  --db-purple-500: #7e22ce;
+  --db-slate-900: #0f172a;
+  --db-slate-800: #1e293b;
+  --db-slate-500: #334155;
+  --db-slate-400: #64748b;
+  --db-slate-200: #e2e8f0;
+  --db-slate-100: #f1f5f9;
+}
+
+body {
+  height: 100%;
+  margin: 0;
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  font-family: $font-family;
+  font-size: $font-size-base;
+  color: $gray-600;
+  background: $gray-100;
+}
+
+label {
+  font-weight: 500;
+}
+
+html {
+  height: 100%;
+  box-sizing: border-box;
+}
+
+#app {
+  height: 100%;
+}
+
+*,
+*:before,
+*:after {
+  box-sizing: inherit;
+}
+
+a:focus,
+a:active {
+  outline: none;
+}
+
+a,
+a:focus,
+a:hover {
+  cursor: pointer;
+  color: inherit;
+  text-decoration: none;
+}
+
+div:focus {
+  outline: none;
+}
+
+.clearfix {
+  &:after {
+    visibility: hidden;
+    display: block;
+    font-size: 0;
+    content: " ";
+    clear: both;
+    height: 0;
+  }
+}
+
+.no-padding {
+  padding: 0px !important;
+}
+
+.padding-content {
+  padding: 4px 0;
+}
+
+aside {
+  background: #eef1f6;
+  padding: 8px 24px;
+  margin-bottom: 20px;
+  border-radius: 4px;
+  display: block;
+  line-height: 32px;
+  font-size: 16px;
+  color: $gray-700;
+
+  a {
+    color: $blue-primary;
+    cursor: pointer;
+
+    &:hover {
+      color: $blue-hover;
+    }
+  }
+}
+
+.app-container {
+  padding: 16px;
+}
+
+.components-container {
+  margin: 30px 50px;
+  position: relative;
+}
+
+.text-center {
+  text-align: center;
+}
+
+.sub-navbar {
+  height: 50px;
+  line-height: 50px;
+  position: relative;
+  width: 100%;
+  text-align: right;
+  padding-right: 20px;
+  transition: 600ms ease position;
+  background: $blue-dark;
+
+  .subtitle {
+    font-size: 20px;
+    color: #fff;
+  }
+
+  &.draft {
+    background: $gray-300;
+  }
+
+  &.deleted {
+    background: $gray-300;
+  }
+}
+
+// 页面滚动条
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: $gray-300;
+  border-radius: 3px;
+
+  &:hover {
+    background: $gray-400;
+  }
+}

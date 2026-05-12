@@ -1,0 +1,10 @@
+import { Router } from 'express';
+import { getProjectList, getProjectById, createProject, updateProject, deleteProject, getProjectStats } from '../controllers/threeSimultaneousController';
+const router = Router();
+router.get('/stats', getProjectStats);
+router.get('/', getProjectList);
+router.get('/:id', getProjectById);
+router.post('/', createProject);
+router.put('/:id', updateProject);
+router.delete('/:id', deleteProject);
+export default router;

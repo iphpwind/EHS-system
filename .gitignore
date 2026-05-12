@@ -1,0 +1,65 @@
+# Dependencies
+node_modules/
+*/node_modules/
+**/node_modules/
+
+# Build outputs
+dist/
+*/dist/
+**/dist/
+WWW/
+*/WWW/
+**/WWW/
+
+# Build logs
+*.log
+*.txt
+build-*/
+vite-*
+
+# Environment files
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+backend/.env
+
+# IDE and editor
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# OS files
+Thumbs.db
+Desktop.ini
+
+# Database
+*.sql
+*.db
+*.sqlite
+*.sqlite3
+
+# Temporary files
+*.tmp
+*.temp
+.temp/
+temp/
+tmp/
+
+# PM2 logs
+~/.pm2/logs/
+*.log
+
+# Old frontend (deprecated)
+frontend/
+
+# Documentation (keep only essential)
+待删除文件清单.md
+
+# Build artifacts
+*.tsbuildinfo
+*.map

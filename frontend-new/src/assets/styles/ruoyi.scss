@@ -1,0 +1,268 @@
+/**
+ * 安全生产管理平台 - 通用样式
+ * 专业、稳重、简约、政务企业风
+ */
+
+@import './variables.module.scss';
+
+/* ===== 表格 ===== */
+.el-table {
+  --el-table-border-color: #{$gray-200};
+  --el-table-header-bg-color: #{$gray-50};
+  --el-table-tr-bg-color: #ffffff;
+
+  th.el-table__cell {
+    background-color: $gray-50 !important;
+    color: $gray-600;
+    font-weight: 600;
+    font-size: $font-size-sm;
+    padding: 0;
+  }
+
+  .el-table__cell {
+    padding: 8px 0;
+  }
+
+  .el-table__body tr:hover > td {
+    background-color: #f0f5ff !important;
+  }
+
+  .el-table__row--striped td {
+    background-color: #fafbfc;
+  }
+
+  .el-table__inner-wrapper::before {
+    display: none;
+  }
+
+  .el-table__empty-text,
+  .el-tree__empty-text {
+    color: $gray-400;
+    font-size: $font-size-base;
+    white-space: nowrap;
+  }
+}
+
+/* ===== 分页 ===== */
+.pagination-container {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  padding: 16px 20px !important;
+  margin-top: 0;
+  height: auto;
+
+  .el-pagination {
+    font-weight: 400;
+  }
+}
+
+/* ===== 弹窗 ===== */
+.el-dialog:not(.is-fullscreen) {
+  margin-top: 6vh !important;
+  border-radius: $radius-md;
+
+  .el-dialog__header {
+    padding: 16px 20px;
+    margin-right: 0;
+    border-bottom: 1px solid $gray-200;
+
+    .el-dialog__title {
+      font-size: $font-size-lg;
+      font-weight: 600;
+      color: $gray-800;
+    }
+
+    .el-dialog__headerbtn {
+      top: 18px;
+      right: 20px;
+    }
+  }
+
+  .el-dialog__body {
+    padding: 20px;
+    max-height: 60vh;
+    overflow-y: auto;
+  }
+
+  .el-dialog__footer {
+    padding: 12px 20px;
+    border-top: 1px solid $gray-200;
+  }
+}
+
+.el-dialog.scrollbar .el-dialog__body {
+  overflow: auto;
+  overflow-x: hidden;
+  max-height: 60vh;
+  padding: 20px;
+}
+
+/* ===== 卡片 ===== */
+.card-box {
+  margin-bottom: 16px;
+}
+
+.el-card {
+  border-radius: $radius-md;
+  border: 1px solid $gray-200;
+  box-shadow: $shadow-sm;
+
+  .el-card__header {
+    padding: 14px 20px;
+    border-bottom: 1px solid $gray-200;
+    font-size: $font-size-base;
+    font-weight: 600;
+    color: $gray-700;
+  }
+
+  .el-card__body {
+    padding: 20px;
+  }
+}
+
+/* ===== 表单 ===== */
+.form-header {
+  font-size: 15px;
+  color: $gray-700;
+  font-weight: 600;
+  border-bottom: 1px solid $gray-200;
+  margin: 0 0 20px 0;
+  padding-bottom: 10px;
+}
+
+.el-form-item {
+  margin-bottom: 18px;
+
+  .el-form-item__label {
+    font-weight: 500;
+    color: $gray-600;
+  }
+}
+
+.el-input__wrapper {
+  border-radius: 6px;
+  box-shadow: 0 0 0 1px $gray-200 inset;
+  transition: all 0.2s;
+
+  &:hover {
+    box-shadow: 0 0 0 1px $gray-300 inset;
+  }
+
+  &.is-focus {
+    box-shadow: 0 0 0 2px rgba($blue-primary, 0.2), 0 0 0 1px $blue-primary inset;
+  }
+}
+
+/* ===== 按钮 ===== */
+.el-button {
+  border-radius: 6px;
+  font-weight: 500;
+
+  &.el-button--primary {
+    --el-button-bg-color: #{$blue-primary};
+    --el-button-border-color: #{$blue-primary};
+    --el-button-hover-bg-color: #{$blue-hover};
+    --el-button-hover-border-color: #{$blue-hover};
+    --el-button-active-bg-color: #{$blue-active};
+    --el-button-active-border-color: #{$blue-active};
+  }
+}
+
+/* ===== 搜索区域 ===== */
+.filter-container {
+  padding: 0 0 16px 0;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+
+  .filter-item {
+    margin-bottom: 0;
+  }
+}
+
+/* ===== 树控件 ===== */
+.tree-border {
+  margin-top: 0;
+  border: 1px solid $gray-200;
+  background: #ffffff;
+  border-radius: $radius-md;
+  min-width: 120px;
+}
+
+.el-tree__empty-block {
+  min-width: 100px;
+}
+
+.el-tree__empty-text {
+  white-space: nowrap !important;
+}
+
+.el-tree-node__content {
+  height: 36px;
+  font-size: $font-size-base;
+  color: $gray-600;
+}
+
+.el-tree-node__expand-icon {
+  color: $gray-400;
+}
+
+/* ===== 标签 ===== */
+.el-tag {
+  border-radius: 4px;
+}
+
+/* ===== 链接文字 ===== */
+.link-type,
+.link-type:focus {
+  color: $blue-primary;
+  cursor: pointer;
+
+  &:hover {
+    color: $blue-hover;
+    text-decoration: underline;
+  }
+}
+
+/* ===== 间距工具类 ===== */
+.pt5 { padding-top: 5px; }
+.pr5 { padding-right: 5px; }
+.pb5 { padding-bottom: 5px; }
+.pl5 { padding-left: 5px; }
+.mt5 { margin-top: 5px; }
+.mr5 { margin-right: 5px; }
+.mb5 { margin-bottom: 5px; }
+.ml5 { margin-left: 5px; }
+.mt10 { margin-top: 10px; }
+.mr10 { margin-right: 10px; }
+.mb10 { margin-bottom: 10px; }
+.ml10 { margin-left: 10px; }
+.mt20 { margin-top: 20px; }
+.mr20 { margin-right: 20px; }
+.mb20 { margin-bottom: 20px; }
+.ml20 { margin-left: 20px; }
+
+/* ===== 文本颜色 ===== */
+.text-primary { color: $blue-primary !important; }
+.text-success { color: $success-color !important; }
+.text-warning { color: $warning-color !important; }
+.text-danger { color: $danger-color !important; }
+.text-muted { color: $gray-400 !important; }
+.text-navy { color: $blue-dark !important; }
+
+/* ===== 其他 ===== */
+.pull-right {
+  float: right !important;
+}
+
+.top-right-btn {
+  position: absolute;
+  right: 0;
+  top: 0;
+}
+
+.app-container {
+  padding: 16px;
+}

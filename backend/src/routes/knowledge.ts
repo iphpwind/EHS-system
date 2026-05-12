@@ -1,0 +1,11 @@
+import { Router } from 'express';
+import { getKnowledgeList, getKnowledgeById, createKnowledge, updateKnowledge, deleteKnowledge, getKnowledgeStats, likeKnowledge } from '../controllers/knowledgeController';
+const router = Router();
+router.get('/stats', getKnowledgeStats);
+router.post('/:id/like', likeKnowledge);
+router.get('/', getKnowledgeList);
+router.get('/:id', getKnowledgeById);
+router.post('/', createKnowledge);
+router.put('/:id', updateKnowledge);
+router.delete('/:id', deleteKnowledge);
+export default router;

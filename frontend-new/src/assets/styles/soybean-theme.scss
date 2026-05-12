@@ -1,0 +1,195 @@
+/* ============================================
+   Soybean Admin UI 设计规范
+   配色、间距、字体、阴影
+   ============================================ */
+
+:root {
+  /* 主色板 */
+  --soy-primary: #1890ff;
+  --soy-primary-light: #40a9ff;
+  --soy-primary-dark: #096dd9;
+  --soy-primary-bg: #e6f7ff;
+
+  /* 功能色 */
+  --soy-success: #52c41a;
+  --soy-success-bg: #f6ffed;
+  --soy-warning: #faad14;
+  --soy-warning-bg: #fffbe6;
+  --soy-error: #f5222d;
+  --soy-error-bg: #fff1f0;
+  --soy-info: #1890ff;
+  --soy-info-bg: #e6f7ff;
+
+  /* 中性色 */
+  --soy-gray-1: #ffffff;
+  --soy-gray-2: #fafafa;
+  --soy-gray-3: #f5f5f5;
+  --soy-gray-4: #f0f0f0;
+  --soy-gray-5: #d9d9d9;
+  --soy-gray-6: #bfbfbf;
+  --soy-gray-7: #8c8c8c;
+  --soy-gray-8: #595959;
+  --soy-gray-9: #434343;
+  --soy-gray-10: #262626;
+
+  /* 文字色 */
+  --soy-text-primary: #262626;
+  --soy-text-secondary: #595959;
+  --soy-text-tertiary: #8c8c8c;
+  --soy-text-disabled: #bfbfbf;
+
+  /* 边框色 */
+  --soy-border: #f0f0f0;
+  --soy-border-split: #f0f0f0;
+
+  /* 背景色 */
+  --soy-bg-body: #f5f5f5;
+  --soy-bg-container: #ffffff;
+  --soy-bg-elevated: #ffffff;
+  --soy-bg-mask: rgba(0, 0, 0, 0.45);
+
+  /* 阴影 */
+  --soy-shadow-1: 0 1px 2px 0 rgba(0, 0, 0, 0.03), 0 1px 6px -1px rgba(0, 0, 0, 0.02), 0 2px 4px 0 rgba(0, 0, 0, 0.02);
+  --soy-shadow-2: 0 3px 6px -4px rgba(0, 0, 0, 0.12), 0 6px 16px 0 rgba(0, 0, 0, 0.08), 0 9px 28px 8px rgba(0, 0, 0, 0.05);
+  --soy-shadow-3: 0 6px 16px -8px rgba(0, 0, 0, 0.08), 0 9px 28px 0 rgba(0, 0, 0, 0.05), 0 12px 48px 16px rgba(0, 0, 0, 0.03);
+
+  /* 圆角 */
+  --soy-radius-sm: 2px;
+  --soy-radius-base: 4px;
+  --soy-radius-md: 6px;
+  --soy-radius-lg: 8px;
+  --soy-radius-xl: 12px;
+
+  /* 间距 */
+  --soy-space-xs: 4px;
+  --soy-space-sm: 8px;
+  --soy-space-md: 16px;
+  --soy-space-lg: 24px;
+  --soy-space-xl: 32px;
+
+  /* 字体 */
+  --soy-font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  --soy-font-size-sm: 12px;
+  --soy-font-size-base: 14px;
+  --soy-font-size-md: 16px;
+  --soy-font-size-lg: 18px;
+  --soy-font-size-xl: 20px;
+
+  /* 过渡 */
+  --soy-transition-base: all 0.3s cubic-bezier(0.645, 0.045, 0.355, 1);
+  --soy-transition-fast: all 0.15s cubic-bezier(0.645, 0.045, 0.355, 1);
+}
+
+/* Element Plus 主题覆盖 */
+.el-button--primary {
+  background-color: var(--soy-primary);
+  border-color: var(--soy-primary);
+}
+.el-button--primary:hover {
+  background-color: var(--soy-primary-light);
+  border-color: var(--soy-primary-light);
+}
+.el-button--primary:active {
+  background-color: var(--soy-primary-dark);
+  border-color: var(--soy-primary-dark);
+}
+
+.el-tag--success {
+  background-color: var(--soy-success-bg);
+  border-color: #b7eb8f;
+  color: var(--soy-success);
+}
+.el-tag--warning {
+  background-color: var(--soy-warning-bg);
+  border-color: #ffe58f;
+  color: var(--soy-warning);
+}
+.el-tag--danger {
+  background-color: var(--soy-error-bg);
+  border-color: #ffa39e;
+  color: var(--soy-error);
+}
+
+/* 卡片优化 */
+.el-card {
+  border-radius: var(--soy-radius-lg);
+  box-shadow: var(--soy-shadow-1);
+  border: none;
+}
+.el-card__header {
+  padding: var(--soy-space-md) var(--soy-space-lg);
+  border-bottom: 1px solid var(--soy-border);
+  font-weight: 500;
+}
+.el-card__body {
+  padding: var(--soy-space-lg);
+}
+
+/* 表格优化 */
+.el-table {
+  border-radius: var(--soy-radius-lg);
+  overflow: hidden;
+}
+.el-table th.el-table__cell {
+  background-color: var(--soy-gray-2);
+  font-weight: 600;
+  color: var(--soy-text-primary);
+}
+
+/* 表单优化 */
+.el-input__wrapper,
+.el-textarea__inner {
+  border-radius: var(--soy-radius-base);
+}
+
+/* 菜单优化 */
+.el-menu {
+  border-right: none;
+}
+
+/* 对话框优化 */
+.el-dialog {
+  border-radius: var(--soy-radius-lg);
+  box-shadow: var(--soy-shadow-3);
+}
+.el-dialog__header {
+  padding: var(--soy-space-md) var(--soy-space-lg);
+  border-bottom: 1px solid var(--soy-border);
+}
+.el-dialog__body {
+  padding: var(--soy-space-lg);
+}
+
+/* 分页优化 */
+.el-pagination.is-background .el-pager li:not(.is-disabled).is-active {
+  background-color: var(--soy-primary);
+}
+
+/* 全局页面容器 */
+.app-container {
+  background: var(--soy-bg-body);
+  min-height: calc(100vh - 50px);
+}
+
+/* 页面过渡动画 */
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.3s ease;
+}
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+}
+
+.slide-up-enter-active,
+.slide-up-leave-active {
+  transition: all 0.3s ease;
+}
+.slide-up-enter-from {
+  opacity: 0;
+  transform: translateY(20px);
+}
+.slide-up-leave-to {
+  opacity: 0;
+  transform: translateY(-20px);
+}

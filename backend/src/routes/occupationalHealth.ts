@@ -1,0 +1,10 @@
+import { Router } from 'express';
+import { getHealthList, getHealthById, createHealth, updateHealth, deleteHealth, getHealthStats } from '../controllers/occupationalHealthController';
+const router = Router();
+router.get('/stats', getHealthStats);
+router.get('/', getHealthList);
+router.get('/:id', getHealthById);
+router.post('/', createHealth);
+router.put('/:id', updateHealth);
+router.delete('/:id', deleteHealth);
+export default router;

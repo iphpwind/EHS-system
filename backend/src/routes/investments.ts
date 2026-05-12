@@ -1,0 +1,10 @@
+import { Router } from 'express';
+import { getInvestmentList, getInvestmentById, createInvestment, updateInvestment, deleteInvestment, getInvestmentStats } from '../controllers/investmentController';
+const router = Router();
+router.get('/stats', getInvestmentStats);
+router.get('/', getInvestmentList);
+router.get('/:id', getInvestmentById);
+router.post('/', createInvestment);
+router.put('/:id', updateInvestment);
+router.delete('/:id', deleteInvestment);
+export default router;

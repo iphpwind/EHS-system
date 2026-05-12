@@ -1,0 +1,3398 @@
+{
+  "pages": [
+    {
+      "title": "工业互联网平台",
+      "url": "http://222.133.13.78:8088/#/navigationPage",
+      "menuItems": [
+        {
+          "text": "宋开强修改密码退出登录德州宏坤橡塑助剂有限公司新增快捷导航0流程办理您已安全生产8362 天 基础档案系统管理前往查看安全办公教育培训双重预防作业管理危险源监测相关方管理风险管控事故应急电子巡检封闭化管理上传模块视频IOT平台",
+          "className": "menu-page",
+          "tagName": "DIV"
+        },
+        {
+          "text": "0流程办理您已安全生产8362 天 基础档案系统管理前往查看安全办公教育培训双重预防作业管理危险源监测相关方管理风险管控事故应急电子巡检封闭化管理上传模块视频IOT平台",
+          "className": "menu-page-main",
+          "tagName": "DIV"
+        },
+        {
+          "text": "0流程办理您已安全生产8362 天 基础档案系统管理前往查看",
+          "className": "menu-page-main-box",
+          "tagName": "DIV"
+        },
+        {
+          "text": "安全办公教育培训双重预防作业管理危险源监测相关方管理风险管控事故应急电子巡检封闭化管理上传模块视频IOT平台",
+          "className": "menu-box",
+          "tagName": "DIV"
+        },
+        {
+          "text": "安全办公",
+          "className": "menu-box-item",
+          "tagName": "DIV"
+        },
+        {
+          "text": "安全办公",
+          "className": "menu-box-item-text",
+          "tagName": "DIV"
+        },
+        {
+          "text": "教育培训",
+          "className": "menu-box-item",
+          "tagName": "DIV"
+        },
+        {
+          "text": "教育培训",
+          "className": "menu-box-item-text",
+          "tagName": "DIV"
+        },
+        {
+          "text": "双重预防",
+          "className": "menu-box-item",
+          "tagName": "DIV"
+        },
+        {
+          "text": "双重预防",
+          "className": "menu-box-item-text",
+          "tagName": "DIV"
+        },
+        {
+          "text": "作业管理",
+          "className": "menu-box-item",
+          "tagName": "DIV"
+        },
+        {
+          "text": "作业管理",
+          "className": "menu-box-item-text",
+          "tagName": "DIV"
+        },
+        {
+          "text": "危险源监测",
+          "className": "menu-box-item",
+          "tagName": "DIV"
+        },
+        {
+          "text": "危险源监测",
+          "className": "menu-box-item-text",
+          "tagName": "DIV"
+        },
+        {
+          "text": "相关方管理",
+          "className": "menu-box-item",
+          "tagName": "DIV"
+        },
+        {
+          "text": "相关方管理",
+          "className": "menu-box-item-text",
+          "tagName": "DIV"
+        },
+        {
+          "text": "风险管控",
+          "className": "menu-box-item",
+          "tagName": "DIV"
+        },
+        {
+          "text": "风险管控",
+          "className": "menu-box-item-text",
+          "tagName": "DIV"
+        },
+        {
+          "text": "事故应急",
+          "className": "menu-box-item",
+          "tagName": "DIV"
+        },
+        {
+          "text": "事故应急",
+          "className": "menu-box-item-text",
+          "tagName": "DIV"
+        },
+        {
+          "text": "电子巡检",
+          "className": "menu-box-item",
+          "tagName": "DIV"
+        },
+        {
+          "text": "电子巡检",
+          "className": "menu-box-item-text",
+          "tagName": "DIV"
+        },
+        {
+          "text": "封闭化管理",
+          "className": "menu-box-item",
+          "tagName": "DIV"
+        },
+        {
+          "text": "封闭化管理",
+          "className": "menu-box-item-text",
+          "tagName": "DIV"
+        },
+        {
+          "text": "上传模块",
+          "className": "menu-box-item",
+          "tagName": "DIV"
+        },
+        {
+          "text": "上传模块",
+          "className": "menu-box-item-text",
+          "tagName": "DIV"
+        },
+        {
+          "text": "视频IOT平台",
+          "className": "menu-box-item",
+          "tagName": "DIV"
+        },
+        {
+          "text": "视频IOT平台",
+          "className": "menu-box-item-text",
+          "tagName": "DIV"
+        }
+      ],
+      "buttons": [
+        {
+          "text": "新增快捷导航",
+          "className": "link-btn"
+        }
+      ],
+      "forms": [],
+      "tables": [],
+      "colors": {
+        "backgroundColor": "rgba(0, 0, 0, 0)",
+        "color": "rgb(0, 0, 0)",
+        "fontFamily": "\"Noto Sans SC\""
+      }
+    },
+    {
+      "title": "工业互联网平台",
+      "url": "http://222.133.13.78:8088/#/workSecurely/personalWorkbench",
+      "menuItems": [
+        {
+          "text": "德州宏坤橡塑助剂有限公司个人工作台统计分析会议与公告文件管理安全生产知识库安全生产投入目标与责任书管理变更管理职业健康管理员工考核宋开强",
+          "className": "top-navigation",
+          "tagName": "DIV"
+        },
+        {
+          "text": "个人工作台统计分析会议与公告文件管理安全生产知识库安全生产投入目标与责任书管理变更管理职业健康管理员工考核",
+          "className": "menu",
+          "tagName": "DIV"
+        },
+        {
+          "text": "个人工作台统计分析会议与公告文件管理安全生产知识库安全生产投入目标与责任书管理变更管理职业健康管理员工考核",
+          "className": "el-menu el-menu--horizontal",
+          "tagName": "UL"
+        },
+        {
+          "text": "个人工作台",
+          "className": "el-menu-item is-active",
+          "tagName": "LI"
+        },
+        {
+          "text": "统计分析",
+          "className": "el-menu-item",
+          "tagName": "LI"
+        },
+        {
+          "text": "会议与公告",
+          "className": "el-menu-item",
+          "tagName": "LI"
+        },
+        {
+          "text": "文件管理",
+          "className": "el-menu-item",
+          "tagName": "LI"
+        },
+        {
+          "text": "安全生产知识库",
+          "className": "el-menu-item",
+          "tagName": "LI"
+        },
+        {
+          "text": "安全生产投入",
+          "className": "el-menu-item",
+          "tagName": "LI"
+        },
+        {
+          "text": "目标与责任书管理",
+          "className": "el-menu-item",
+          "tagName": "LI"
+        },
+        {
+          "text": "变更管理",
+          "className": "el-menu-item",
+          "tagName": "LI"
+        },
+        {
+          "text": "职业健康管理",
+          "className": "el-menu-item",
+          "tagName": "LI"
+        },
+        {
+          "text": "员工考核",
+          "className": "el-menu-item",
+          "tagName": "LI"
+        },
+        {
+          "text": "基础档案安全办公教育培训双重预防作业管理风险管控封闭化管理事故应急相关方管理电子巡检",
+          "className": "el-menu el-menu--horizontal",
+          "tagName": "UL"
+        },
+        {
+          "text": "基础档案",
+          "className": "el-menu-item",
+          "tagName": "LI"
+        },
+        {
+          "text": "安全办公",
+          "className": "el-menu-item is-active",
+          "tagName": "LI"
+        },
+        {
+          "text": "教育培训",
+          "className": "el-menu-item",
+          "tagName": "LI"
+        },
+        {
+          "text": "双重预防",
+          "className": "el-menu-item",
+          "tagName": "LI"
+        },
+        {
+          "text": "作业管理",
+          "className": "el-menu-item",
+          "tagName": "LI"
+        },
+        {
+          "text": "风险管控",
+          "className": "el-menu-item",
+          "tagName": "LI"
+        },
+        {
+          "text": "封闭化管理",
+          "className": "el-menu-item",
+          "tagName": "LI"
+        },
+        {
+          "text": "事故应急",
+          "className": "el-menu-item",
+          "tagName": "LI"
+        },
+        {
+          "text": "相关方管理",
+          "className": "el-menu-item",
+          "tagName": "LI"
+        },
+        {
+          "text": "电子巡检",
+          "className": "el-menu-item",
+          "tagName": "LI"
+        },
+        {
+          "text": "导航页",
+          "className": "menus-box",
+          "tagName": "DIV"
+        },
+        {
+          "text": "驾驶舱",
+          "className": "menus-box",
+          "tagName": "DIV"
+        },
+        {
+          "text": "基础档案",
+          "className": "menus-box",
+          "tagName": "DIV"
+        },
+        {
+          "text": "安全办公",
+          "className": "menus-box menus-box-checked",
+          "tagName": "DIV"
+        },
+        {
+          "text": "教育培训",
+          "className": "menus-box",
+          "tagName": "DIV"
+        },
+        {
+          "text": "双重预防",
+          "className": "menus-box",
+          "tagName": "DIV"
+        },
+        {
+          "text": "作业管理",
+          "className": "menus-box",
+          "tagName": "DIV"
+        },
+        {
+          "text": "危险源监测",
+          "className": "menus-box",
+          "tagName": "DIV"
+        },
+        {
+          "text": "相关方管理",
+          "className": "menus-box",
+          "tagName": "DIV"
+        },
+        {
+          "text": "风险管控",
+          "className": "menus-box",
+          "tagName": "DIV"
+        },
+        {
+          "text": "事故应急",
+          "className": "menus-box",
+          "tagName": "DIV"
+        },
+        {
+          "text": "电子巡检",
+          "className": "menus-box",
+          "tagName": "DIV"
+        },
+        {
+          "text": "封闭化管理",
+          "className": "menus-box",
+          "tagName": "DIV"
+        },
+        {
+          "text": "上传模块",
+          "className": "menus-box",
+          "tagName": "DIV"
+        },
+        {
+          "text": "视频IOT平台",
+          "className": "menus-box",
+          "tagName": "DIV"
+        },
+        {
+          "text": "流程办理",
+          "className": "menus-box",
+          "tagName": "DIV"
+        }
+      ],
+      "buttons": [],
+      "forms": [
+        {
+          "tagName": "INPUT",
+          "type": "checkbox",
+          "placeholder": "",
+          "className": "el-switch__input",
+          "name": ""
+        }
+      ],
+      "tables": [],
+      "colors": {
+        "backgroundColor": "rgba(0, 0, 0, 0)",
+        "color": "rgb(0, 0, 0)",
+        "fontFamily": "\"Noto Sans SC\""
+      }
+    },
+    {
+      "title": "工业互联网平台",
+      "url": "http://222.133.13.78:8088/#/trainingSys/personalWorkbench",
+      "menuItems": [
+        {
+          "text": "德州宏坤橡塑助剂有限公司个人工作台统计分析资料库管理培训设置培训记录年度学时考核宋开强",
+          "className": "top-navigation",
+          "tagName": "DIV"
+        },
+        {
+          "text": "个人工作台统计分析资料库管理培训设置培训记录年度学时考核",
+          "className": "menu",
+          "tagName": "DIV"
+        },
+        {
+          "text": "个人工作台统计分析资料库管理培训设置培训记录年度学时考核",
+          "className": "el-menu el-menu--horizontal",
+          "tagName": "UL"
+        },
+        {
+          "text": "个人工作台",
+          "className": "el-menu-item is-active",
+          "tagName": "LI"
+        },
+        {
+          "text": "统计分析",
+          "className": "el-menu-item",
+          "tagName": "LI"
+        },
+        {
+          "text": "资料库管理",
+          "className": "el-menu-item",
+          "tagName": "LI"
+        },
+        {
+          "text": "培训设置",
+          "className": "el-menu-item",
+          "tagName": "LI"
+        },
+        {
+          "text": "培训记录",
+          "className": "el-menu-item",
+          "tagName": "LI"
+        },
+        {
+          "text": "年度学时考核",
+          "className": "el-menu-item",
+          "tagName": "LI"
+        },
+        {
+          "text": "基础档案安全办公教育培训双重预防作业管理风险管控封闭化管理事故应急相关方管理电子巡检",
+          "className": "el-menu el-menu--horizontal",
+          "tagName": "UL"
+        },
+        {
+          "text": "基础档案",
+          "className": "el-menu-item",
+          "tagName": "LI"
+        },
+        {
+          "text": "安全办公",
+          "className": "el-menu-item",
+          "tagName": "LI"
+        },
+        {
+          "text": "教育培训",
+          "className": "el-menu-item is-active",
+          "tagName": "LI"
+        },
+        {
+          "text": "双重预防",
+          "className": "el-menu-item",
+          "tagName": "LI"
+        },
+        {
+          "text": "作业管理",
+          "className": "el-menu-item",
+          "tagName": "LI"
+        },
+        {
+          "text": "风险管控",
+          "className": "el-menu-item",
+          "tagName": "LI"
+        },
+        {
+          "text": "封闭化管理",
+          "className": "el-menu-item",
+          "tagName": "LI"
+        },
+        {
+          "text": "事故应急",
+          "className": "el-menu-item",
+          "tagName": "LI"
+        },
+        {
+          "text": "相关方管理",
+          "className": "el-menu-item",
+          "tagName": "LI"
+        },
+        {
+          "text": "电子巡检",
+          "className": "el-menu-item",
+          "tagName": "LI"
+        },
+        {
+          "text": "导航页",
+          "className": "menus-box",
+          "tagName": "DIV"
+        },
+        {
+          "text": "驾驶舱",
+          "className": "menus-box",
+          "tagName": "DIV"
+        },
+        {
+          "text": "基础档案",
+          "className": "menus-box",
+          "tagName": "DIV"
+        },
+        {
+          "text": "安全办公",
+          "className": "menus-box",
+          "tagName": "DIV"
+        },
+        {
+          "text": "教育培训",
+          "className": "menus-box menus-box-checked",
+          "tagName": "DIV"
+        },
+        {
+          "text": "双重预防",
+          "className": "menus-box",
+          "tagName": "DIV"
+        },
+        {
+          "text": "作业管理",
+          "className": "menus-box",
+          "tagName": "DIV"
+        },
+        {
+          "text": "危险源监测",
+          "className": "menus-box",
+          "tagName": "DIV"
+        },
+        {
+          "text": "相关方管理",
+          "className": "menus-box",
+          "tagName": "DIV"
+        },
+        {
+          "text": "风险管控",
+          "className": "menus-box",
+          "tagName": "DIV"
+        },
+        {
+          "text": "事故应急",
+          "className": "menus-box",
+          "tagName": "DIV"
+        },
+        {
+          "text": "电子巡检",
+          "className": "menus-box",
+          "tagName": "DIV"
+        },
+        {
+          "text": "封闭化管理",
+          "className": "menus-box",
+          "tagName": "DIV"
+        },
+        {
+          "text": "上传模块",
+          "className": "menus-box",
+          "tagName": "DIV"
+        },
+        {
+          "text": "视频IOT平台",
+          "className": "menus-box",
+          "tagName": "DIV"
+        },
+        {
+          "text": "流程办理",
+          "className": "menus-box",
+          "tagName": "DIV"
+        }
+      ],
+      "buttons": [],
+      "forms": [
+        {
+          "tagName": "INPUT",
+          "type": "checkbox",
+          "placeholder": "",
+          "className": "el-switch__input",
+          "name": ""
+        }
+      ],
+      "tables": [],
+      "colors": {
+        "backgroundColor": "rgba(0, 0, 0, 0)",
+        "color": "rgb(0, 0, 0)",
+        "fontFamily": "\"Noto Sans SC\""
+      }
+    },
+    {
+      "title": "工业互联网平台",
+      "url": "http://222.133.13.78:8088/#/doublePrevente/personalWorkbench",
+      "menuItems": [
+        {
+          "text": "德州宏坤橡塑助剂有限公司个人工作台数据监控工作推进管理基础配置包保责任人履职日常排查管理政府专项检查隐患治理运行评估员工绩效评估双预防预警管理宋开强",
+          "className": "top-navigation",
+          "tagName": "DIV"
+        },
+        {
+          "text": "个人工作台数据监控工作推进管理基础配置包保责任人履职日常排查管理政府专项检查隐患治理运行评估员工绩效评估双预防预警管理",
+          "className": "menu",
+          "tagName": "DIV"
+        },
+        {
+          "text": "个人工作台数据监控工作推进管理基础配置包保责任人履职日常排查管理政府专项检查隐患治理运行评估员工绩效评估双预防预警管理",
+          "className": "el-menu el-menu--horizontal",
+          "tagName": "UL"
+        },
+        {
+          "text": "个人工作台",
+          "className": "el-menu-item is-active",
+          "tagName": "LI"
+        },
+        {
+          "text": "数据监控",
+          "className": "el-menu-item",
+          "tagName": "LI"
+        },
+        {
+          "text": "工作推进管理",
+          "className": "el-menu-item",
+          "tagName": "LI"
+        },
+        {
+          "text": "基础配置",
+          "className": "el-menu-item",
+          "tagName": "LI"
+        },
+        {
+          "text": "包保责任人履职",
+          "className": "el-menu-item",
+          "tagName": "LI"
+        },
+        {
+          "text": "日常排查管理",
+          "className": "el-menu-item",
+          "tagName": "LI"
+        },
+        {
+          "text": "政府专项检查",
+          "className": "el-menu-item",
+          "tagName": "LI"
+        },
+        {
+          "text": "隐患治理",
+          "className": "el-menu-item",
+          "tagName": "LI"
+        },
+        {
+          "text": "运行评估",
+          "className": "el-menu-item",
+          "tagName": "LI"
+        },
+        {
+          "text": "员工绩效评估",
+          "className": "el-menu-item",
+          "tagName": "LI"
+        },
+        {
+          "text": "双预防预警管理",
+          "className": "el-menu-item",
+          "tagName": "LI"
+        },
+        {
+          "text": "基础档案安全办公教育培训双重预防作业管理风险管控封闭化管理事故应急相关方管理电子巡检",
+          "className": "el-menu el-menu--horizontal",
+          "tagName": "UL"
+        },
+        {
+          "text": "基础档案",
+          "className": "el-menu-item",
+          "tagName": "LI"
+        },
+        {
+          "text": "安全办公",
+          "className": "el-menu-item",
+          "tagName": "LI"
+        },
+        {
+          "text": "教育培训",
+          "className": "el-menu-item",
+          "tagName": "LI"
+        },
+        {
+          "text": "双重预防",
+          "className": "el-menu-item is-active",
+          "tagName": "LI"
+        },
+        {
+          "text": "作业管理",
+          "className": "el-menu-item",
+          "tagName": "LI"
+        },
+        {
+          "text": "风险管控",
+          "className": "el-menu-item",
+          "tagName": "LI"
+        },
+        {
+          "text": "封闭化管理",
+          "className": "el-menu-item",
+          "tagName": "LI"
+        },
+        {
+          "text": "事故应急",
+          "className": "el-menu-item",
+          "tagName": "LI"
+        },
+        {
+          "text": "相关方管理",
+          "className": "el-menu-item",
+          "tagName": "LI"
+        },
+        {
+          "text": "电子巡检",
+          "className": "el-menu-item",
+          "tagName": "LI"
+        },
+        {
+          "text": "导航页",
+          "className": "menus-box",
+          "tagName": "DIV"
+        },
+        {
+          "text": "驾驶舱",
+          "className": "menus-box",
+          "tagName": "DIV"
+        },
+        {
+          "text": "基础档案",
+          "className": "menus-box",
+          "tagName": "DIV"
+        },
+        {
+          "text": "安全办公",
+          "className": "menus-box",
+          "tagName": "DIV"
+        },
+        {
+          "text": "教育培训",
+          "className": "menus-box",
+          "tagName": "DIV"
+        },
+        {
+          "text": "双重预防",
+          "className": "menus-box menus-box-checked",
+          "tagName": "DIV"
+        },
+        {
+          "text": "作业管理",
+          "className": "menus-box",
+          "tagName": "DIV"
+        },
+        {
+          "text": "危险源监测",
+          "className": "menus-box",
+          "tagName": "DIV"
+        },
+        {
+          "text": "相关方管理",
+          "className": "menus-box",
+          "tagName": "DIV"
+        },
+        {
+          "text": "风险管控",
+          "className": "menus-box",
+          "tagName": "DIV"
+        },
+        {
+          "text": "事故应急",
+          "className": "menus-box",
+          "tagName": "DIV"
+        },
+        {
+          "text": "电子巡检",
+          "className": "menus-box",
+          "tagName": "DIV"
+        },
+        {
+          "text": "封闭化管理",
+          "className": "menus-box",
+          "tagName": "DIV"
+        },
+        {
+          "text": "上传模块",
+          "className": "menus-box",
+          "tagName": "DIV"
+        },
+        {
+          "text": "视频IOT平台",
+          "className": "menus-box",
+          "tagName": "DIV"
+        },
+        {
+          "text": "流程办理",
+          "className": "menus-box",
+          "tagName": "DIV"
+        },
+        {
+          "text": "建设成效评估",
+          "className": "el-menu--horizontal",
+          "tagName": "DIV"
+        },
+        {
+          "text": "建设成效评估",
+          "className": "el-menu el-menu--popup el-menu--popup-bottom-start",
+          "tagName": "UL"
+        },
+        {
+          "text": "建设成效评估",
+          "className": "el-menu-item",
+          "tagName": "LI"
+        }
+      ],
+      "buttons": [],
+      "forms": [
+        {
+          "tagName": "INPUT",
+          "type": "checkbox",
+          "placeholder": "",
+          "className": "el-switch__input",
+          "name": ""
+        }
+      ],
+      "tables": [],
+      "colors": {
+        "backgroundColor": "rgba(0, 0, 0, 0)",
+        "color": "rgb(0, 0, 0)",
+        "fontFamily": "\"Noto Sans SC\""
+      }
+    },
+    {
+      "title": "工业互联网平台",
+      "url": "http://222.133.13.78:8088/#/jobTickets/personalWorkbench",
+      "menuItems": [
+        {
+          "text": "德州宏坤橡塑助剂有限公司个人工作台统计分析基础配置JSA分析作业票预约作业票申请现场办票作业过程管理作业归档作业预警宋开强",
+          "className": "top-navigation",
+          "tagName": "DIV"
+        },
+        {
+          "text": "个人工作台统计分析基础配置JSA分析作业票预约作业票申请现场办票作业过程管理作业归档作业预警",
+          "className": "menu",
+          "tagName": "DIV"
+        },
+        {
+          "text": "个人工作台统计分析基础配置JSA分析作业票预约作业票申请现场办票作业过程管理作业归档作业预警",
+          "className": "el-menu el-menu--horizontal",
+          "tagName": "UL"
+        },
+        {
+          "text": "个人工作台",
+          "className": "el-menu-item is-active",
+          "tagName": "LI"
+        },
+        {
+          "text": "统计分析",
+          "className": "el-menu-item",
+          "tagName": "LI"
+        },
+        {
+          "text": "基础配置",
+          "className": "el-menu-item",
+          "tagName": "LI"
+        },
+        {
+          "text": "JSA分析",
+          "className": "el-menu-item",
+          "tagName": "LI"
+        },
+        {
+          "text": "作业票预约",
+          "className": "el-menu-item",
+          "tagName": "LI"
+        },
+        {
+          "text": "作业票申请",
+          "className": "el-menu-item",
+          "tagName": "LI"
+        },
+        {
+          "text": "现场办票",
+          "className": "el-menu-item",
+          "tagName": "LI"
+        },
+        {
+          "text": "作业过程管理",
+          "className": "el-menu-item",
+          "tagName": "LI"
+        },
+        {
+          "text": "作业归档",
+          "className": "el-menu-item",
+          "tagName": "LI"
+        },
+        {
+          "text": "作业预警",
+          "className": "el-menu-item",
+          "tagName": "LI"
+        },
+        {
+          "text": "基础档案安全办公教育培训双重预防作业管理风险管控封闭化管理事故应急相关方管理电子巡检",
+          "className": "el-menu el-menu--horizontal",
+          "tagName": "UL"
+        },
+        {
+          "text": "基础档案",
+          "className": "el-menu-item",
+          "tagName": "LI"
+        },
+        {
+          "text": "安全办公",
+          "className": "el-menu-item",
+          "tagName": "LI"
+        },
+        {
+          "text": "教育培训",
+          "className": "el-menu-item",
+          "tagName": "LI"
+        },
+        {
+          "text": "双重预防",
+          "className": "el-menu-item",
+          "tagName": "LI"
+        },
+        {
+          "text": "作业管理",
+          "className": "el-menu-item is-active",
+          "tagName": "LI"
+        },
+        {
+          "text": "风险管控",
+          "className": "el-menu-item",
+          "tagName": "LI"
+        },
+        {
+          "text": "封闭化管理",
+          "className": "el-menu-item",
+          "tagName": "LI"
+        },
+        {
+          "text": "事故应急",
+          "className": "el-menu-item",
+          "tagName": "LI"
+        },
+        {
+          "text": "相关方管理",
+          "className": "el-menu-item",
+          "tagName": "LI"
+        },
+        {
+          "text": "电子巡检",
+          "className": "el-menu-item",
+          "tagName": "LI"
+        },
+        {
+          "text": "导航页",
+          "className": "menus-box",
+          "tagName": "DIV"
+        },
+        {
+          "text": "驾驶舱",
+          "className": "menus-box",
+          "tagName": "DIV"
+        },
+        {
+          "text": "基础档案",
+          "className": "menus-box",
+          "tagName": "DIV"
+        },
+        {
+          "text": "安全办公",
+          "className": "menus-box",
+          "tagName": "DIV"
+        },
+        {
+          "text": "教育培训",
+          "className": "menus-box",
+          "tagName": "DIV"
+        },
+        {
+          "text": "双重预防",
+          "className": "menus-box",
+          "tagName": "DIV"
+        },
+        {
+          "text": "作业管理",
+          "className": "menus-box menus-box-checked",
+          "tagName": "DIV"
+        },
+        {
+          "text": "危险源监测",
+          "className": "menus-box",
+          "tagName": "DIV"
+        },
+        {
+          "text": "相关方管理",
+          "className": "menus-box",
+          "tagName": "DIV"
+        },
+        {
+          "text": "风险管控",
+          "className": "menus-box",
+          "tagName": "DIV"
+        },
+        {
+          "text": "事故应急",
+          "className": "menus-box",
+          "tagName": "DIV"
+        },
+        {
+          "text": "电子巡检",
+          "className": "menus-box",
+          "tagName": "DIV"
+        },
+        {
+          "text": "封闭化管理",
+          "className": "menus-box",
+          "tagName": "DIV"
+        },
+        {
+          "text": "上传模块",
+          "className": "menus-box",
+          "tagName": "DIV"
+        },
+        {
+          "text": "视频IOT平台",
+          "className": "menus-box",
+          "tagName": "DIV"
+        },
+        {
+          "text": "流程办理",
+          "className": "menus-box",
+          "tagName": "DIV"
+        }
+      ],
+      "buttons": [],
+      "forms": [
+        {
+          "tagName": "INPUT",
+          "type": "checkbox",
+          "placeholder": "",
+          "className": "el-switch__input",
+          "name": ""
+        }
+      ],
+      "tables": [],
+      "colors": {
+        "backgroundColor": "rgba(0, 0, 0, 0)",
+        "color": "rgb(0, 0, 0)",
+        "fontFamily": "\"Noto Sans SC\""
+      }
+    },
+    {
+      "title": "工业互联网平台",
+      "url": "http://222.133.13.78:8088/#/monitorEarly/onlineMonitor",
+      "menuItems": [
+        {
+          "text": "德州宏坤橡塑助剂有限公司在线监测实时监测管理报警配置报警管理重大危险源档案化学品档案宋开强",
+          "className": "top-navigation",
+          "tagName": "DIV"
+        },
+        {
+          "text": "在线监测实时监测管理报警配置报警管理重大危险源档案化学品档案",
+          "className": "menu",
+          "tagName": "DIV"
+        },
+        {
+          "text": "在线监测实时监测管理报警配置报警管理重大危险源档案化学品档案",
+          "className": "el-menu el-menu--horizontal",
+          "tagName": "UL"
+        },
+        {
+          "text": "在线监测",
+          "className": "el-menu-item is-active",
+          "tagName": "LI"
+        },
+        {
+          "text": "实时监测管理",
+          "className": "el-menu-item",
+          "tagName": "LI"
+        },
+        {
+          "text": "报警配置",
+          "className": "el-menu-item",
+          "tagName": "LI"
+        },
+        {
+          "text": "报警管理",
+          "className": "el-menu-item",
+          "tagName": "LI"
+        },
+        {
+          "text": "重大危险源档案",
+          "className": "el-menu-item",
+          "tagName": "LI"
+        },
+        {
+          "text": "化学品档案",
+          "className": "el-menu-item",
+          "tagName": "LI"
+        },
+        {
+          "text": "导航页",
+          "className": "menus-box",
+          "tagName": "DIV"
+        },
+        {
+          "text": "驾驶舱",
+          "className": "menus-box",
+          "tagName": "DIV"
+        },
+        {
+          "text": "基础档案",
+          "className": "menus-box",
+          "tagName": "DIV"
+        },
+        {
+          "text": "安全办公",
+          "className": "menus-box",
+          "tagName": "DIV"
+        },
+        {
+          "text": "教育培训",
+          "className": "menus-box",
+          "tagName": "DIV"
+        },
+        {
+          "text": "双重预防",
+          "className": "menus-box",
+          "tagName": "DIV"
+        },
+        {
+          "text": "作业管理",
+          "className": "menus-box",
+          "tagName": "DIV"
+        },
+        {
+          "text": "危险源监测",
+          "className": "menus-box menus-box-checked",
+          "tagName": "DIV"
+        },
+        {
+          "text": "相关方管理",
+          "className": "menus-box",
+          "tagName": "DIV"
+        },
+        {
+          "text": "风险管控",
+          "className": "menus-box",
+          "tagName": "DIV"
+        },
+        {
+          "text": "事故应急",
+          "className": "menus-box",
+          "tagName": "DIV"
+        },
+        {
+          "text": "电子巡检",
+          "className": "menus-box",
+          "tagName": "DIV"
+        },
+        {
+          "text": "封闭化管理",
+          "className": "menus-box",
+          "tagName": "DIV"
+        },
+        {
+          "text": "上传模块",
+          "className": "menus-box",
+          "tagName": "DIV"
+        },
+        {
+          "text": "视频IOT平台",
+          "className": "menus-box",
+          "tagName": "DIV"
+        },
+        {
+          "text": "流程办理",
+          "className": "menus-box",
+          "tagName": "DIV"
+        }
+      ],
+      "buttons": [
+        {
+          "text": "全部储罐工艺GDS库房装卸台SIS自定义",
+          "className": "digitalTwin-btn-box"
+        },
+        {
+          "text": "全部",
+          "className": "digitalTwin-btn-box-item digitalTwin-btn-box-item-active"
+        },
+        {
+          "text": "储罐",
+          "className": "digitalTwin-btn-box-item"
+        },
+        {
+          "text": "工艺",
+          "className": "digitalTwin-btn-box-item"
+        },
+        {
+          "text": "GDS",
+          "className": "digitalTwin-btn-box-item"
+        },
+        {
+          "text": "库房",
+          "className": "digitalTwin-btn-box-item"
+        },
+        {
+          "text": "装卸台",
+          "className": "digitalTwin-btn-box-item"
+        },
+        {
+          "text": "SIS",
+          "className": "digitalTwin-btn-box-item"
+        },
+        {
+          "text": "自定义",
+          "className": "digitalTwin-btn-box-item"
+        }
+      ],
+      "forms": [
+        {
+          "tagName": "DIV",
+          "className": "el-input el-input--mini el-input--suffix"
+        },
+        {
+          "tagName": "INPUT",
+          "type": "text",
+          "placeholder": "名称",
+          "className": "el-input__inner",
+          "name": ""
+        },
+        {
+          "tagName": "DIV",
+          "className": "el-select el-select--mini"
+        },
+        {
+          "tagName": "DIV",
+          "className": "el-input el-input--mini el-input--suffix"
+        },
+        {
+          "tagName": "INPUT",
+          "type": "text",
+          "placeholder": "类型",
+          "className": "el-input__inner",
+          "name": ""
+        },
+        {
+          "tagName": "INPUT",
+          "type": "checkbox",
+          "placeholder": "",
+          "className": "el-switch__input",
+          "name": ""
+        }
+      ],
+      "tables": [
+        {
+          "className": "",
+          "rowCount": 1,
+          "headers": [
+            "序号",
+            "名称",
+            "类型"
+          ]
+        }
+      ],
+      "colors": {
+        "backgroundColor": "rgba(0, 0, 0, 0)",
+        "color": "rgb(0, 0, 0)",
+        "fontFamily": "\"Noto Sans SC\""
+      }
+    },
+    {
+      "title": "工业互联网平台",
+      "url": "http://222.133.13.78:8088/#/visitors/personalWorkbench",
+      "menuItems": [
+        {
+          "text": "德州宏坤橡塑助剂有限公司个人工作台统计分析基础配置相关方档案考评奖惩宋开强",
+          "className": "top-navigation",
+          "tagName": "DIV"
+        },
+        {
+          "text": "个人工作台统计分析基础配置相关方档案考评奖惩",
+          "className": "menu",
+          "tagName": "DIV"
+        },
+        {
+          "text": "个人工作台统计分析基础配置相关方档案考评奖惩",
+          "className": "el-menu el-menu--horizontal",
+          "tagName": "UL"
+        },
+        {
+          "text": "个人工作台",
+          "className": "el-menu-item is-active",
+          "tagName": "LI"
+        },
+        {
+          "text": "统计分析",
+          "className": "el-menu-item",
+          "tagName": "LI"
+        },
+        {
+          "text": "基础配置",
+          "className": "el-menu-item",
+          "tagName": "LI"
+        },
+        {
+          "text": "相关方档案",
+          "className": "el-menu-item",
+          "tagName": "LI"
+        },
+        {
+          "text": "考评奖惩",
+          "className": "el-menu-item",
+          "tagName": "LI"
+        },
+        {
+          "text": "基础档案安全办公教育培训双重预防作业管理风险管控封闭化管理事故应急相关方管理电子巡检",
+          "className": "el-menu el-menu--horizontal",
+          "tagName": "UL"
+        },
+        {
+          "text": "基础档案",
+          "className": "el-menu-item",
+          "tagName": "LI"
+        },
+        {
+          "text": "安全办公",
+          "className": "el-menu-item",
+          "tagName": "LI"
+        },
+        {
+          "text": "教育培训",
+          "className": "el-menu-item",
+          "tagName": "LI"
+        },
+        {
+          "text": "双重预防",
+          "className": "el-menu-item",
+          "tagName": "LI"
+        },
+        {
+          "text": "作业管理",
+          "className": "el-menu-item",
+          "tagName": "LI"
+        },
+        {
+          "text": "风险管控",
+          "className": "el-menu-item",
+          "tagName": "LI"
+        },
+        {
+          "text": "封闭化管理",
+          "className": "el-menu-item",
+          "tagName": "LI"
+        },
+        {
+          "text": "事故应急",
+          "className": "el-menu-item",
+          "tagName": "LI"
+        },
+        {
+          "text": "相关方管理",
+          "className": "el-menu-item is-active",
+          "tagName": "LI"
+        },
+        {
+          "text": "电子巡检",
+          "className": "el-menu-item",
+          "tagName": "LI"
+        },
+        {
+          "text": "导航页",
+          "className": "menus-box",
+          "tagName": "DIV"
+        },
+        {
+          "text": "驾驶舱",
+          "className": "menus-box",
+          "tagName": "DIV"
+        },
+        {
+          "text": "基础档案",
+          "className": "menus-box",
+          "tagName": "DIV"
+        },
+        {
+          "text": "安全办公",
+          "className": "menus-box",
+          "tagName": "DIV"
+        },
+        {
+          "text": "教育培训",
+          "className": "menus-box",
+          "tagName": "DIV"
+        },
+        {
+          "text": "双重预防",
+          "className": "menus-box",
+          "tagName": "DIV"
+        },
+        {
+          "text": "作业管理",
+          "className": "menus-box",
+          "tagName": "DIV"
+        },
+        {
+          "text": "危险源监测",
+          "className": "menus-box",
+          "tagName": "DIV"
+        },
+        {
+          "text": "相关方管理",
+          "className": "menus-box menus-box-checked",
+          "tagName": "DIV"
+        },
+        {
+          "text": "风险管控",
+          "className": "menus-box",
+          "tagName": "DIV"
+        },
+        {
+          "text": "事故应急",
+          "className": "menus-box",
+          "tagName": "DIV"
+        },
+        {
+          "text": "电子巡检",
+          "className": "menus-box",
+          "tagName": "DIV"
+        },
+        {
+          "text": "封闭化管理",
+          "className": "menus-box",
+          "tagName": "DIV"
+        },
+        {
+          "text": "上传模块",
+          "className": "menus-box",
+          "tagName": "DIV"
+        },
+        {
+          "text": "视频IOT平台",
+          "className": "menus-box",
+          "tagName": "DIV"
+        },
+        {
+          "text": "流程办理",
+          "className": "menus-box",
+          "tagName": "DIV"
+        }
+      ],
+      "buttons": [],
+      "forms": [
+        {
+          "tagName": "INPUT",
+          "type": "checkbox",
+          "placeholder": "",
+          "className": "el-switch__input",
+          "name": ""
+        }
+      ],
+      "tables": [],
+      "colors": {
+        "backgroundColor": "rgba(0, 0, 0, 0)",
+        "color": "rgb(0, 0, 0)",
+        "fontFamily": "\"Noto Sans SC\""
+      }
+    },
+    {
+      "title": "工业互联网平台",
+      "url": "http://222.133.13.78:8088/#/riskManagement/personalWorkbench",
+      "menuItems": [
+        {
+          "text": "德州宏坤橡塑助剂有限公司个人工作台统计分析风险研判风险辨识与四色图评估内部安全检查随手拍隐患专家检查隐患隐患治理三卡管理动态风险宋开强",
+          "className": "top-navigation",
+          "tagName": "DIV"
+        },
+        {
+          "text": "个人工作台统计分析风险研判风险辨识与四色图评估内部安全检查随手拍隐患专家检查隐患隐患治理三卡管理动态风险",
+          "className": "menu",
+          "tagName": "DIV"
+        },
+        {
+          "text": "个人工作台统计分析风险研判风险辨识与四色图评估内部安全检查随手拍隐患专家检查隐患隐患治理三卡管理动态风险",
+          "className": "el-menu el-menu--horizontal",
+          "tagName": "UL"
+        },
+        {
+          "text": "个人工作台",
+          "className": "el-menu-item is-active",
+          "tagName": "LI"
+        },
+        {
+          "text": "统计分析",
+          "className": "el-menu-item",
+          "tagName": "LI"
+        },
+        {
+          "text": "风险研判",
+          "className": "el-menu-item",
+          "tagName": "LI"
+        },
+        {
+          "text": "风险辨识与四色图评估",
+          "className": "el-menu-item",
+          "tagName": "LI"
+        },
+        {
+          "text": "内部安全检查",
+          "className": "el-menu-item",
+          "tagName": "LI"
+        },
+        {
+          "text": "随手拍隐患",
+          "className": "el-menu-item",
+          "tagName": "LI"
+        },
+        {
+          "text": "专家检查隐患",
+          "className": "el-menu-item",
+          "tagName": "LI"
+        },
+        {
+          "text": "隐患治理",
+          "className": "el-menu-item",
+          "tagName": "LI"
+        },
+        {
+          "text": "三卡管理",
+          "className": "el-menu-item",
+          "tagName": "LI"
+        },
+        {
+          "text": "动态风险",
+          "className": "el-menu-item",
+          "tagName": "LI"
+        },
+        {
+          "text": "基础档案安全办公教育培训双重预防作业管理风险管控封闭化管理事故应急相关方管理电子巡检",
+          "className": "el-menu el-menu--horizontal",
+          "tagName": "UL"
+        },
+        {
+          "text": "基础档案",
+          "className": "el-menu-item",
+          "tagName": "LI"
+        },
+        {
+          "text": "安全办公",
+          "className": "el-menu-item",
+          "tagName": "LI"
+        },
+        {
+          "text": "教育培训",
+          "className": "el-menu-item",
+          "tagName": "LI"
+        },
+        {
+          "text": "双重预防",
+          "className": "el-menu-item",
+          "tagName": "LI"
+        },
+        {
+          "text": "作业管理",
+          "className": "el-menu-item",
+          "tagName": "LI"
+        },
+        {
+          "text": "风险管控",
+          "className": "el-menu-item is-active",
+          "tagName": "LI"
+        },
+        {
+          "text": "封闭化管理",
+          "className": "el-menu-item",
+          "tagName": "LI"
+        },
+        {
+          "text": "事故应急",
+          "className": "el-menu-item",
+          "tagName": "LI"
+        },
+        {
+          "text": "相关方管理",
+          "className": "el-menu-item",
+          "tagName": "LI"
+        },
+        {
+          "text": "电子巡检",
+          "className": "el-menu-item",
+          "tagName": "LI"
+        },
+        {
+          "text": "导航页",
+          "className": "menus-box",
+          "tagName": "DIV"
+        },
+        {
+          "text": "驾驶舱",
+          "className": "menus-box",
+          "tagName": "DIV"
+        },
+        {
+          "text": "基础档案",
+          "className": "menus-box",
+          "tagName": "DIV"
+        },
+        {
+          "text": "安全办公",
+          "className": "menus-box",
+          "tagName": "DIV"
+        },
+        {
+          "text": "教育培训",
+          "className": "menus-box",
+          "tagName": "DIV"
+        },
+        {
+          "text": "双重预防",
+          "className": "menus-box",
+          "tagName": "DIV"
+        },
+        {
+          "text": "作业管理",
+          "className": "menus-box",
+          "tagName": "DIV"
+        },
+        {
+          "text": "危险源监测",
+          "className": "menus-box",
+          "tagName": "DIV"
+        },
+        {
+          "text": "相关方管理",
+          "className": "menus-box",
+          "tagName": "DIV"
+        },
+        {
+          "text": "风险管控",
+          "className": "menus-box menus-box-checked",
+          "tagName": "DIV"
+        },
+        {
+          "text": "事故应急",
+          "className": "menus-box",
+          "tagName": "DIV"
+        },
+        {
+          "text": "电子巡检",
+          "className": "menus-box",
+          "tagName": "DIV"
+        },
+        {
+          "text": "封闭化管理",
+          "className": "menus-box",
+          "tagName": "DIV"
+        },
+        {
+          "text": "上传模块",
+          "className": "menus-box",
+          "tagName": "DIV"
+        },
+        {
+          "text": "视频IOT平台",
+          "className": "menus-box",
+          "tagName": "DIV"
+        },
+        {
+          "text": "流程办理",
+          "className": "menus-box",
+          "tagName": "DIV"
+        }
+      ],
+      "buttons": [],
+      "forms": [
+        {
+          "tagName": "INPUT",
+          "type": "checkbox",
+          "placeholder": "",
+          "className": "el-switch__input",
+          "name": ""
+        }
+      ],
+      "tables": [],
+      "colors": {
+        "backgroundColor": "rgba(0, 0, 0, 0)",
+        "color": "rgb(0, 0, 0)",
+        "fontFamily": "\"Noto Sans SC\""
+      }
+    },
+    {
+      "title": "工业互联网平台",
+      "url": "http://222.133.13.78:8088/#/smartEmergency/personalWorkbench",
+      "menuItems": [
+        {
+          "text": "德州宏坤橡塑助剂有限公司个人工作台统计分析基础配置应急资源应急预案应急演练事故管理自然灾害预警宋开强",
+          "className": "top-navigation",
+          "tagName": "DIV"
+        },
+        {
+          "text": "个人工作台统计分析基础配置应急资源应急预案应急演练事故管理自然灾害预警",
+          "className": "menu",
+          "tagName": "DIV"
+        },
+        {
+          "text": "个人工作台统计分析基础配置应急资源应急预案应急演练事故管理自然灾害预警",
+          "className": "el-menu el-menu--horizontal",
+          "tagName": "UL"
+        },
+        {
+          "text": "个人工作台",
+          "className": "el-menu-item is-active",
+          "tagName": "LI"
+        },
+        {
+          "text": "统计分析",
+          "className": "el-menu-item",
+          "tagName": "LI"
+        },
+        {
+          "text": "基础配置",
+          "className": "el-menu-item",
+          "tagName": "LI"
+        },
+        {
+          "text": "应急资源",
+          "className": "el-menu-item",
+          "tagName": "LI"
+        },
+        {
+          "text": "应急预案",
+          "className": "el-menu-item",
+          "tagName": "LI"
+        },
+        {
+          "text": "应急演练",
+          "className": "el-menu-item",
+          "tagName": "LI"
+        },
+        {
+          "text": "事故管理",
+          "className": "el-menu-item",
+          "tagName": "LI"
+        },
+        {
+          "text": "自然灾害预警",
+          "className": "el-menu-item",
+          "tagName": "LI"
+        },
+        {
+          "text": "基础档案安全办公教育培训双重预防作业管理风险管控封闭化管理事故应急相关方管理电子巡检",
+          "className": "el-menu el-menu--horizontal",
+          "tagName": "UL"
+        },
+        {
+          "text": "基础档案",
+          "className": "el-menu-item",
+          "tagName": "LI"
+        },
+        {
+          "text": "安全办公",
+          "className": "el-menu-item",
+          "tagName": "LI"
+        },
+        {
+          "text": "教育培训",
+          "className": "el-menu-item",
+          "tagName": "LI"
+        },
+        {
+          "text": "双重预防",
+          "className": "el-menu-item",
+          "tagName": "LI"
+        },
+        {
+          "text": "作业管理",
+          "className": "el-menu-item",
+          "tagName": "LI"
+        },
+        {
+          "text": "风险管控",
+          "className": "el-menu-item",
+          "tagName": "LI"
+        },
+        {
+          "text": "封闭化管理",
+          "className": "el-menu-item",
+          "tagName": "LI"
+        },
+        {
+          "text": "事故应急",
+          "className": "el-menu-item is-active",
+          "tagName": "LI"
+        },
+        {
+          "text": "相关方管理",
+          "className": "el-menu-item",
+          "tagName": "LI"
+        },
+        {
+          "text": "电子巡检",
+          "className": "el-menu-item",
+          "tagName": "LI"
+        },
+        {
+          "text": "导航页",
+          "className": "menus-box",
+          "tagName": "DIV"
+        },
+        {
+          "text": "驾驶舱",
+          "className": "menus-box",
+          "tagName": "DIV"
+        },
+        {
+          "text": "基础档案",
+          "className": "menus-box",
+          "tagName": "DIV"
+        },
+        {
+          "text": "安全办公",
+          "className": "menus-box",
+          "tagName": "DIV"
+        },
+        {
+          "text": "教育培训",
+          "className": "menus-box",
+          "tagName": "DIV"
+        },
+        {
+          "text": "双重预防",
+          "className": "menus-box",
+          "tagName": "DIV"
+        },
+        {
+          "text": "作业管理",
+          "className": "menus-box",
+          "tagName": "DIV"
+        },
+        {
+          "text": "危险源监测",
+          "className": "menus-box",
+          "tagName": "DIV"
+        },
+        {
+          "text": "相关方管理",
+          "className": "menus-box",
+          "tagName": "DIV"
+        },
+        {
+          "text": "风险管控",
+          "className": "menus-box",
+          "tagName": "DIV"
+        },
+        {
+          "text": "事故应急",
+          "className": "menus-box menus-box-checked",
+          "tagName": "DIV"
+        },
+        {
+          "text": "电子巡检",
+          "className": "menus-box",
+          "tagName": "DIV"
+        },
+        {
+          "text": "封闭化管理",
+          "className": "menus-box",
+          "tagName": "DIV"
+        },
+        {
+          "text": "上传模块",
+          "className": "menus-box",
+          "tagName": "DIV"
+        },
+        {
+          "text": "视频IOT平台",
+          "className": "menus-box",
+          "tagName": "DIV"
+        },
+        {
+          "text": "流程办理",
+          "className": "menus-box",
+          "tagName": "DIV"
+        }
+      ],
+      "buttons": [],
+      "forms": [
+        {
+          "tagName": "INPUT",
+          "type": "checkbox",
+          "placeholder": "",
+          "className": "el-switch__input",
+          "name": ""
+        }
+      ],
+      "tables": [],
+      "colors": {
+        "backgroundColor": "rgba(0, 0, 0, 0)",
+        "color": "rgb(0, 0, 0)",
+        "fontFamily": "\"Noto Sans SC\""
+      }
+    },
+    {
+      "title": "工业互联网平台",
+      "url": "http://222.133.13.78:8088/#/patrolInspection/personalWorkbench",
+      "menuItems": [
+        {
+          "text": "德州宏坤橡塑助剂有限公司个人工作台统计分析巡检内容配置巡检点配置巡检计划巡检记录宋开强",
+          "className": "top-navigation",
+          "tagName": "DIV"
+        },
+        {
+          "text": "个人工作台统计分析巡检内容配置巡检点配置巡检计划巡检记录",
+          "className": "menu",
+          "tagName": "DIV"
+        },
+        {
+          "text": "个人工作台统计分析巡检内容配置巡检点配置巡检计划巡检记录",
+          "className": "el-menu el-menu--horizontal",
+          "tagName": "UL"
+        },
+        {
+          "text": "个人工作台",
+          "className": "el-menu-item is-active",
+          "tagName": "LI"
+        },
+        {
+          "text": "统计分析",
+          "className": "el-menu-item",
+          "tagName": "LI"
+        },
+        {
+          "text": "巡检内容配置",
+          "className": "el-menu-item",
+          "tagName": "LI"
+        },
+        {
+          "text": "巡检点配置",
+          "className": "el-menu-item",
+          "tagName": "LI"
+        },
+        {
+          "text": "巡检计划",
+          "className": "el-menu-item",
+          "tagName": "LI"
+        },
+        {
+          "text": "巡检记录",
+          "className": "el-menu-item",
+          "tagName": "LI"
+        },
+        {
+          "text": "基础档案安全办公教育培训双重预防作业管理风险管控封闭化管理事故应急相关方管理电子巡检",
+          "className": "el-menu el-menu--horizontal",
+          "tagName": "UL"
+        },
+        {
+          "text": "基础档案",
+          "className": "el-menu-item",
+          "tagName": "LI"
+        },
+        {
+          "text": "安全办公",
+          "className": "el-menu-item",
+          "tagName": "LI"
+        },
+        {
+          "text": "教育培训",
+          "className": "el-menu-item",
+          "tagName": "LI"
+        },
+        {
+          "text": "双重预防",
+          "className": "el-menu-item",
+          "tagName": "LI"
+        },
+        {
+          "text": "作业管理",
+          "className": "el-menu-item",
+          "tagName": "LI"
+        },
+        {
+          "text": "风险管控",
+          "className": "el-menu-item",
+          "tagName": "LI"
+        },
+        {
+          "text": "封闭化管理",
+          "className": "el-menu-item",
+          "tagName": "LI"
+        },
+        {
+          "text": "事故应急",
+          "className": "el-menu-item",
+          "tagName": "LI"
+        },
+        {
+          "text": "相关方管理",
+          "className": "el-menu-item",
+          "tagName": "LI"
+        },
+        {
+          "text": "电子巡检",
+          "className": "el-menu-item is-active",
+          "tagName": "LI"
+        },
+        {
+          "text": "导航页",
+          "className": "menus-box",
+          "tagName": "DIV"
+        },
+        {
+          "text": "驾驶舱",
+          "className": "menus-box",
+          "tagName": "DIV"
+        },
+        {
+          "text": "基础档案",
+          "className": "menus-box",
+          "tagName": "DIV"
+        },
+        {
+          "text": "安全办公",
+          "className": "menus-box",
+          "tagName": "DIV"
+        },
+        {
+          "text": "教育培训",
+          "className": "menus-box",
+          "tagName": "DIV"
+        },
+        {
+          "text": "双重预防",
+          "className": "menus-box",
+          "tagName": "DIV"
+        },
+        {
+          "text": "作业管理",
+          "className": "menus-box",
+          "tagName": "DIV"
+        },
+        {
+          "text": "危险源监测",
+          "className": "menus-box",
+          "tagName": "DIV"
+        },
+        {
+          "text": "相关方管理",
+          "className": "menus-box",
+          "tagName": "DIV"
+        },
+        {
+          "text": "风险管控",
+          "className": "menus-box",
+          "tagName": "DIV"
+        },
+        {
+          "text": "事故应急",
+          "className": "menus-box",
+          "tagName": "DIV"
+        },
+        {
+          "text": "电子巡检",
+          "className": "menus-box menus-box-checked",
+          "tagName": "DIV"
+        },
+        {
+          "text": "封闭化管理",
+          "className": "menus-box",
+          "tagName": "DIV"
+        },
+        {
+          "text": "上传模块",
+          "className": "menus-box",
+          "tagName": "DIV"
+        },
+        {
+          "text": "视频IOT平台",
+          "className": "menus-box",
+          "tagName": "DIV"
+        },
+        {
+          "text": "流程办理",
+          "className": "menus-box",
+          "tagName": "DIV"
+        }
+      ],
+      "buttons": [],
+      "forms": [
+        {
+          "tagName": "INPUT",
+          "type": "checkbox",
+          "placeholder": "",
+          "className": "el-switch__input",
+          "name": ""
+        }
+      ],
+      "tables": [],
+      "colors": {
+        "backgroundColor": "rgba(0, 0, 0, 0)",
+        "color": "rgb(0, 0, 0)",
+        "fontFamily": "\"Noto Sans SC\""
+      }
+    },
+    {
+      "title": "工业互联网平台",
+      "url": "http://222.133.13.78:8088/#/closedManage/personalWorkbench",
+      "menuItems": [
+        {
+          "text": "德州宏坤橡塑助剂有限公司个人工作台基础信息定位管理聚集预警管理访客管理宋开强",
+          "className": "top-navigation",
+          "tagName": "DIV"
+        },
+        {
+          "text": "个人工作台基础信息定位管理聚集预警管理访客管理",
+          "className": "menu",
+          "tagName": "DIV"
+        },
+        {
+          "text": "个人工作台基础信息定位管理聚集预警管理访客管理",
+          "className": "el-menu el-menu--horizontal",
+          "tagName": "UL"
+        },
+        {
+          "text": "个人工作台",
+          "className": "el-menu-item is-active",
+          "tagName": "LI"
+        },
+        {
+          "text": "基础信息",
+          "className": "el-menu-item",
+          "tagName": "LI"
+        },
+        {
+          "text": "定位管理",
+          "className": "el-menu-item",
+          "tagName": "LI"
+        },
+        {
+          "text": "聚集预警管理",
+          "className": "el-menu-item",
+          "tagName": "LI"
+        },
+        {
+          "text": "访客管理",
+          "className": "el-menu-item",
+          "tagName": "LI"
+        },
+        {
+          "text": "基础档案安全办公教育培训双重预防作业管理风险管控封闭化管理事故应急相关方管理电子巡检",
+          "className": "el-menu el-menu--horizontal",
+          "tagName": "UL"
+        },
+        {
+          "text": "基础档案",
+          "className": "el-menu-item",
+          "tagName": "LI"
+        },
+        {
+          "text": "安全办公",
+          "className": "el-menu-item",
+          "tagName": "LI"
+        },
+        {
+          "text": "教育培训",
+          "className": "el-menu-item",
+          "tagName": "LI"
+        },
+        {
+          "text": "双重预防",
+          "className": "el-menu-item",
+          "tagName": "LI"
+        },
+        {
+          "text": "作业管理",
+          "className": "el-menu-item",
+          "tagName": "LI"
+        },
+        {
+          "text": "风险管控",
+          "className": "el-menu-item",
+          "tagName": "LI"
+        },
+        {
+          "text": "封闭化管理",
+          "className": "el-menu-item is-active",
+          "tagName": "LI"
+        },
+        {
+          "text": "事故应急",
+          "className": "el-menu-item",
+          "tagName": "LI"
+        },
+        {
+          "text": "相关方管理",
+          "className": "el-menu-item",
+          "tagName": "LI"
+        },
+        {
+          "text": "电子巡检",
+          "className": "el-menu-item",
+          "tagName": "LI"
+        },
+        {
+          "text": "导航页",
+          "className": "menus-box",
+          "tagName": "DIV"
+        },
+        {
+          "text": "驾驶舱",
+          "className": "menus-box",
+          "tagName": "DIV"
+        },
+        {
+          "text": "基础档案",
+          "className": "menus-box",
+          "tagName": "DIV"
+        },
+        {
+          "text": "安全办公",
+          "className": "menus-box",
+          "tagName": "DIV"
+        },
+        {
+          "text": "教育培训",
+          "className": "menus-box",
+          "tagName": "DIV"
+        },
+        {
+          "text": "双重预防",
+          "className": "menus-box",
+          "tagName": "DIV"
+        },
+        {
+          "text": "作业管理",
+          "className": "menus-box",
+          "tagName": "DIV"
+        },
+        {
+          "text": "危险源监测",
+          "className": "menus-box",
+          "tagName": "DIV"
+        },
+        {
+          "text": "相关方管理",
+          "className": "menus-box",
+          "tagName": "DIV"
+        },
+        {
+          "text": "风险管控",
+          "className": "menus-box",
+          "tagName": "DIV"
+        },
+        {
+          "text": "事故应急",
+          "className": "menus-box",
+          "tagName": "DIV"
+        },
+        {
+          "text": "电子巡检",
+          "className": "menus-box",
+          "tagName": "DIV"
+        },
+        {
+          "text": "封闭化管理",
+          "className": "menus-box menus-box-checked",
+          "tagName": "DIV"
+        },
+        {
+          "text": "上传模块",
+          "className": "menus-box",
+          "tagName": "DIV"
+        },
+        {
+          "text": "视频IOT平台",
+          "className": "menus-box",
+          "tagName": "DIV"
+        },
+        {
+          "text": "流程办理",
+          "className": "menus-box",
+          "tagName": "DIV"
+        }
+      ],
+      "buttons": [],
+      "forms": [
+        {
+          "tagName": "INPUT",
+          "type": "checkbox",
+          "placeholder": "",
+          "className": "el-switch__input",
+          "name": ""
+        }
+      ],
+      "tables": [],
+      "colors": {
+        "backgroundColor": "rgba(0, 0, 0, 0)",
+        "color": "rgb(0, 0, 0)",
+        "fontFamily": "\"Noto Sans SC\""
+      }
+    },
+    {
+      "title": "工业互联网平台",
+      "url": "http://222.133.13.78:8088/#/videoAIManage/AlCenter",
+      "menuItems": [
+        {
+          "text": "德州宏坤橡塑助剂有限公司监控平台视频管理AI管理宋开强",
+          "className": "top-navigation",
+          "tagName": "DIV"
+        },
+        {
+          "text": "监控平台视频管理AI管理",
+          "className": "menu",
+          "tagName": "DIV"
+        },
+        {
+          "text": "监控平台视频管理AI管理",
+          "className": "el-menu el-menu--horizontal",
+          "tagName": "UL"
+        },
+        {
+          "text": "监控平台",
+          "className": "el-menu-item is-active",
+          "tagName": "LI"
+        },
+        {
+          "text": "视频管理",
+          "className": "el-menu-item",
+          "tagName": "LI"
+        },
+        {
+          "text": "AI管理",
+          "className": "el-menu-item",
+          "tagName": "LI"
+        },
+        {
+          "text": "导航页",
+          "className": "menus-box",
+          "tagName": "DIV"
+        },
+        {
+          "text": "驾驶舱",
+          "className": "menus-box",
+          "tagName": "DIV"
+        },
+        {
+          "text": "基础档案",
+          "className": "menus-box",
+          "tagName": "DIV"
+        },
+        {
+          "text": "安全办公",
+          "className": "menus-box",
+          "tagName": "DIV"
+        },
+        {
+          "text": "教育培训",
+          "className": "menus-box",
+          "tagName": "DIV"
+        },
+        {
+          "text": "双重预防",
+          "className": "menus-box",
+          "tagName": "DIV"
+        },
+        {
+          "text": "作业管理",
+          "className": "menus-box",
+          "tagName": "DIV"
+        },
+        {
+          "text": "危险源监测",
+          "className": "menus-box",
+          "tagName": "DIV"
+        },
+        {
+          "text": "相关方管理",
+          "className": "menus-box",
+          "tagName": "DIV"
+        },
+        {
+          "text": "风险管控",
+          "className": "menus-box",
+          "tagName": "DIV"
+        },
+        {
+          "text": "事故应急",
+          "className": "menus-box",
+          "tagName": "DIV"
+        },
+        {
+          "text": "电子巡检",
+          "className": "menus-box",
+          "tagName": "DIV"
+        },
+        {
+          "text": "封闭化管理",
+          "className": "menus-box",
+          "tagName": "DIV"
+        },
+        {
+          "text": "上传模块",
+          "className": "menus-box",
+          "tagName": "DIV"
+        },
+        {
+          "text": "视频IOT平台",
+          "className": "menus-box menus-box-checked",
+          "tagName": "DIV"
+        },
+        {
+          "text": "流程办理",
+          "className": "menus-box",
+          "tagName": "DIV"
+        }
+      ],
+      "buttons": [
+        {
+          "text": "清空",
+          "className": "el-button el-button--text el-button--mini el-picker-panel__link-btn",
+          "type": "button"
+        },
+        {
+          "text": "确定",
+          "className": "el-button el-button--default el-button--mini is-plain el-picker-panel__link-btn",
+          "type": "button"
+        },
+        {
+          "text": "清空",
+          "className": "el-button el-button--text el-button--mini el-picker-panel__link-btn",
+          "type": "button"
+        },
+        {
+          "text": "确定",
+          "className": "el-button el-button--default el-button--mini is-plain el-picker-panel__link-btn",
+          "type": "button"
+        },
+        {
+          "text": "清空",
+          "className": "el-button el-button--text el-button--mini el-picker-panel__link-btn",
+          "type": "button"
+        },
+        {
+          "text": "确定",
+          "className": "el-button el-button--default el-button--mini is-plain el-picker-panel__link-btn",
+          "type": "button"
+        }
+      ],
+      "forms": [
+        {
+          "tagName": "DIV",
+          "className": "el-input el-input--mini el-input--prefix el-input--suffix"
+        },
+        {
+          "tagName": "INPUT",
+          "type": "text",
+          "placeholder": "摄像头名称",
+          "className": "el-input__inner",
+          "name": ""
+        },
+        {
+          "tagName": "DIV",
+          "className": "el-input el-input--mini el-input--prefix el-input--suffix"
+        },
+        {
+          "tagName": "INPUT",
+          "type": "text",
+          "placeholder": "区域名称",
+          "className": "el-input__inner",
+          "name": ""
+        },
+        {
+          "tagName": "INPUT",
+          "type": "checkbox",
+          "placeholder": "",
+          "className": "el-checkbox__original",
+          "name": ""
+        },
+        {
+          "tagName": "INPUT",
+          "type": "checkbox",
+          "placeholder": "",
+          "className": "el-checkbox__original",
+          "name": ""
+        },
+        {
+          "tagName": "INPUT",
+          "type": "checkbox",
+          "placeholder": "",
+          "className": "el-checkbox__original",
+          "name": ""
+        },
+        {
+          "tagName": "INPUT",
+          "type": "checkbox",
+          "placeholder": "",
+          "className": "el-checkbox__original",
+          "name": ""
+        },
+        {
+          "tagName": "INPUT",
+          "type": "text",
+          "placeholder": "开始时间",
+          "className": "el-range-input",
+          "name": ""
+        },
+        {
+          "tagName": "INPUT",
+          "type": "text",
+          "placeholder": "结束时间",
+          "className": "el-range-input",
+          "name": ""
+        },
+        {
+          "tagName": "INPUT",
+          "type": "text",
+          "placeholder": "开始时间",
+          "className": "el-range-input",
+          "name": ""
+        },
+        {
+          "tagName": "INPUT",
+          "type": "text",
+          "placeholder": "结束时间",
+          "className": "el-range-input",
+          "name": ""
+        },
+        {
+          "tagName": "INPUT",
+          "type": "text",
+          "placeholder": "开始时间",
+          "className": "el-range-input",
+          "name": ""
+        },
+        {
+          "tagName": "INPUT",
+          "type": "text",
+          "placeholder": "结束时间",
+          "className": "el-range-input",
+          "name": ""
+        },
+        {
+          "tagName": "INPUT",
+          "type": "checkbox",
+          "placeholder": "",
+          "className": "el-switch__input",
+          "name": ""
+        },
+        {
+          "tagName": "DIV",
+          "className": "el-input el-input--small el-date-range-picker__editor"
+        },
+        {
+          "tagName": "INPUT",
+          "type": "text",
+          "placeholder": "开始日期",
+          "className": "el-input__inner",
+          "name": ""
+        },
+        {
+          "tagName": "DIV",
+          "className": "el-input el-input--small el-date-range-picker__editor"
+        },
+        {
+          "tagName": "INPUT",
+          "type": "text",
+          "placeholder": "开始时间",
+          "className": "el-input__inner",
+          "name": ""
+        },
+        {
+          "tagName": "DIV",
+          "className": "el-input el-input--small el-date-range-picker__editor"
+        },
+        {
+          "tagName": "INPUT",
+          "type": "text",
+          "placeholder": "结束日期",
+          "className": "el-input__inner",
+          "name": ""
+        },
+        {
+          "tagName": "DIV",
+          "className": "el-input el-input--small el-date-range-picker__editor"
+        },
+        {
+          "tagName": "INPUT",
+          "type": "text",
+          "placeholder": "结束时间",
+          "className": "el-input__inner",
+          "name": ""
+        },
+        {
+          "tagName": "DIV",
+          "className": "el-input el-input--small el-date-range-picker__editor"
+        },
+        {
+          "tagName": "INPUT",
+          "type": "text",
+          "placeholder": "开始日期",
+          "className": "el-input__inner",
+          "name": ""
+        },
+        {
+          "tagName": "DIV",
+          "className": "el-input el-input--small el-date-range-picker__editor"
+        },
+        {
+          "tagName": "INPUT",
+          "type": "text",
+          "placeholder": "开始时间",
+          "className": "el-input__inner",
+          "name": ""
+        },
+        {
+          "tagName": "DIV",
+          "className": "el-input el-input--small el-date-range-picker__editor"
+        },
+        {
+          "tagName": "INPUT",
+          "type": "text",
+          "placeholder": "结束日期",
+          "className": "el-input__inner",
+          "name": ""
+        },
+        {
+          "tagName": "DIV",
+          "className": "el-input el-input--small el-date-range-picker__editor"
+        },
+        {
+          "tagName": "INPUT",
+          "type": "text",
+          "placeholder": "结束时间",
+          "className": "el-input__inner",
+          "name": ""
+        },
+        {
+          "tagName": "DIV",
+          "className": "el-input el-input--small el-date-range-picker__editor"
+        },
+        {
+          "tagName": "INPUT",
+          "type": "text",
+          "placeholder": "开始日期",
+          "className": "el-input__inner",
+          "name": ""
+        },
+        {
+          "tagName": "DIV",
+          "className": "el-input el-input--small el-date-range-picker__editor"
+        },
+        {
+          "tagName": "INPUT",
+          "type": "text",
+          "placeholder": "开始时间",
+          "className": "el-input__inner",
+          "name": ""
+        },
+        {
+          "tagName": "DIV",
+          "className": "el-input el-input--small el-date-range-picker__editor"
+        },
+        {
+          "tagName": "INPUT",
+          "type": "text",
+          "placeholder": "结束日期",
+          "className": "el-input__inner",
+          "name": ""
+        },
+        {
+          "tagName": "DIV",
+          "className": "el-input el-input--small el-date-range-picker__editor"
+        },
+        {
+          "tagName": "INPUT",
+          "type": "text",
+          "placeholder": "结束时间",
+          "className": "el-input__inner",
+          "name": ""
+        }
+      ],
+      "tables": [
+        {
+          "className": "el-date-table",
+          "rowCount": 7,
+          "headers": [
+            "日",
+            "一",
+            "二",
+            "三",
+            "四",
+            "五",
+            "六"
+          ]
+        },
+        {
+          "className": "el-date-table",
+          "rowCount": 7,
+          "headers": [
+            "日",
+            "一",
+            "二",
+            "三",
+            "四",
+            "五",
+            "六"
+          ]
+        },
+        {
+          "className": "el-date-table",
+          "rowCount": 7,
+          "headers": [
+            "日",
+            "一",
+            "二",
+            "三",
+            "四",
+            "五",
+            "六"
+          ]
+        },
+        {
+          "className": "el-date-table",
+          "rowCount": 7,
+          "headers": [
+            "日",
+            "一",
+            "二",
+            "三",
+            "四",
+            "五",
+            "六"
+          ]
+        },
+        {
+          "className": "el-date-table",
+          "rowCount": 7,
+          "headers": [
+            "日",
+            "一",
+            "二",
+            "三",
+            "四",
+            "五",
+            "六"
+          ]
+        },
+        {
+          "className": "el-date-table",
+          "rowCount": 7,
+          "headers": [
+            "日",
+            "一",
+            "二",
+            "三",
+            "四",
+            "五",
+            "六"
+          ]
+        }
+      ],
+      "colors": {
+        "backgroundColor": "rgba(0, 0, 0, 0)",
+        "color": "rgb(0, 0, 0)",
+        "fontFamily": "\"Noto Sans SC\""
+      }
+    },
+    {
+      "title": "工业互联网平台",
+      "url": "http://222.133.13.78:8088/#/navigationPage",
+      "menuItems": [
+        {
+          "text": "宋开强修改密码退出登录德州宏坤橡塑助剂有限公司新增快捷导航0流程办理您已安全生产8362 天 基础档案系统管理前往查看安全办公教育培训双重预防作业管理危险源监测相关方管理风险管控事故应急电子巡检封闭化管理上传模块视频IOT平台",
+          "className": "menu-page",
+          "tagName": "DIV"
+        },
+        {
+          "text": "0流程办理您已安全生产8362 天 基础档案系统管理前往查看安全办公教育培训双重预防作业管理危险源监测相关方管理风险管控事故应急电子巡检封闭化管理上传模块视频IOT平台",
+          "className": "menu-page-main",
+          "tagName": "DIV"
+        },
+        {
+          "text": "0流程办理您已安全生产8362 天 基础档案系统管理前往查看",
+          "className": "menu-page-main-box",
+          "tagName": "DIV"
+        },
+        {
+          "text": "安全办公教育培训双重预防作业管理危险源监测相关方管理风险管控事故应急电子巡检封闭化管理上传模块视频IOT平台",
+          "className": "menu-box",
+          "tagName": "DIV"
+        },
+        {
+          "text": "安全办公",
+          "className": "menu-box-item",
+          "tagName": "DIV"
+        },
+        {
+          "text": "安全办公",
+          "className": "menu-box-item-text",
+          "tagName": "DIV"
+        },
+        {
+          "text": "教育培训",
+          "className": "menu-box-item",
+          "tagName": "DIV"
+        },
+        {
+          "text": "教育培训",
+          "className": "menu-box-item-text",
+          "tagName": "DIV"
+        },
+        {
+          "text": "双重预防",
+          "className": "menu-box-item",
+          "tagName": "DIV"
+        },
+        {
+          "text": "双重预防",
+          "className": "menu-box-item-text",
+          "tagName": "DIV"
+        },
+        {
+          "text": "作业管理",
+          "className": "menu-box-item",
+          "tagName": "DIV"
+        },
+        {
+          "text": "作业管理",
+          "className": "menu-box-item-text",
+          "tagName": "DIV"
+        },
+        {
+          "text": "危险源监测",
+          "className": "menu-box-item",
+          "tagName": "DIV"
+        },
+        {
+          "text": "危险源监测",
+          "className": "menu-box-item-text",
+          "tagName": "DIV"
+        },
+        {
+          "text": "相关方管理",
+          "className": "menu-box-item",
+          "tagName": "DIV"
+        },
+        {
+          "text": "相关方管理",
+          "className": "menu-box-item-text",
+          "tagName": "DIV"
+        },
+        {
+          "text": "风险管控",
+          "className": "menu-box-item",
+          "tagName": "DIV"
+        },
+        {
+          "text": "风险管控",
+          "className": "menu-box-item-text",
+          "tagName": "DIV"
+        },
+        {
+          "text": "事故应急",
+          "className": "menu-box-item",
+          "tagName": "DIV"
+        },
+        {
+          "text": "事故应急",
+          "className": "menu-box-item-text",
+          "tagName": "DIV"
+        },
+        {
+          "text": "电子巡检",
+          "className": "menu-box-item",
+          "tagName": "DIV"
+        },
+        {
+          "text": "电子巡检",
+          "className": "menu-box-item-text",
+          "tagName": "DIV"
+        },
+        {
+          "text": "封闭化管理",
+          "className": "menu-box-item",
+          "tagName": "DIV"
+        },
+        {
+          "text": "封闭化管理",
+          "className": "menu-box-item-text",
+          "tagName": "DIV"
+        },
+        {
+          "text": "上传模块",
+          "className": "menu-box-item",
+          "tagName": "DIV"
+        },
+        {
+          "text": "上传模块",
+          "className": "menu-box-item-text",
+          "tagName": "DIV"
+        },
+        {
+          "text": "视频IOT平台",
+          "className": "menu-box-item",
+          "tagName": "DIV"
+        },
+        {
+          "text": "视频IOT平台",
+          "className": "menu-box-item-text",
+          "tagName": "DIV"
+        }
+      ],
+      "buttons": [
+        {
+          "text": "新增快捷导航",
+          "className": "link-btn"
+        }
+      ],
+      "forms": [],
+      "tables": [],
+      "colors": {
+        "backgroundColor": "rgba(0, 0, 0, 0)",
+        "color": "rgb(0, 0, 0)",
+        "fontFamily": "\"Noto Sans SC\""
+      }
+    },
+    {
+      "title": "工业互联网平台",
+      "url": "http://222.133.13.78:8088/#/baseFile/personalWorkbench",
+      "menuItems": [
+        {
+          "text": "德州宏坤橡塑助剂有限公司个人工作台基础档案人员档案化学品档案区域档案三同时档案设备档案相关方档案生产静态档案安全生产档案到期提醒设置宋开强",
+          "className": "top-navigation",
+          "tagName": "DIV"
+        },
+        {
+          "text": "个人工作台基础档案人员档案化学品档案区域档案三同时档案设备档案相关方档案生产静态档案安全生产档案到期提醒设置",
+          "className": "menu",
+          "tagName": "DIV"
+        },
+        {
+          "text": "个人工作台基础档案人员档案化学品档案区域档案三同时档案设备档案相关方档案生产静态档案安全生产档案到期提醒设置",
+          "className": "el-menu el-menu--horizontal",
+          "tagName": "UL"
+        },
+        {
+          "text": "个人工作台",
+          "className": "el-menu-item is-active",
+          "tagName": "LI"
+        },
+        {
+          "text": "基础档案",
+          "className": "el-menu-item",
+          "tagName": "LI"
+        },
+        {
+          "text": "人员档案",
+          "className": "el-menu-item",
+          "tagName": "LI"
+        },
+        {
+          "text": "化学品档案",
+          "className": "el-menu-item",
+          "tagName": "LI"
+        },
+        {
+          "text": "区域档案",
+          "className": "el-menu-item",
+          "tagName": "LI"
+        },
+        {
+          "text": "三同时档案",
+          "className": "el-menu-item",
+          "tagName": "LI"
+        },
+        {
+          "text": "设备档案",
+          "className": "el-menu-item",
+          "tagName": "LI"
+        },
+        {
+          "text": "相关方档案",
+          "className": "el-menu-item",
+          "tagName": "LI"
+        },
+        {
+          "text": "生产静态档案",
+          "className": "el-menu-item",
+          "tagName": "LI"
+        },
+        {
+          "text": "安全生产档案",
+          "className": "el-menu-item",
+          "tagName": "LI"
+        },
+        {
+          "text": "到期提醒设置",
+          "className": "el-menu-item",
+          "tagName": "LI"
+        },
+        {
+          "text": "基础档案安全办公教育培训双重预防作业管理风险管控封闭化管理事故应急相关方管理电子巡检",
+          "className": "el-menu el-menu--horizontal",
+          "tagName": "UL"
+        },
+        {
+          "text": "基础档案",
+          "className": "el-menu-item is-active",
+          "tagName": "LI"
+        },
+        {
+          "text": "安全办公",
+          "className": "el-menu-item",
+          "tagName": "LI"
+        },
+        {
+          "text": "教育培训",
+          "className": "el-menu-item",
+          "tagName": "LI"
+        },
+        {
+          "text": "双重预防",
+          "className": "el-menu-item",
+          "tagName": "LI"
+        },
+        {
+          "text": "作业管理",
+          "className": "el-menu-item",
+          "tagName": "LI"
+        },
+        {
+          "text": "风险管控",
+          "className": "el-menu-item",
+          "tagName": "LI"
+        },
+        {
+          "text": "封闭化管理",
+          "className": "el-menu-item",
+          "tagName": "LI"
+        },
+        {
+          "text": "事故应急",
+          "className": "el-menu-item",
+          "tagName": "LI"
+        },
+        {
+          "text": "相关方管理",
+          "className": "el-menu-item",
+          "tagName": "LI"
+        },
+        {
+          "text": "电子巡检",
+          "className": "el-menu-item",
+          "tagName": "LI"
+        },
+        {
+          "text": "导航页",
+          "className": "menus-box",
+          "tagName": "DIV"
+        },
+        {
+          "text": "驾驶舱",
+          "className": "menus-box",
+          "tagName": "DIV"
+        },
+        {
+          "text": "基础档案",
+          "className": "menus-box menus-box-checked",
+          "tagName": "DIV"
+        },
+        {
+          "text": "安全办公",
+          "className": "menus-box",
+          "tagName": "DIV"
+        },
+        {
+          "text": "教育培训",
+          "className": "menus-box",
+          "tagName": "DIV"
+        },
+        {
+          "text": "双重预防",
+          "className": "menus-box",
+          "tagName": "DIV"
+        },
+        {
+          "text": "作业管理",
+          "className": "menus-box",
+          "tagName": "DIV"
+        },
+        {
+          "text": "危险源监测",
+          "className": "menus-box",
+          "tagName": "DIV"
+        },
+        {
+          "text": "相关方管理",
+          "className": "menus-box",
+          "tagName": "DIV"
+        },
+        {
+          "text": "风险管控",
+          "className": "menus-box",
+          "tagName": "DIV"
+        },
+        {
+          "text": "事故应急",
+          "className": "menus-box",
+          "tagName": "DIV"
+        },
+        {
+          "text": "电子巡检",
+          "className": "menus-box",
+          "tagName": "DIV"
+        },
+        {
+          "text": "封闭化管理",
+          "className": "menus-box",
+          "tagName": "DIV"
+        },
+        {
+          "text": "上传模块",
+          "className": "menus-box",
+          "tagName": "DIV"
+        },
+        {
+          "text": "视频IOT平台",
+          "className": "menus-box",
+          "tagName": "DIV"
+        },
+        {
+          "text": "流程办理",
+          "className": "menus-box",
+          "tagName": "DIV"
+        }
+      ],
+      "buttons": [],
+      "forms": [
+        {
+          "tagName": "INPUT",
+          "type": "checkbox",
+          "placeholder": "",
+          "className": "el-switch__input",
+          "name": ""
+        }
+      ],
+      "tables": [],
+      "colors": {
+        "backgroundColor": "rgba(0, 0, 0, 0)",
+        "color": "rgb(0, 0, 0)",
+        "fontFamily": "\"Noto Sans SC\""
+      }
+    },
+    {
+      "title": "工业互联网平台",
+      "url": "http://222.133.13.78:8088/#/workbenchProcess/processHandling",
+      "menuItems": [
+        {
+          "text": "德州宏坤橡塑助剂有限公司待办流程我发起的流程我的抄送宋开强",
+          "className": "top-navigation",
+          "tagName": "DIV"
+        },
+        {
+          "text": "待办流程我发起的流程我的抄送",
+          "className": "menu",
+          "tagName": "DIV"
+        },
+        {
+          "text": "待办流程我发起的流程我的抄送",
+          "className": "el-menu el-menu--horizontal",
+          "tagName": "UL"
+        },
+        {
+          "text": "待办流程",
+          "className": "el-menu-item is-active",
+          "tagName": "LI"
+        },
+        {
+          "text": "我发起的流程",
+          "className": "el-menu-item",
+          "tagName": "LI"
+        },
+        {
+          "text": "我的抄送",
+          "className": "el-menu-item",
+          "tagName": "LI"
+        },
+        {
+          "text": "导航页",
+          "className": "menus-box",
+          "tagName": "DIV"
+        },
+        {
+          "text": "驾驶舱",
+          "className": "menus-box",
+          "tagName": "DIV"
+        },
+        {
+          "text": "基础档案",
+          "className": "menus-box",
+          "tagName": "DIV"
+        },
+        {
+          "text": "安全办公",
+          "className": "menus-box",
+          "tagName": "DIV"
+        },
+        {
+          "text": "教育培训",
+          "className": "menus-box",
+          "tagName": "DIV"
+        },
+        {
+          "text": "双重预防",
+          "className": "menus-box",
+          "tagName": "DIV"
+        },
+        {
+          "text": "作业管理",
+          "className": "menus-box",
+          "tagName": "DIV"
+        },
+        {
+          "text": "危险源监测",
+          "className": "menus-box",
+          "tagName": "DIV"
+        },
+        {
+          "text": "相关方管理",
+          "className": "menus-box",
+          "tagName": "DIV"
+        },
+        {
+          "text": "风险管控",
+          "className": "menus-box",
+          "tagName": "DIV"
+        },
+        {
+          "text": "事故应急",
+          "className": "menus-box",
+          "tagName": "DIV"
+        },
+        {
+          "text": "电子巡检",
+          "className": "menus-box",
+          "tagName": "DIV"
+        },
+        {
+          "text": "封闭化管理",
+          "className": "menus-box",
+          "tagName": "DIV"
+        },
+        {
+          "text": "上传模块",
+          "className": "menus-box",
+          "tagName": "DIV"
+        },
+        {
+          "text": "视频IOT平台",
+          "className": "menus-box",
+          "tagName": "DIV"
+        },
+        {
+          "text": "流程办理",
+          "className": "menus-box menus-box-checked",
+          "tagName": "DIV"
+        }
+      ],
+      "buttons": [
+        {
+          "text": "重置",
+          "className": "el-button el-button--default el-button--mini",
+          "type": "button"
+        },
+        {
+          "text": "待办理",
+          "className": "el-button el-button--success el-button--mini",
+          "type": "button"
+        },
+        {
+          "text": "已办理",
+          "className": "el-button el-button--primary el-button--mini",
+          "type": "button"
+        },
+        {
+          "text": "办理",
+          "className": "el-button el-button--default el-button--mini",
+          "type": "button"
+        },
+        {
+          "text": "委派",
+          "className": "el-button el-button--warning el-button--mini",
+          "type": "button"
+        }
+      ],
+      "forms": [
+        {
+          "tagName": "DIV",
+          "className": "el-input el-input--mini el-input--suffix"
+        },
+        {
+          "tagName": "INPUT",
+          "type": "text",
+          "placeholder": "表单名称",
+          "className": "el-input__inner",
+          "name": ""
+        },
+        {
+          "tagName": "DIV",
+          "className": "el-input el-input--mini el-input--suffix"
+        },
+        {
+          "tagName": "INPUT",
+          "type": "text",
+          "placeholder": "流程名称",
+          "className": "el-input__inner",
+          "name": ""
+        },
+        {
+          "tagName": "INPUT",
+          "type": "checkbox",
+          "placeholder": "",
+          "className": "el-switch__input",
+          "name": ""
+        }
+      ],
+      "tables": [
+        {
+          "className": "el-table--fit el-table--mini el-table proTable",
+          "rowCount": 2,
+          "headers": [
+            "序号",
+            "表单名称",
+            "流程名称",
+            "当前环节",
+            "流程发起人",
+            "发起人所在部门",
+            "创建时间",
+            "操作",
+            "序号",
+            "表单名称",
+            "流程名称",
+            "当前环节",
+            "流程发起人",
+            "发起人所在部门",
+            "创建时间",
+            "操作"
+          ]
+        },
+        {
+          "className": "el-table__header",
+          "rowCount": 1,
+          "headers": [
+            "序号",
+            "表单名称",
+            "流程名称",
+            "当前环节",
+            "流程发起人",
+            "发起人所在部门",
+            "创建时间",
+            "操作"
+          ]
+        },
+        {
+          "className": "el-table__body",
+          "rowCount": 0,
+          "headers": []
+        },
+        {
+          "className": "el-table__header",
+          "rowCount": 1,
+          "headers": [
+            "序号",
+            "表单名称",
+            "流程名称",
+            "当前环节",
+            "流程发起人",
+            "发起人所在部门",
+            "创建时间",
+            "操作"
+          ]
+        },
+        {
+          "className": "el-table__body",
+          "rowCount": 0,
+          "headers": []
+        }
+      ],
+      "colors": {
+        "backgroundColor": "rgba(0, 0, 0, 0)",
+        "color": "rgb(0, 0, 0)",
+        "fontFamily": "\"Noto Sans SC\""
+      }
+    }
+  ],
+  "menuStructure": [],
+  "components": [],
+  "colors": {},
+  "layout": {}
+}

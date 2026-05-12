@@ -1,0 +1,10 @@
+import { Router } from 'express';
+import { getAssessmentList, getAssessmentById, createAssessment, updateAssessment, deleteAssessment, getAssessmentStats } from '../controllers/assessmentController';
+const router = Router();
+router.get('/stats', getAssessmentStats);
+router.get('/', getAssessmentList);
+router.get('/:id', getAssessmentById);
+router.post('/', createAssessment);
+router.put('/:id', updateAssessment);
+router.delete('/:id', deleteAssessment);
+export default router;

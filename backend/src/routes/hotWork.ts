@@ -1,0 +1,32 @@
+import { Router } from 'express';
+import { authenticateToken } from '../middleware/authMiddleware';
+import {
+  getHotWorkList, getHotWorkDetail,
+  createHotWork, updateHotWork,
+  submitHotWork, approveHotWork,
+  startWork, finishWork, closeWork,
+  gasCheck, getGasChecks
+} from '../controllers/hotWorkController';
+
+const router = Router();
+
+// 列表和详情
+router.get('/', authenticateToken, getHotWorkList);
+router.get('/:id', authenticateToken, getHotWorkDetail);
+
+// CRUD
+router.post('/', authenticateToken, createHotWork);
+router.put('/:id', authenticateToken, updateHotWork);
+
+// 流程操作
+router.post('/:id/submit', authenticateToken, submitHotWork);
+router.post('/:id/approve', authenticateToken, approveHotWork);
+router.post('/:id/start', authenticateToken, startWork);
+router.post('/:id/finish', authenticateToken, finishWork);
+router.post('/:id/close', authenticateToken, closeWork);
+
+// 气体检测
+router.get('/:id/gas', authenticateToken, getGasChecks);
+router.post('/:id/gas', authenticateToken, gasCheck);
+
+export default router;

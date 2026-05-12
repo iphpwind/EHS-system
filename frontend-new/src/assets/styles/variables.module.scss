@@ -1,0 +1,147 @@
+// ==============================
+// 安全生产管理平台 - 主题变量
+// 主色调：安全蓝 #1a56db
+// 风格：专业、稳重、简约、政务企业风
+// ==============================
+
+// ----- 主色 -----
+$blue-primary: #1a56db;
+$blue-hover: #1648c0;
+$blue-active: #1340b0;
+$blue-light: #eef2ff;
+$blue-dark: #1e3a5f;
+
+// ----- Element Plus 主题色 -----
+$--color-primary: #1a56db;
+$--color-success: #059669;
+$--color-warning: #d97706;
+$--color-danger: #dc2626;
+$--color-info: #6b7280;
+
+// ----- 灰色阶 -----
+$gray-50: #f9fafb;
+$gray-100: #f3f4f6;
+$gray-200: #e5e7eb;
+$gray-300: #d1d5db;
+$gray-400: #9ca3af;
+$gray-500: #6b7280;
+$gray-600: #4b5563;
+$gray-700: #374151;
+$gray-800: #1f2937;
+
+// ----- 功能色 -----
+$success-color: #059669;
+$warning-color: #d97706;
+$danger-color: #dc2626;
+$info-color: #6b7280;
+
+// ----- 侧边栏（深色主题）-----
+$base-menu-color: #bfcbd9;
+$base-menu-color-active: #ffffff;
+$base-menu-background: #1e3a5f;
+$base-logo-title-color: #ffffff;
+
+$base-menu-light-color: rgba(0, 0, 0, 0.7);
+$base-menu-light-background: #ffffff;
+$base-logo-light-title-color: #1e3a5f;
+
+$base-sub-menu-background: #15294a;
+$base-sub-menu-hover: #1a345d;
+$base-menu-item-hover-bg: rgba(26, 86, 219, 0.08);
+$base-menu-item-active-bg: rgba(26, 86, 219, 0.15);
+
+// ----- 尺寸 -----
+$base-sidebar-width: 240px;
+$base-sidebar-collapsed-width: 64px;
+$base-navbar-height: 52px;
+$base-tagsview-height: 36px;
+
+// ----- 圆角 -----
+$radius-sm: 4px;
+$radius-md: 8px;
+$radius-lg: 12px;
+$radius-xl: 16px;
+$radius-2xl: 20px;
+$radius-3xl: 24px;
+$radius-4xl: 36px;
+
+// ----- 阴影 -----
+$shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.06);
+$shadow-md: 0 1px 3px rgba(0, 0, 0, 0.08);
+$shadow-lg: 0 4px 12px rgba(0, 0, 0, 0.1);
+$shadow-xl: 0 12px 40px rgba(0, 0, 0, 0.12);
+$shadow-2xl: 0 20px 60px rgba(0, 0, 0, 0.15);
+$shadow-card: 0 1px 3px rgba(0, 0, 0, 0.06), 0 4px 16px rgba(0, 0, 0, 0.04);
+
+// ----- 仪表盘专用色 -----
+$blue-50: #eff6ff;
+$blue-100: #dbeafe;
+$blue-200: #bfdbfe;
+$blue-500: #3b82f6;
+$blue-600: #2563eb;
+$blue-700: #1d4ed8;
+$blue-800: #1e40af;
+
+$orange-100: #fff7ed;
+$orange-500: #f97316;
+$orange-600: #ea580c;
+
+$red-50: #fef2f2;
+$red-100: #fee2e2;
+$red-500: #ef4444;
+$red-600: #dc2626;
+
+$green-100: #dcfce7;
+$green-500: #22c55e;
+$green-600: #16a34a;
+
+$purple-100: #f3e8ff;
+$purple-500: #a855f7;
+
+$yellow-100: #fef9c3;
+$yellow-500: #eab308;
+
+$teal-100: #ccfbf1;
+$teal-500: #14b8a6;
+
+$indigo-100: #e0e7ff;
+$indigo-500: #6366f1;
+
+// ----- 深色主题色 -----
+$slate-50: #f8fafc;
+$slate-100: #f1f5f9;
+$slate-200: #e2e8f0;
+$slate-400: #94a3b8;
+$slate-500: #64748b;
+$slate-700: #334155;
+$slate-800: #1e293b;
+$slate-900: #0f172a;
+
+// ----- 字体 -----
+$font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'PingFang SC', 'Microsoft YaHei', 'Helvetica Neue', Arial, sans-serif;
+$font-size-xs: 12px;
+$font-size-sm: 13px;
+$font-size-base: 14px;
+$font-size-lg: 16px;
+$font-size-xl: 20px;
+$font-size-2xl: 28px;
+
+// ----- 导出给 JS 使用 -----
+:export {
+  primaryColor: $--color-primary;
+  successColor: $--color-success;
+  dangerColor: $--color-danger;
+  infoColor: $--color-info;
+  warningColor: $--color-warning;
+
+  menuColor: $base-menu-color;
+  menuLightColor: $base-menu-light-color;
+  menuColorActive: $base-menu-color-active;
+  menuBackground: $base-menu-background;
+  menuLightBackground: $base-menu-light-background;
+  subMenuBackground: $base-sub-menu-background;
+  subMenuHover: $base-sub-menu-hover;
+  sideBarWidth: $base-sidebar-width;
+  logoTitleColor: $base-logo-title-color;
+  logoLightTitleColor: $base-logo-light-title-color;
+}

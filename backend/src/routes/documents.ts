@@ -1,0 +1,10 @@
+import { Router } from 'express';
+import { getDocList, getDocById, createDoc, updateDoc, deleteDoc, getDocStats } from '../controllers/documentController';
+const router = Router();
+router.get('/stats', getDocStats);
+router.get('/', getDocList);
+router.get('/:id', getDocById);
+router.post('/', createDoc);
+router.put('/:id', updateDoc);
+router.delete('/:id', deleteDoc);
+export default router;

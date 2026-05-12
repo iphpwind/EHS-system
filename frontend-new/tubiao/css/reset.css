@@ -1,0 +1,252 @@
+/* reset */
+@charset "UTF-8";
+html, body {
+    height: 100%;
+    -moz-osx-font-smoothing: grayscale;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+}
+
+html, body, div, span, applet, object, iframe,
+h1, h2, h3, h4, h5, h6, p, blockquote, pre,
+a, abbr, acronym, address, big, cite, code,
+del, dfn, em, img, ins, kbd, q, s, samp,
+small, strike, strong, sub, sup, tt, var,
+b, u, i, center,
+dl, dt, dd, ol, ul, li,
+fieldset, form, label, legend,
+table, caption, tbody, tfoot, thead, tr, th, td,
+article, aside, canvas, details, embed,
+figure, figcaption, footer, header, hgroup,
+menu, nav, output, ruby, section, summary,
+time, mark, audio, video {
+    margin: 0;
+    padding: 0;
+    border: 0;
+    font-family:"Microsoft YaHei";
+}
+
+/* HTML5 display-role reset for older browsers */
+article, aside, details, figcaption, figure,
+footer, header, hgroup, menu, nav, section, main {
+    display: block;
+}
+
+img {
+    border: 0;
+    vertical-align: top;
+}
+
+a {
+    text-decoration: none;
+    outline: none;
+}
+
+a:focus {
+    outline: none;
+}
+
+ol, ul {
+    list-style: none;
+}
+
+* {
+    box-sizing: border-box;
+    -moz-box-sizing: border-box; /* Firefox */
+    -webkit-box-sizing: border-box; /* Safari */
+}
+
+strong, i, em {
+    font-style: normal;
+    outline: none;
+}
+
+span, i, em, b {
+    display: inline-block;
+}
+
+/* 去除IE下拉菜单箭头 */
+select::-ms-expand {
+    display: none;
+}
+
+/* 去除IE下radio、checkbox默认样式 */
+::-ms-check {
+    display: none;
+}
+
+/* 去除输入框、文本域默认边框和IOS4下的内阴影 */
+/*去掉苹果安卓系统点击时的灰色遮盖和边框*/
+a, button, input, textarea {
+    -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+}
+
+/* 设置Gecko内核下输入框属性placeholder中值的文件颜色 */
+input:-moz-placeholder {
+    color: #C4C4C4;
+}
+
+/* 设置webkit内核下输入框属性placeholder中值的文件颜色 */
+::-webkit-input-placeholder {
+    color: #C4C4C4;
+}
+
+input, textarea {
+    outline: none;
+    background: transparent;
+    font: 14px/1.0 "Microsoft YaHei", "微软雅黑", Tahoma, Helvetica;
+}
+
+input[type='text'], input[type='search'], input[type='password'], textarea, select {
+    width: 100%;
+    height: 100%;
+    display: block;
+    border: none;
+    text-indent: 1em;
+    background-color: transparent;
+}
+
+/*文字不可选*/
+.no_select {
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none
+}
+
+/*浮动*/
+.fl {
+    float: left;
+}
+
+.fr {
+    float: right;
+}
+
+.clearfix:after {
+    display: block;
+    height: 0;
+    font-size: 0;
+    clear: both;
+    visibility: hidden;
+    content: '.';
+}
+
+.clearfix {
+    zoom: 1;
+}
+
+/*定位*/
+.relative {
+    position: relative;
+}
+
+.absolute {
+    position: absolute;
+}
+
+.fixed {
+    position: fixed;
+}
+
+/*显示框类型*/
+.block {
+    display: block;
+}
+
+.inline {
+    display: inline;
+}
+
+.inline_block {
+    display: inline-block;
+}
+
+.none {
+    display: none;
+}
+
+/*表格*/
+table {
+    table-layout: fixed;
+    border-collapse: collapse;
+    border-spacing: 0;
+    width: 100%;
+    height: 100%;
+}
+
+table td {
+    text-align: center;
+}
+
+table td, table th {
+    border-bottom: 1px solid #E5E5E5;
+    border-left: 1px solid #E5E5E5;
+}
+
+table td:last-child, table th:last-child {
+    border-right: 1px solid #E5E5E5;
+}
+
+table th {
+    border-top: 1px solid #E5E5E5;
+    font-size: 12px;
+    height: 1.5rem;
+    line-height: 1.5rem;
+}
+
+/*字体大小*/
+.f12 {
+    font-size: 12px;
+}
+
+.f14 {
+    font-size: 14px;
+}
+
+.f16 {
+    font-size: 16px;
+}
+
+.f18 {
+    font-size: 18px;
+}
+
+.f20 {
+    font-size: 20px;
+}
+
+.f22 {
+    font-size: 22px;
+}
+
+.f24 {
+    font-size: 24px;
+}
+
+.f26 {
+    font-size: 26px;
+}
+
+.f30 {
+    font-size: 30px;
+}
+
+.f34 {
+    font-size: 34px;
+}
+
+.f36 {
+    font-size: 36px;
+}
+
+/*其他*/
+.pointer {
+    cursor: pointer;
+}
+/*超过...*/
+.ell {
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
