@@ -37,11 +37,12 @@ backend/.env
 Thumbs.db
 Desktop.ini
 
-# Database
-*.sql
+# Database (exclude root level, keep schema files)
 *.db
 *.sqlite
 *.sqlite3
+# Keep backend/src/schema/*.sql
+!backend/src/schema/*.sql
 
 # Temporary files
 *.tmp
