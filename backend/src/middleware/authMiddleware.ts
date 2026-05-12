@@ -1,7 +1,14 @@
 import { Request, Response, NextFunction } from 'express';
 import jwt from 'jsonwebtoken';
 
-const JWT_SECRET = process.env.JWT_SECRET || 'safety-system-secret-2026';
+// 启动时检查 JWT_SECRET 是否配置
+if (!process.env.JWT_SECRET) {
+  console.error('❌ 环境变量 JWT_SECRET 未配置！');
+  console.error('请在 .env 文件中设置强密码作为 JWT_SECRET');
+  process.exit(1);
+}
+
+const JWT_SECRET = process.env.JWT_SECRET;
 
 /**
  * 认证中间件 - 验证JWT Token

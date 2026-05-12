@@ -20,7 +20,6 @@
     "node-cron": "^4.2.1",
     "puppeteer-core": "^24.43.0",
     "qrcode": "^1.5.4",
-    "redis": "^4.6.0",
     "svg-captcha": "^1.4.0"
   },
   "devDependencies": {

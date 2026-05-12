@@ -404,13 +404,29 @@ export const constantRoutes = [
 		// 	]
 		// },
         // {
-		// 	path: '/industry/hxhb/gxxq',
-		// 	component: Layout,
-		// 	hidden: true,
-		// 	children: [
-
-		// 	]
-		// }
+	// 	path: '/industry/hxhb/gxxq',
+	// 	component: Layout,
+	// 	hidden: true,
+	// 	children: [
+            
+	// 	]
+	// }
+    ,
+    {
+        path: '/training',
+        component: Layout,
+        redirect: '/training/plan',
+        name: 'Training',
+        meta: { title: '培训教育', icon: 'education' },
+        children: [
+            { path: 'plan', component: () => import('@/views/training/PlanList.vue'), name: 'TrainingPlan', meta: { title: '培训计划' } },
+            { path: 'course', component: () => import('@/views/training/CourseList.vue'), name: 'TrainingCourse', meta: { title: '课程管理' } },
+            { path: 'exam/:id(\\d+)', component: () => import('@/views/training/ExamRoom.vue'), name: 'TrainingExam', meta: { title: '在线考试' }, hidden: true },
+            { path: 'my', component: () => import('@/views/training/MyTraining.vue'), name: 'MyTraining', meta: { title: '我的学习' } },
+            { path: 'certificate', component: () => import('@/views/training/CertificateList.vue'), name: 'TrainingCertificate', meta: { title: '证书管理' } },
+            { path: 'statistics', component: () => import('@/views/training/Statistics.vue'), name: 'TrainingStatistics', meta: { title: '培训统计' } }
+        ]
+    }
 ];
 
 const router = createRouter({

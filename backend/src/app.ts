@@ -4,6 +4,7 @@ import helmet from 'helmet';
 import morgan from 'morgan';
 import dotenv from 'dotenv';
 import path from 'path';
+import rateLimit from 'express-rate-limit';
 
 // 导入路由
 import authRoutes from './routes/auth';
@@ -118,7 +119,8 @@ process.on('uncaughtException', (error: Error) => {
 process.on('unhandledRejection', (reason: any, promise: Promise<any>) => {
   console.error('❌ 未处理的Promise拒绝 (unhandledRejection):', reason);
   console.error('Promise:', promise);
-  // 记录但不退出（避免单个请求导致整个进程崩溃）
+  // 记录日志后退出，让进程守护工具重启，避免内存泄漏累积
+  setTimeout(() => { process.exit(1); }, 1000);
 });
 // ================================================
 
@@ -135,18 +137,17 @@ app.use(cors({
     if (process.env.NODE_ENV === 'development') {
       return callback(null, true);
     }
-    const allowedOrigins = [
-      'http://localhost:3000',
-      'http://localhost:5173',
-      'http://localhost',
-      'http://127.0.0.1',
-      'http://127.0.0.1:3000',
-      'http://192.168.1.19',
-      'http://58.56.233.218:300',
-      undefined // 允许非浏览器请求（如 curl）
-    ];
-    // 允许所有局域网和外网访问（生产环境根据需要调整）
-    if (!origin || allowedOrigins.includes(origin) || origin?.match(/^https?:\/\/.+/)) {
+    // 生产环境使用白名单
+    const allowedOrigins = process.env.ALLOWED_ORIGINS 
+      ? process.env.ALLOWED_ORIGINS.split(',')
+      : [
+          'http://localhost',
+          'http://127.0.0.1',
+          'http://192.168.1.19',
+          'http://58.56.233.218:300'
+        ];
+    // 允许非浏览器请求（如 curl、Postman）
+    if (!origin || allowedOrigins.includes(origin)) {
       callback(null, true);
     } else {
       callback(new Error('不允许的跨域来源: ' + origin));
@@ -167,6 +168,30 @@ app.use(helmet({
     }
   }
 }));
+
+// API 限流中间件
+const generalLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15分钟
+  max: 100, // 每个IP最多100次请求
+  message: {
+    success: false,
+    message: '请求过于频繁，请15分钟后再试'
+  }
+});
+
+// 认证接口严格限流（防暴力破解）
+const authLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 5, // 15分钟内最多5次登录尝试
+  message: {
+    success: false,
+    message: '登录尝试次数过多，请15分钟后再试'
+  }
+});
+
+// 应用限流
+app.use('/api/', generalLimiter);
+app.use('/api/auth/login', authLimiter);
 
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
