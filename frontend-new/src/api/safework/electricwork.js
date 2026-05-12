@@ -1,6 +1,6 @@
 import request from '@/utils/request'
 
-// 查询临时用电列表
+// ============ 基础 CRUD ============
 export function listElectricwork(query) {
   return request({
     url: '/safework/electricwork/list',
@@ -9,7 +9,6 @@ export function listElectricwork(query) {
   })
 }
 
-// 查询临时用电列表
 export function listElectricwork2(query) {
   return request({
     url: '/safework/electricwork/list2',
@@ -18,7 +17,6 @@ export function listElectricwork2(query) {
   })
 }
 
-// 查询临时用电详细
 export function getElectricwork(id) {
   return request({
     url: '/safework/electricwork/' + id,
@@ -26,7 +24,6 @@ export function getElectricwork(id) {
   })
 }
 
-// 新增临时用电
 export function addElectricwork(data) {
   return request({
     url: '/safework/electricwork',
@@ -35,7 +32,6 @@ export function addElectricwork(data) {
   })
 }
 
-// 修改临时用电
 export function updateElectricwork(data) {
   return request({
     url: '/safework/electricwork',
@@ -43,7 +39,7 @@ export function updateElectricwork(data) {
     data: data
   })
 }
-// 作废临时用电
+
 export function updateStatus(data) {
   return request({
     url: '/safework/electricwork/updateStatus',
@@ -52,10 +48,63 @@ export function updateStatus(data) {
   })
 }
 
-// 删除临时用电
 export function delElectricwork(id) {
   return request({
     url: '/safework/electricwork/' + id,
     method: 'delete'
+  })
+}
+
+// ============ V2 流程操作 (GB 30871-2022) ============
+export function submitElectricwork(id) {
+  return request({
+    url: '/safework/electricwork/' + id + '/submit',
+    method: 'post'
+  })
+}
+
+export function approveElectricwork(id, data) {
+  return request({
+    url: '/safework/electricwork/' + id + '/approve',
+    method: 'post',
+    data
+  })
+}
+
+export function startElectricwork(id) {
+  return request({
+    url: '/safework/electricwork/' + id + '/start',
+    method: 'post'
+  })
+}
+
+export function finishElectricwork(id) {
+  return request({
+    url: '/safework/electricwork/' + id + '/finish',
+    method: 'post'
+  })
+}
+
+export function closeElectricwork(id) {
+  return request({
+    url: '/safework/electricwork/' + id + '/close',
+    method: 'post'
+  })
+}
+
+export function cancelElectricwork(id, data) {
+  return request({
+    url: '/safework/electricwork/' + id + '/cancel',
+    method: 'post',
+    data
+  })
+}
+
+// ============ PDF导出 ============
+export function exportElectricworkPDF(id) {
+  return request({
+    url: '/pdf/electricwork/' + id,
+    method: 'get',
+    responseType: 'blob'
   })
 }

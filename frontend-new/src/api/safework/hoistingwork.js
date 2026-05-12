@@ -1,6 +1,6 @@
 import request from '@/utils/request'
 
-// 查询吊装作业列表
+// ============ 基础 CRUD ============
 export function listHoistingwork(query) {
   return request({
     url: '/safework/hoistingwork/list',
@@ -9,7 +9,6 @@ export function listHoistingwork(query) {
   })
 }
 
-// 查询吊装作业列表
 export function listHoistingwork2(query) {
   return request({
     url: '/safework/hoistingwork/list2',
@@ -18,7 +17,6 @@ export function listHoistingwork2(query) {
   })
 }
 
-// 查询吊装作业详细
 export function getHoistingwork(id) {
   return request({
     url: '/safework/hoistingwork/' + id,
@@ -26,7 +24,6 @@ export function getHoistingwork(id) {
   })
 }
 
-// 新增吊装作业
 export function addHoistingwork(data) {
   return request({
     url: '/safework/hoistingwork',
@@ -35,7 +32,6 @@ export function addHoistingwork(data) {
   })
 }
 
-// 修改吊装作业
 export function updateHoistingwork(data) {
   return request({
     url: '/safework/hoistingwork',
@@ -44,7 +40,6 @@ export function updateHoistingwork(data) {
   })
 }
 
-// 作废吊装作业
 export function updateStatus(data) {
   return request({
     url: '/safework/hoistingwork/updateStatus',
@@ -53,10 +48,63 @@ export function updateStatus(data) {
   })
 }
 
-// 删除吊装作业
 export function delHoistingwork(id) {
   return request({
     url: '/safework/hoistingwork/' + id,
     method: 'delete'
+  })
+}
+
+// ============ V2 流程操作 (GB 30871-2022) ============
+export function submitHoistingwork(id) {
+  return request({
+    url: '/safework/hoistingwork/' + id + '/submit',
+    method: 'post'
+  })
+}
+
+export function approveHoistingwork(id, data) {
+  return request({
+    url: '/safework/hoistingwork/' + id + '/approve',
+    method: 'post',
+    data
+  })
+}
+
+export function startHoistingwork(id) {
+  return request({
+    url: '/safework/hoistingwork/' + id + '/start',
+    method: 'post'
+  })
+}
+
+export function finishHoistingwork(id) {
+  return request({
+    url: '/safework/hoistingwork/' + id + '/finish',
+    method: 'post'
+  })
+}
+
+export function closeHoistingwork(id) {
+  return request({
+    url: '/safework/hoistingwork/' + id + '/close',
+    method: 'post'
+  })
+}
+
+export function cancelHoistingwork(id, data) {
+  return request({
+    url: '/safework/hoistingwork/' + id + '/cancel',
+    method: 'post',
+    data
+  })
+}
+
+// ============ PDF导出 ============
+export function exportHoistingworkPDF(id) {
+  return request({
+    url: '/pdf/hoistingwork/' + id,
+    method: 'get',
+    responseType: 'blob'
   })
 }

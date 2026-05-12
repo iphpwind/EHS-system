@@ -440,6 +440,18 @@ export const constantRoutes = [
                 meta: { title: '作业票申请' }
             },
             {
+                path: 'apply/confined-space',
+                component: () => import('@/views/safework/apply/ConfinedSpaceApply.vue'),
+                name: 'ConfinedSpaceApply',
+                meta: { title: '受限空间作业申请' }
+            },
+            {
+                path: 'apply/hot-work',
+                component: () => import('@/views/safework/apply/HotWorkApply.vue'),
+                name: 'HotWorkApply',
+                meta: { title: '动火作业申请' }
+            },
+            {
                 path: 'detail',
                 component: () => import('@/views/safework/WorkTicketDetail.vue'),
                 name: 'WorkTicketDetail',

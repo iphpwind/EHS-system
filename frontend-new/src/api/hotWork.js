@@ -102,11 +102,36 @@ export function addGasCheck(id, data) {
   })
 }
 
+// 作废
+export function cancelHotWork(id, data) {
+  return request({
+    url: '/hot-work/' + id + '/cancel',
+    method: 'post',
+    data
+  })
+}
+
 // 导出PDF
 export function exportHotWorkPDF(id) {
   return request({
     url: '/pdf/hot-work/' + id,
     method: 'get',
     responseType: 'blob'
+  })
+}
+
+// ============ 风险辨识 ============
+export function getRiskMeasures(id) {
+  return request({
+    url: '/hot-work/' + id + '/risk-measures',
+    method: 'get'
+  })
+}
+
+export function saveRiskMeasures(id, data) {
+  return request({
+    url: '/hot-work/' + id + '/risk-measures',
+    method: 'post',
+    data
   })
 }

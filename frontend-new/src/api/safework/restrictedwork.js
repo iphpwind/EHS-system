@@ -1,6 +1,6 @@
 import request from '@/utils/request'
 
-// 查询受限空间列表
+// ============ 基础 CRUD ============
 export function listRestrictedwork(query) {
   return request({
     url: '/safework/restrictedwork/list',
@@ -9,7 +9,6 @@ export function listRestrictedwork(query) {
   })
 }
 
-// 查询受限空间列表
 export function listRestrictedwork2(query) {
   return request({
     url: '/safework/restrictedwork/list2',
@@ -18,7 +17,6 @@ export function listRestrictedwork2(query) {
   })
 }
 
-// 查询受限空间详细
 export function getRestrictedwork(id) {
   return request({
     url: '/safework/restrictedwork/' + id,
@@ -26,7 +24,6 @@ export function getRestrictedwork(id) {
   })
 }
 
-// 新增受限空间
 export function addRestrictedwork(data) {
   return request({
     url: '/safework/restrictedwork',
@@ -35,7 +32,6 @@ export function addRestrictedwork(data) {
   })
 }
 
-// 修改受限空间
 export function updateRestrictedwork(data) {
   return request({
     url: '/safework/restrictedwork',
@@ -44,7 +40,13 @@ export function updateRestrictedwork(data) {
   })
 }
 
-// 作废受限空间
+export function delRestrictedwork(id) {
+  return request({
+    url: '/safework/restrictedwork/' + id,
+    method: 'delete'
+  })
+}
+
 export function updateStatus(data) {
   return request({
     url: '/safework/restrictedwork/updateStatus',
@@ -53,10 +55,89 @@ export function updateStatus(data) {
   })
 }
 
-// 删除受限空间
-export function delRestrictedwork(id) {
+// ============ V2 流程操作 (GB 30871-2022) ============
+export function submitRestrictedwork(id) {
   return request({
-    url: '/safework/restrictedwork/' + id,
-    method: 'delete'
+    url: '/safework/restrictedwork/' + id + '/submit',
+    method: 'post'
+  })
+}
+
+export function approveRestrictedwork(id, data) {
+  return request({
+    url: '/safework/restrictedwork/' + id + '/approve',
+    method: 'post',
+    data
+  })
+}
+
+export function startRestrictedwork(id) {
+  return request({
+    url: '/safework/restrictedwork/' + id + '/start',
+    method: 'post'
+  })
+}
+
+export function finishRestrictedwork(id) {
+  return request({
+    url: '/safework/restrictedwork/' + id + '/finish',
+    method: 'post'
+  })
+}
+
+export function closeRestrictedwork(id) {
+  return request({
+    url: '/safework/restrictedwork/' + id + '/close',
+    method: 'post'
+  })
+}
+
+export function cancelRestrictedwork(id, data) {
+  return request({
+    url: '/safework/restrictedwork/' + id + '/cancel',
+    method: 'post',
+    data
+  })
+}
+
+// ============ 气体检测 ============
+export function getGasChecks(id, query) {
+  return request({
+    url: '/safework/restrictedwork/' + id + '/gas',
+    method: 'get',
+    params: query
+  })
+}
+
+export function addGasCheck(id, data) {
+  return request({
+    url: '/safework/restrictedwork/' + id + '/gas',
+    method: 'post',
+    data
+  })
+}
+
+// ============ 风险辨识 ============
+export function getRiskMeasures(id) {
+  return request({
+    url: '/safework/restrictedwork/' + id + '/risk-measures',
+    method: 'get'
+  })
+}
+
+export function saveRiskMeasures(id, data) {
+  return request({
+    url: '/safework/restrictedwork/' + id + '/risk-measures',
+    method: 'post',
+    data
+  })
+}
+
+// ============ PDF导出 ============
+export function exportRestrictedworkPDF(id) {
+  return request({
+    url: '/pdf/restrictedwork/' + id,
+    method: 'get',
+    responseType: 'blob'
   })
 }
