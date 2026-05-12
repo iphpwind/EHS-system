@@ -1,10 +1,16 @@
 import { Request, Response, NextFunction } from 'express';
 import jwt from 'jsonwebtoken';
+import dotenv from 'dotenv';
+import path from 'path';
+
+// 确保在模块初始化前加载 .env（早于 app.ts 的 dotenv.config()）
+dotenv.config({ path: path.join(__dirname, '..', '..', '.env') });
 
 // 启动时检查 JWT_SECRET 是否配置
 if (!process.env.JWT_SECRET) {
   console.error('❌ 环境变量 JWT_SECRET 未配置！');
   console.error('请在 .env 文件中设置强密码作为 JWT_SECRET');
+  console.error(`当前查找路径: ${path.join(__dirname, '..', '..', '.env')}`);
   process.exit(1);
 }
 

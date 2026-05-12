@@ -1,5 +1,6 @@
 import { Router } from 'express';
 import { authenticateToken } from '../middleware/authMiddleware';
+import { ticketTrainingValidator } from '../middleware/ticketTrainingValidator';
 import {
   getElectricWorkList, getElectricWorkDetail,
   createElectricWork, updateElectricWork,
@@ -11,7 +12,8 @@ const router = Router();
 
 router.get('/', authenticateToken, getElectricWorkList);
 router.get('/:id', authenticateToken, getElectricWorkDetail);
-router.post('/', authenticateToken, createElectricWork);
+// 培训合规：三级教育72学时 + 年度≥20学时
+router.post('/', authenticateToken, ticketTrainingValidator({ requireThreeLevel: true, minAnnualHours: 20 }), createElectricWork);
 router.put('/:id', authenticateToken, updateElectricWork);
 router.post('/:id/submit', authenticateToken, submitElectricWork);
 router.post('/:id/approve', authenticateToken, approveElectricWork);

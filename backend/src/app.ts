@@ -101,27 +101,74 @@ import systemMonitorRoutes from './routes/systemMonitor';
 import operationTraceRoutes from './routes/operationTrace';
 import complianceRoutes from './routes/compliance';
 import safetyPointsRoutes from './routes/safetyPoints';
+// 责任制签署路由
+import responsibilityRoutes from './routes/responsibility';
+// 三级教育 + 年度学时 合规路由
+import trainingComplianceRoutes from './routes/trainingCompliance';
+
+// Winston 日志系统
+import { logger } from './utils/logger';
+// 证书定时任务
+import { startCertificateScheduler } from './services/certificateScheduler';
 
 // 加载环境变量
 dotenv.config();
 
-// ========== 全局异常处理（防止进程崩溃）==========
+// 导入培训合规校验中间件
+import { ticketTrainingValidator } from './middleware/ticketTrainingValidator';
+
+// ========== 全局异常处理（增强版：Winston日志 + 内存监控）==========
 // 处理未捕获的同步异常
 process.on('uncaughtException', (error: Error) => {
-  console.error('❌ 未捕获的异常 (uncaughtException):', error.name, error.message);
-  console.error('Stack:', error.stack);
-  console.error('⚠️  进程将在1秒后退出，请检查日志并重启服务');
-  // 给时间记录日志，然后退出（让进程守护工具自动重启）
+  logger.error('❌ 未捕获的异常 (uncaughtException)', {
+    errorName: error.name,
+    errorMessage: error.message,
+    stack: error.stack,
+    pid: process.pid,
+    memoryUsage: process.memoryUsage(),
+  });
+  // 给时间写入日志，然后退出（让进程守护工具PM2自动重启）
   setTimeout(() => { process.exit(1); }, 1000);
 });
 
 // 处理未捕获的Promise拒绝
-process.on('unhandledRejection', (reason: any, promise: Promise<any>) => {
-  console.error('❌ 未处理的Promise拒绝 (unhandledRejection):', reason);
-  console.error('Promise:', promise);
-  // 记录日志后退出，让进程守护工具重启，避免内存泄漏累积
+process.on('unhandledRejection', (reason: any) => {
+  logger.error('❌ 未处理的Promise拒绝 (unhandledRejection)', {
+    reason: reason?.message || reason,
+    stack: reason?.stack,
+    pid: process.pid,
+    memoryUsage: process.memoryUsage(),
+  });
+  // 记录日志后退出，防止内存泄漏累积
   setTimeout(() => { process.exit(1); }, 1000);
 });
+
+// ========== 内存监控（每30秒检查一次）==========
+setInterval(() => {
+  const mem = process.memoryUsage();
+  const heapUsedMB = Math.round(mem.heapUsed / 1024 / 1024);
+  const heapTotalMB = Math.round(mem.heapTotal / 1024 / 1024);
+  const rssMB = Math.round(mem.rss / 1024 / 1024);
+  const usageRatio = mem.heapUsed / mem.heapTotal;
+
+  if (usageRatio > 0.85) {
+    logger.warn('⚠️ 内存使用率超过85%', {
+      heapUsedMB,
+      heapTotalMB,
+      rssMB,
+      usageRatio: `${(usageRatio * 100).toFixed(1)}%`,
+      pid: process.pid,
+    });
+  } else {
+    logger.debug(`📊 内存: Heap ${heapUsedMB}MB/${heapTotalMB}MB RSS ${rssMB}MB (${(usageRatio * 100).toFixed(1)}%)`);
+  }
+
+  // 可选：超过90%时尝试触发GC（需要--expose-gc启动参数）
+  if (usageRatio > 0.90 && global.gc) {
+    logger.warn('⚠️ 内存使用率超过90%，尝试触发垃圾回收');
+    global.gc();
+  }
+}, 30000);
 // ================================================
 
 const app: Express = express();
@@ -197,9 +244,9 @@ app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 app.use(morgan('dev'));
 
-// 请求日志
+// 请求日志（保留Morgan，同时用Winston记录关键请求）
 app.use((req: Request, res: Response, next: NextFunction) => {
-  console.log(`${new Date().toISOString()} - ${req.method} ${req.path}`);
+  logger.debug(`${req.method} ${req.path}`, { method: req.method, path: req.path, ip: req.ip });
   next();
 });
 
@@ -779,6 +826,8 @@ app.use('/api/training', trainingRoutes);
 app.use('/api/training-records', trainingRecordsRoutes);
 // 教育培训V2路由（课程/题库/试卷/考试/证书）
 app.use('/api/training-v2', trainingV2Routes);
+// 培训合规路由（三级教育 + 年度学时 + 预校验）
+app.use('/api/training-compliance', trainingComplianceRoutes);
 // 应急/法规/隐患V2路由
 app.use('/api/emergency-v2', emergencyV2Routes);
 // 隐患管理路由
@@ -810,6 +859,8 @@ app.use('/api/meetings', meetingRoutes);
 app.use('/api/knowledge', knowledgeRoutes);
 app.use('/api/investments', investmentRoutes);
 app.use('/api/changes', changeRoutes);
+// 安全生产责任制签署路由
+app.use('/api/responsibility', responsibilityRoutes);
 // 作业票类型子表路由
 app.use('/api/ticket-types', ticketTypeRoutes);
 // 隐患管理路由
@@ -979,7 +1030,7 @@ app.use('/api', (req: Request, res: Response, next: NextFunction) => {
   if (res.headersSent) return next();
   const path = req.path;
   // 对已注册路由的精确匹配已在前面处理，这里是通配兜底
-  console.log(`[API Stub] ${req.method} ${req.originalUrl}`);
+  logger.debug(`[API Stub] ${req.method} ${req.originalUrl}`, { method: req.method, path: req.originalUrl });
   // 根据路径猜测返回数据结构
   if (path.includes('/list') || path.includes('/treeselect') || path.includes('/optionselect')) {
     return res.json({ code: 200, msg: 'success', data: [], total: 0 });
@@ -1010,15 +1061,18 @@ const startServer = async () => {
     const { connectDB } = require('./config/database');
     await connectDB();
 
-    // 启动定时任务引擎
+    // 启动定时任务引擎（隐患检查、作业票过期、证书扫描等）
     startAllJobs();
+
+    // 启动证书到期定时任务（每天8:30检查 + SSE推送）
+    startCertificateScheduler();
     
     const server = app.listen(PORT, () => {
-      console.log(`✅ 后端服务启动成功`);
-      console.log(`🚀 监听端口: ${PORT}`);
-      console.log(`📊 健康检查: http://localhost:${PORT}/api/health`);
-      console.log(`📚 API文档: http://localhost:${PORT}/api`);
-      console.log(`🖥️  系统监控: http://localhost:${PORT}/api/system-monitor/health`);
+      logger.info('✅ 后端服务启动成功');
+      logger.info(`🚀 监听端口: ${PORT} | 环境: ${process.env.NODE_ENV || 'development'}`);
+      logger.info(`📊 健康检查: http://localhost:${PORT}/api/health`);
+      logger.info(`📚 API文档: http://localhost:${PORT}/api`);
+      logger.info(`🖥️  系统监控: http://localhost:${PORT}/api/system-monitor/health`);
     });
 
     // 设置服务器超时（解决"系统接口请求超时"问题）
@@ -1026,10 +1080,10 @@ const startServer = async () => {
     server.keepAliveTimeout = 65000;  // Keep-Alive 65秒
     server.headersTimeout = 66000;    // 请求头66秒超时
 
-    console.log(`⏱️  超时配置: 请求60s | KeepAlive 65s | Headers 66s`);
+    logger.info(`⏱️  超时配置: 请求60s | KeepAlive 65s | Headers 66s`);
 
   } catch (error) {
-    console.error('❌ 服务启动失败:', error);
+    logger.error('❌ 服务启动失败', { error });
     process.exit(1);
   }
 };

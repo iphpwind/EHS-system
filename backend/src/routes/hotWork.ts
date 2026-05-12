@@ -1,5 +1,6 @@
 import { Router } from 'express';
 import { authenticateToken } from '../middleware/authMiddleware';
+import { ticketTrainingValidator } from '../middleware/ticketTrainingValidator';
 import {
   getHotWorkList, getHotWorkDetail,
   createHotWork, updateHotWork,
@@ -14,8 +15,8 @@ const router = Router();
 router.get('/', authenticateToken, getHotWorkList);
 router.get('/:id', authenticateToken, getHotWorkDetail);
 
-// CRUD
-router.post('/', authenticateToken, createHotWork);
+// CRUD（培训合规：高危作业需三级教育72学时 + 年度≥20学时 + 特种证书）
+router.post('/', authenticateToken, ticketTrainingValidator({ requireThreeLevel: true, minAnnualHours: 20 }), createHotWork);
 router.put('/:id', authenticateToken, updateHotWork);
 
 // 流程操作

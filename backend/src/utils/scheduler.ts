@@ -12,7 +12,7 @@ async function checkOverdueHazards() {
     const conn = await getConnection();
     const [rows] = await conn.execute(
       `SELECT COUNT(*) as count FROM hazard_inspection 
-       WHERE rectify_deadline < NOW() AND status != 4 AND status != 'closed'`
+       WHERE rectification_deadline < NOW() AND status != 4 AND status <> 'closed'`
     );
     const count = (rows as any[])[0]?.count || 0;
     if (count > 0) {

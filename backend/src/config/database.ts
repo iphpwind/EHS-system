@@ -1,6 +1,7 @@
 import mysql from 'mysql2/promise'
+import { logger } from '../utils/logger';
 
-// 数据库连接池配置
+// 数据库连接池配置（优化版：适配100-200用户并发）
 const pool = mysql.createPool({
   host: process.env.DB_HOST || 'localhost',
   port: parseInt(process.env.DB_PORT || '3306'),
@@ -8,38 +9,33 @@ const pool = mysql.createPool({
   password: process.env.DB_PASSWORD || 'root',
   database: process.env.DB_NAME || 'safety_system',
   waitForConnections: true,
-  connectionLimit: 10,
-  queueLimit: 0,
-  // 超时配置
-  acquireTimeout: 60000,      // 获取连接超时60秒
-  timeout: 60000,            // 查询超时60秒
-  reconnect: true,            // 自动重连
-  // 连接池事件监听
+  connectionLimit: 30,        // 原10 → 30（适配中型化工企业并发）
+  queueLimit: 100,            // 原0无线排队 → 100（防止无限排队导致内存溢出）
   enableKeepAlive: true,
-  keepAliveInitialDelay: 0
-});
+  keepAliveInitialDelay: 0,
+} as mysql.PoolOptions);
 
-// 监听连接池事件
+// 监听连接池事件（使用Winston日志替代console.log）
 pool.on('acquire', (connection) => {
-  console.log('📥 获取数据库连接: id=%d', connection.threadId);
+  logger.debug('数据库连接获取', { threadId: connection.threadId });
 });
 
 pool.on('release', (connection) => {
-  console.log('📤 释放数据库连接: id=%d', connection.threadId);
+  logger.debug('数据库连接释放', { threadId: connection.threadId });
 });
 
 pool.on('enqueue', () => {
-  console.log('⏳ 等待可用数据库连接...');
+  logger.warn('等待可用数据库连接（连接池繁忙）');
 });
 
 // 连接数据库
 export const connectDB = async (): Promise<void> => {
   try {
     const conn = await pool.getConnection()
-    console.log('✅ 数据库连接成功')
+    logger.info('✅ 数据库连接成功')
     conn.release()
   } catch (error) {
-    console.error('❌ 数据库连接失败：', error)
+    logger.error('❌ 数据库连接失败', { error })
     throw error
   }
 }
@@ -50,7 +46,7 @@ export const query = async (sql: string, params?: any[]): Promise<any> => {
     const [rows] = await pool.execute(sql, params)
     return rows
   } catch (error) {
-    console.error('SQL执行失败：', error)
+    logger.error('SQL执行失败', { error, sql: sql.substring(0, 200) })
     throw error
   }
 }

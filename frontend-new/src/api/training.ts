@@ -134,3 +134,10 @@ export const saveExamProgress = (data: {
 // ========== 培训统计 API ==========
 export const getTrainingStatistics = (params: any) =>
   request.get('/api/training/statistics', { params })
+
+// ========== 培训合规 API（三级教育+年度学时） ==========
+export const getThreeLevelTemplates = () => request.get('/api/training-compliance/templates')
+export const getMyEducationStatus = () => request.get('/api/training-compliance/my-status')
+export const assignThreeLevelEducation = (data: any) => request.post('/api/training-compliance/assign', data)
+export const getAnnualCreditReport = (params: any) => request.get('/api/training-compliance/annual-report', { params })
+export const preCheckTraining = () => request.get('/api/training-compliance/precheck')
