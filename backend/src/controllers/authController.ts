@@ -75,7 +75,8 @@ export const login = async (req: Request, res: Response, next: NextFunction) => 
       success: true,
       message: '登录成功',
       data: {
-        token,
+        access_token: token,
+        expires_in: JWT_EXPIRES_IN,
         user: {
           id: user.id,
           username: user.username,
@@ -244,7 +245,10 @@ export const refreshToken = async (req: Request, res: Response, next: NextFuncti
     res.json({
       success: true,
       message: 'Token刷新成功',
-      data: { token }
+      data: { 
+        access_token: token,
+        expires_in: JWT_EXPIRES_IN
+      }
     });
   } catch (error) {
     console.error('Refresh token error:', error);

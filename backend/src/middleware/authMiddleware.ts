@@ -44,7 +44,7 @@ export const authenticateToken = async (req: Request, res: Response, next: NextF
           });
         }
         
-        return res.status(403).json({
+        return res.status(401).json({
           success: false,
           message: '认证令牌无效',
           code: 'INVALID_TOKEN'

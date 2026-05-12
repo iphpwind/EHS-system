@@ -151,7 +151,12 @@ service.interceptors.response.use(res => {
         if (res.request.responseType === 'blob' || res.request.responseType === 'arraybuffer') {
             return res.data
         }
-        if (code === 401) {
+        // 检查是否是token相关错误（支持数值401和字符串code）
+        const isTokenError = code === 401 || 
+                            code === 'TOKEN_EXPIRED' || 
+                            code === 'NO_TOKEN' || 
+                            code === 'INVALID_TOKEN';
+        if (isTokenError) {
             if (!isRelogin.show) {
                 isRelogin.show = true;
                 ElMessageBox.confirm('登录状态已过期，您可以继续留在该页面，或者重新登录', '系统提示', {
