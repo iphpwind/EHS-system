@@ -123,6 +123,14 @@ export const saveTrainingProgress = (data: any) =>
 export const getTrainingProgress = (recordId: number) =>
   request.get(`/api/training/progress/${recordId}`)
 
+// ========== 考试进度保存 ==========
+export const saveExamProgress = (data: {
+  paperId: number
+  answers: any
+  timeLeft: number
+}) =>
+  request.post('/api/training-v2/exam/save-progress', data)
+
 // ========== 培训统计 API ==========
 export const getTrainingStatistics = (params: any) =>
   request.get('/api/training/statistics', { params })

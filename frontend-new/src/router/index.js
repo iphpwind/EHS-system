@@ -426,6 +426,32 @@ export const constantRoutes = [
             { path: 'certificate', component: () => import('@/views/training/CertificateList.vue'), name: 'TrainingCertificate', meta: { title: '证书管理' } },
             { path: 'statistics', component: () => import('@/views/training/Statistics.vue'), name: 'TrainingStatistics', meta: { title: '培训统计' } }
         ]
+    },
+    // 统一作业票管理（GB 30871-2022）hidden路由，通过现有菜单跳转
+    {
+        path: '/safework',
+        component: Layout,
+        hidden: true,
+        children: [
+            {
+                path: 'apply',
+                component: () => import('@/views/safework/apply/index.vue'),
+                name: 'WorkTicketApply',
+                meta: { title: '作业票申请' }
+            },
+            {
+                path: 'detail',
+                component: () => import('@/views/safework/WorkTicketDetail.vue'),
+                name: 'WorkTicketDetail',
+                meta: { title: '作业票详情' }
+            },
+            {
+                path: 'list',
+                component: () => import('@/views/safework/WorkTicketList.vue'),
+                name: 'WorkTicketList',
+                meta: { title: '作业票列表' }
+            }
+        ]
     }
 ];
 
