@@ -16,7 +16,7 @@ const prefix = 'EL';
 export const getElectricWorkList = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { page = 1, pageSize = 10, status, keyword, deptId, startDate, endDate } = req.query;
-    const userRole = (req as any).user?.role; const userDeptId = (req as any).user?.departmentId || 0;
+    const userRole = (req as any).user?.role; const userDeptName = (req as any).user?.department || '';
     const userOrgId = (req as any).user?.orgId || 1;
     const conn = await getConnection();
     let sql = `SELECT wp.id, wp.ticket_no, wp.status as main_status, wp.applicant_id, wp.created_at,
@@ -24,14 +24,14 @@ export const getElectricWorkList = async (req: Request, res: Response, next: Nex
       ext.voltage_level, ext.power_capacity
       FROM work_permits wp
       LEFT JOIN users u ON wp.applicant_id = u.id
-      LEFT JOIN departments d ON u.department_id = d.id
+      LEFT JOIN departments d ON d.name = u.department
       LEFT JOIN ${extTable} ext ON wp.id = ext.permit_id
       WHERE wp.ticket_type = ?`;
     const params: any[] = [ticketType];
     if (userRole > 1) { sql += ' AND wp.org_id = ?'; params.push(userOrgId); }
-    if (userRole >= 4) { sql += ' AND u.department_id = ?'; params.push(userDeptId); }
+    if (userRole >= 4) { sql += ' AND u.department = ?'; params.push(userDeptName); }
     if (status) { sql += ' AND wp.status = ?'; params.push(status); }
-    if (deptId) { sql += ' AND u.department_id = ?'; params.push(deptId); }
+    if (deptId) { sql += ' AND u.department = (SELECT name FROM departments WHERE id = ?)'; params.push(deptId); }
     if (keyword) { sql += ' AND (wp.ticket_no LIKE ? OR wp.project_name LIKE ?)'; params.push(`%${keyword}%`, `%${keyword}%`); }
     if (startDate) { sql += ' AND DATE(wp.created_at) >= ?'; params.push(startDate); }
     if (endDate) { sql += ' AND DATE(wp.created_at) <= ?'; params.push(endDate); }
@@ -47,7 +47,7 @@ export const getElectricWorkList = async (req: Request, res: Response, next: Nex
 export const getElectricWorkDetail = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { id } = req.params; const conn = await getConnection();
-    const [mainRows] = await conn.execute<RowDataPacket[]>(`SELECT wp.*, u.real_name as applicant_name, d.name as dept_name FROM work_permits wp LEFT JOIN users u ON wp.applicant_id = u.id LEFT JOIN departments d ON u.department_id = d.id WHERE wp.id = ?`, [id]);
+    const [mainRows] = await conn.execute<RowDataPacket[]>(`SELECT wp.*, u.real_name as applicant_name, d.name as dept_name FROM work_permits wp LEFT JOIN users u ON wp.applicant_id = u.id LEFT JOIN departments d ON d.name = u.department WHERE wp.id = ?`, [id]);
     if (!mainRows.length) return res.status(404).json({ code: 404, msg: '作业票不存在' });
     const [extRows] = await conn.execute<RowDataPacket[]>(`SELECT * FROM ${extTable} WHERE permit_id = ?`, [id]);
     const [signRows] = await conn.execute<RowDataPacket[]>(`SELECT * FROM signatures WHERE biz_id = ? AND biz_type = ? ORDER BY sign_time ASC`, [id, ticketType]);

@@ -374,6 +374,10 @@ import { listEnterpriseInformation } from "@/api/system/enterpriseInformation"
 import { selectTicketList } from "@/api/safework/allticket"
 import { listHazareport } from "@/api/safework/hazareport"
 import { getKPI, getTrend, getPendingTasks, getTrainingRate, getAreaRisk, getDepartmentRanking } from "@/api/dashboard"
+import { getConfigKey } from "@/api/system/config"
+import { createModuleLogger } from "@/utils/logger"
+
+const log = createModuleLogger('Dashboard')
 
 const store = useStore()
 const router = useRouter()
@@ -394,7 +398,7 @@ const { user, pocard, queryParams, enterpriseInfo } = toRefs(data)
 
 // ===== PC 驾驶舱数据 =====
 const cockpitData = reactive({
-  safetyDays: 8353,
+  safetyDays: 0,
   todayTickets: 0,
   pendingTickets: 0,
   hazardToday: 0,
@@ -456,29 +460,37 @@ function deptPercent(dept) {
 // ===== 驾驶舱数据拉取（并行优化）=====
 async function fetchCockpitData() {
   try {
-    const [kpiRes, trainingRes, pendingRes, areaRes, rankingRes] = await Promise.allSettled([
+    const [kpiRes, trainingRes, pendingRes, areaRes, rankingRes, safetyDaysRes] = await Promise.allSettled([
       getKPI(),
       getTrainingRate(),
       getPendingTasks(),
       getAreaRisk(),
       getDepartmentRanking(),
+      getConfigKey('safety_days'),
     ])
 
     if (kpiRes.status === 'fulfilled') {
       const d = kpiRes.value.data || {}
-      cockpitData.safetyDays = d.safetyDays || 8353
       cockpitData.todayTickets = d.todayTickets || 0
       cockpitData.pendingTickets = d.pendingTickets || 0
       cockpitData.hazardToday = d.hazardToday || 0
     } else {
-      console.error('[Dashboard] getKPI failed:', kpiRes.reason)
+      log.error('getKPI failed', kpiRes.reason)
+    }
+
+    // 从系统配置获取安全运行天数
+    if (safetyDaysRes.status === 'fulfilled') {
+      const d = safetyDaysRes.value.data || {}
+      cockpitData.safetyDays = parseInt(d.configValue) || 8353
+    } else {
+      log.warn('safety_days not configured, using default', safetyDaysRes.reason)
     }
 
     if (trainingRes.status === 'fulfilled') {
       const d = trainingRes.value.data || {}
       cockpitData.trainingRate = d.trainingRate || '0%'
     } else {
-      console.error('[Dashboard] getTrainingRate failed:', trainingRes.reason)
+      log.error('getTrainingRate failed', trainingRes.reason)
     }
 
     if (pendingRes.status === 'fulfilled') {

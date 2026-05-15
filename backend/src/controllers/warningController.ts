@@ -287,7 +287,7 @@ export const runWarningCheck = async (req: Request, res: Response, next: NextFun
       `SELECT h.*, u.id as user_id
        FROM hazard_inspection h
        LEFT JOIN users u ON h.discoverer_id = u.id
-       WHERE h.status = 1 AND h.rectify_deadline < NOW()`
+       WHERE h.status = 1 AND h.rectification_deadline < NOW()`
     );
 
     for (const hazard of overdueHazards as any[]) {

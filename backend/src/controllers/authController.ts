@@ -29,33 +29,36 @@ export const login = async (req: Request, res: Response, next: NextFunction) => 
       [username]
     );
 
-    if (!users || users.length === 0) {
-      return res.status(401).json({
+    if (!users || (users as any[]).length === 0) {
+      return res.json({
+        code: 500,
         success: false,
         message: '用户名或密码错误'
       });
     }
 
-    const user = users[0];
+    const user = (users as any[])[0];
 
     // 验证密码
     const isValidPassword = await bcrypt.compare(password, user.password);
 
     if (!isValidPassword) {
-      return res.status(401).json({
+      return res.json({
+        code: 500,
         success: false,
         message: '用户名或密码错误'
       });
     }
 
     // 生成JWT token
+    // @ts-ignore
     const token = jwt.sign(
       {
         userId: user.id,
         username: user.username,
         role: user.role
       },
-      JWT_SECRET,
+      JWT_SECRET as jwt.Secret,
       { expiresIn: JWT_EXPIRES_IN }
     );
 
@@ -72,6 +75,7 @@ export const login = async (req: Request, res: Response, next: NextFunction) => 
     );
 
     res.json({
+      code: 200,
       success: true,
       message: '登录成功',
       data: {
@@ -114,7 +118,7 @@ export const register = async (req: Request, res: Response, next: NextFunction) 
       [username]
     );
 
-    if (existing && existing.length > 0) {
+    if (existing && (existing as any[]).length > 0) {
       return res.status(400).json({
         success: false,
         message: '用户名已存在'
@@ -159,14 +163,14 @@ export const getCurrentUser = async (req: Request, res: Response, next: NextFunc
       [userId]
     );
 
-    if (!users || users.length === 0) {
+    if (!users || (users as any[]).length === 0) {
       return res.status(404).json({
         success: false,
         message: '用户不存在'
       });
     }
 
-    const user = users[0];
+    const user = (users as any[])[0];
 
     // 角色名称映射
     const roleNames: Record<number, string> = {
@@ -232,13 +236,14 @@ export const refreshToken = async (req: Request, res: Response, next: NextFuncti
     const username = (req as any).user.username;
     const role = (req as any).user.role;
 
+    // @ts-ignore
     const token = jwt.sign(
       {
         userId,
         username,
         role
       },
-      JWT_SECRET,
+      JWT_SECRET as jwt.Secret,
       { expiresIn: JWT_EXPIRES_IN }
     );
 

@@ -43,7 +43,7 @@ export const getHotWorkList = async (req: Request, res: Response, next: NextFunc
 
     const userId = (req as any).user?.userId;
     const userRole = (req as any).user?.role;
-    const userDeptId = (req as any).user?.departmentId || 0;
+    const userDeptName = (req as any).user?.department || '';
     const userOrgId = (req as any).user?.orgId || 1;
 
     const conn = await getConnection();
@@ -52,14 +52,14 @@ export const getHotWorkList = async (req: Request, res: Response, next: NextFunc
       SELECT
         wp.id, wp.ticket_no, wp.ticket_type, wp.status as main_status,
         wp.applicant_id, wp.created_at,
-        u.real_name as applicant_name, u.department_id as applicant_dept_id,
+        u.real_name as applicant_name, u.department as applicant_dept_name,
         d.name as dept_name,
         hd.fire_level, hd.fire_area, hd.fire_type,
         hd.risk_analysis, hd.risk_analysis_time,
         hd.acceptance_time, hd.status_flow
       FROM work_permits wp
       LEFT JOIN users u ON wp.applicant_id = u.id
-      LEFT JOIN departments d ON u.department_id = d.id
+      LEFT JOIN departments d ON d.name = u.department
       LEFT JOIN hot_work_details hd ON wp.id = hd.ticket_id
       WHERE wp.ticket_type = 'hot_work'
     `;
@@ -74,8 +74,8 @@ export const getHotWorkList = async (req: Request, res: Response, next: NextFunc
     // 数据权限过滤
     if (userRole >= 4) {
       // 普通用户/部门负责人只能看本部门
-      sql += ' AND u.department_id = ?';
-      params.push(userDeptId);
+      sql += ' AND u.department = ?';
+      params.push(userDeptName);
     }
 
     if (status) {
@@ -84,7 +84,7 @@ export const getHotWorkList = async (req: Request, res: Response, next: NextFunc
     }
 
     if (deptId) {
-      sql += ' AND u.department_id = ?';
+      sql += ' AND u.department = (SELECT name FROM departments WHERE id = ?)';
       params.push(deptId);
     }
 
@@ -141,7 +141,7 @@ export const getHotWorkDetail = async (req: Request, res: Response, next: NextFu
       SELECT wp.*, u.real_name as applicant_name, d.name as dept_name
       FROM work_permits wp
       LEFT JOIN users u ON wp.applicant_id = u.id
-      LEFT JOIN departments d ON u.department_id = d.id
+      LEFT JOIN departments d ON d.name = u.department
       WHERE wp.id = ?
     `, [id]);
 

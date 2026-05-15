@@ -11,7 +11,7 @@ interface UserRow extends RowDataPacket {
   phone: string;
   department: string;
   position: string;
-  role_id: number;
+  role: number;
   role_name?: string;
   status: number;
   last_login: Date;
@@ -33,12 +33,13 @@ interface ExistResult extends RowDataPacket {
  */
 export const getUsers = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const { page = 1, pageSize = 20, keyword, department, roleId } = req.query;
+    const { page = 1, pageSize = 20, keyword, department, role, roleId } = req.query;
+    const roleValue = role || roleId;
     const offset = (Number(page) - 1) * Number(pageSize);
 
     const conn = await getConnection();
 
-    let query = 'SELECT id, username, real_name, email, phone, department, position, role_id, status, last_login, created_at FROM users WHERE 1=1';
+    let query = 'SELECT id, username, real_name, email, phone, department, position, role, status, last_login, created_at FROM users WHERE 1=1';
     const params: any[] = [];
 
     if (keyword) {
@@ -51,9 +52,9 @@ export const getUsers = async (req: Request, res: Response, next: NextFunction) 
       params.push(department);
     }
 
-    if (roleId) {
-      query += ' AND role_id = ?';
-      params.push(roleId);
+    if (roleValue) {
+      query += ' AND role = ?';
+      params.push(roleValue);
     }
 
     // 获取总数
@@ -61,11 +62,11 @@ export const getUsers = async (req: Request, res: Response, next: NextFunction) 
       'SELECT COUNT(*) as total FROM users WHERE 1=1' + 
       (keyword ? ' AND (username LIKE ? OR real_name LIKE ?)' : '') +
       (department ? ' AND department = ?' : '') +
-      (roleId ? ' AND role_id = ?' : ''),
+      (roleValue ? ' AND role = ?' : ''),
       params.filter((p: any, idx: number) => {
         if (keyword && (idx === 0 || idx === 1)) return true;
         if (department && idx === (keyword ? 2 : 0)) return true;
-        if (roleId && idx === params.length - 1) return true;
+        if (roleValue && idx === params.length - 1) return true;
         return false;
       })
     );
@@ -108,10 +109,9 @@ export const getUserById = async (req: Request, res: Response, next: NextFunctio
 
     const [users] = await conn.execute<UserRow[]>(
       `SELECT u.id, u.username, u.real_name, u.email, u.phone, u.department, 
-              u.position, u.role_id, r.name as role_name, u.status, u.last_login, 
+              u.position, u.role, u.status, u.last_login, 
               u.created_at, u.updated_at
        FROM users u
-       LEFT JOIN roles r ON u.role_id = r.id
        WHERE u.id = ?`,
       [id]
     );
@@ -138,7 +138,7 @@ export const getUserById = async (req: Request, res: Response, next: NextFunctio
  */
 export const createUser = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const { username, password, realName, email, phone, department, position, roleId } = req.body;
+    const { username, password, realName, email, phone, department, position, role } = req.body;
 
     if (!username || !password) {
       return res.status(400).json({
@@ -169,9 +169,9 @@ export const createUser = async (req: Request, res: Response, next: NextFunction
     // 创建用户
     const [result] = await conn.execute<OkPacket>(
       `INSERT INTO users 
-       (username, password, real_name, email, phone, department, position, role_id, status, created_at, updated_at) 
+       (username, password, real_name, email, phone, department, position, role, status, created_at, updated_at) 
        VALUES (?, ?, ?, ?, ?, ?, ?, ?, 1, NOW(), NOW())`,
-      [username, hashedPassword, realName, email, phone, department, position, roleId || 5]
+      [username, hashedPassword, realName, email, phone, department, position, role || 5]
     );
 
     // 记录日志
@@ -200,7 +200,7 @@ export const createUser = async (req: Request, res: Response, next: NextFunction
 export const updateUser = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { id } = req.params;
-    const { realName, email, phone, department, position, roleId, status } = req.body;
+    const { realName, email, phone, department, position, role, status } = req.body;
 
     const conn = await getConnection();
 
@@ -220,9 +220,9 @@ export const updateUser = async (req: Request, res: Response, next: NextFunction
     // 更新用户
     await conn.execute(
       `UPDATE users 
-       SET real_name = ?, email = ?, phone = ?, department = ?, position = ?, role_id = ?, status = ?, updated_at = NOW()
+       SET real_name = ?, email = ?, phone = ?, department = ?, position = ?, role = ?, status = ?, updated_at = NOW()
        WHERE id = ?`,
-      [realName, email, phone, department, position, roleId, status, id]
+      [realName, email, phone, department, position, role || 5, status, id]
     );
 
     // 记录日志

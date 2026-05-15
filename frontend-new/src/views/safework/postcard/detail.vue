@@ -91,7 +91,7 @@ export default {
         this.form = response.data;
         let img = this.form.safetyWarningSigns.split(",")
         img.forEach((j, index) => {
-          let aa = 'http://safework.cgiot.net/post/'+j+'.png';
+          let aa = 'http://localhost:3001/post/'+j+'.png';
           this.imgList.push(aa)
         })
       });

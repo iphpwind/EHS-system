@@ -22,7 +22,7 @@ export const hazardToTraining = async (req: Request, res: Response, next: NextFu
 
     // 获取该部门所有用户
     const [users] = await conn.execute<RowDataPacket[]>(
-      `SELECT id FROM users WHERE department_id = ?`, [deptId]
+      `SELECT id FROM users WHERE department = (SELECT name FROM departments WHERE id = ?)`, [deptId]
     );
 
     let assigned = 0;

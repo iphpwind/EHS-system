@@ -142,8 +142,8 @@ export const getPendingTasks = async (req: Request, res: Response, next: NextFun
     
     // 待整改隐患（status=1 表示待整改）
     const [pendingHazards] = await conn.execute<RowDataPacket[]>(
-      `SELECT id, hazard_level as level, hazard_description as description, rectify_deadline as deadline
-       FROM hazard_inspection WHERE status=1 ORDER BY rectify_deadline ASC LIMIT 10`
+      `SELECT id, hazard_level as level, hazard_description as description, rectification_deadline as deadline
+       FROM hazard_inspection WHERE status=1 ORDER BY rectification_deadline ASC LIMIT 10`
     );
     
     // 即将到期的作业票（3天内）

@@ -4,10 +4,11 @@ import { getTrainingRecords, getTrainingRecordById, createTrainingRecord, update
 
 const router = Router();
 
-router.get('/', authenticateToken, getTrainingRecords);
-router.get('/:id', authenticateToken, getTrainingRecordById);
-router.post('/', authenticateToken, createTrainingRecord);
-router.put('/:id', authenticateToken, updateTrainingRecord);
-router.delete('/:id', authenticateToken, deleteTrainingRecord);
+// ===== 培训记录管理 =====
+router.get('/training-records', authenticateToken, getTrainingRecords);
+router.get('/training-records/:id', authenticateToken, getTrainingRecordById);
+router.post('/training-records', authenticateToken, createTrainingRecord);
+router.put('/training-records/:id', authenticateToken, updateTrainingRecord);
+router.delete('/training-records/:id', authenticateToken, deleteTrainingRecord);
 
 export default router;

@@ -7,21 +7,18 @@
 
     <div class="right-menu">
       <template v-if="getters.device !== 'mobile'">
-        <!-- <header-search id="header-search" class="right-menu-item"/> -->
-
-        <!-- <el-tooltip content="源码地址" effect="dark" placement="bottom">
-          <ruo-yi-git id="ruoyi-git" class="right-menu-item hover-effect"/>
-        </el-tooltip>
-
-        <el-tooltip content="文档地址" effect="dark" placement="bottom">
-          <ruo-yi-doc id="ruoyi-doc" class="right-menu-item hover-effect"/>
-        </el-tooltip> -->
-
-        <!-- <screenfull id="screenfull" class="right-menu-item hover-effect"/>
-
-        <el-tooltip content="布局大小" effect="dark" placement="bottom">
-          <size-select id="size-select" class="right-menu-item hover-effect"/>
-        </el-tooltip> -->
+        <!-- 全局搜索 -->
+        <header-search id="header-search" class="right-menu-item"/>
+        
+        <!-- 待办提醒 -->
+        <div class="todo-reminder" @click="showTodoDrawer = true">
+          <el-badge :value="todoCount" class="todo-badge">
+            <el-icon class="todo-icon">
+              <Clock/>
+            </el-icon>
+          </el-badge>
+          <span class="todo-text">待办提醒</span>
+        </div>
       </template>
       <div class="avatar-container">
 				<!-- 版本信息弹出 -->
@@ -224,6 +221,82 @@
     </el-dialog>
   </div>
 
+  <!-- 待办提醒抽屉 -->
+  <div class="todo-drawer">
+    <el-drawer v-model="showTodoDrawer" title="待办提醒" direction="rtl" size="380px">
+      <div class="todo-content">
+        <!-- 作业票待审批 -->
+        <div class="todo-section">
+          <div class="todo-section-header">
+            <el-icon class="section-icon"><FileText/></el-icon>
+            <span class="section-title">作业票待审批</span>
+            <span class="section-count">{{ todoItems.workTicketCount }}</span>
+          </div>
+          <div class="todo-list">
+            <div 
+              v-for="item in todoItems.workTickets" 
+              :key="item.id" 
+              class="todo-item"
+              @click="goToWorkTicket(item.id)"
+            >
+              <el-icon class="item-icon"><Document/></el-icon>
+              <div class="item-content">
+                <div class="item-title">{{ item.title }}</div>
+                <div class="item-time">{{ item.time }}</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 隐患待整改 -->
+        <div class="todo-section">
+          <div class="todo-section-header">
+            <el-icon class="section-icon"><Warning/></el-icon>
+            <span class="section-title">隐患待整改</span>
+            <span class="section-count">{{ todoItems.hazardCount }}</span>
+          </div>
+          <div class="todo-list">
+            <div 
+              v-for="item in todoItems.hazards" 
+              :key="item.id" 
+              class="todo-item"
+              @click="goToHazard(item.id)"
+            >
+              <el-icon class="item-icon"><CircleCheck/></el-icon>
+              <div class="item-content">
+                <div class="item-title">{{ item.title }}</div>
+                <div class="item-time">{{ item.time }}</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 证书即将到期 -->
+        <div class="todo-section">
+          <div class="todo-section-header">
+            <el-icon class="section-icon"><Trophy/></el-icon>
+            <span class="section-title">证书即将到期</span>
+            <span class="section-count">{{ todoItems.certificateCount }}</span>
+          </div>
+          <div class="todo-list">
+            <div 
+              v-for="item in todoItems.certificates" 
+              :key="item.id" 
+              class="todo-item"
+              @click="goToCertificate(item.id)"
+            >
+              <el-icon class="item-icon"><Star/></el-icon>
+              <div class="item-content">
+                <div class="item-title">{{ item.title }}</div>
+                <div class="item-time">{{ item.time }}</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </el-drawer>
+  </div>
+
 </template>
 
 <script setup>
@@ -239,12 +312,14 @@ import RuoYiGit from '@/components/RuoYi/Git'
 import RuoYiDoc from '@/components/RuoYi/Doc'
 import {getDeptListBySecondDeptId, saveCurrChildrenDeptId} from "@/api/system/dept";
 import {totalAlarmList} from "@/api/system/alarm"
+import {Clock, Document, Warning, CircleCheck, Trophy, Star} from '@element-plus/icons-vue'
 
 import {ref} from 'vue'
 
 const drawer = ref(false);
 const warndetbox = ref(false);
 const versioninfo = ref(false);
+const showTodoDrawer = ref(false);
 const ycNameClick = ref('')
 const eqNameClick = ref('')
 const alarmContent = ref('')
@@ -259,10 +334,46 @@ const {proxy} = getCurrentInstance();
 
 const num = ref(0);
 const alramlist = ref([]);
+const todoCount = ref(6);
 
 const form = reactive({
   info: '',
 })
+
+// 待办数据（模拟）
+const todoItems = reactive({
+  workTicketCount: 2,
+  workTickets: [
+    { id: 1, title: '动火作业票 #HT2024001', time: '10分钟前' },
+    { id: 2, title: '受限空间作业票 #CS2024003', time: '30分钟前' }
+  ],
+  hazardCount: 1,
+  hazards: [
+    { id: 1, title: '储罐区消防通道堵塞', time: '2小时前' }
+  ],
+  certificateCount: 3,
+  certificates: [
+    { id: 1, title: '张三 - 焊工证', time: '3天后到期' },
+    { id: 2, title: '李四 - 高处作业证', time: '5天后到期' },
+    { id: 3, title: '王五 - 有限空间证', time: '7天后到期' }
+  ]
+});
+
+// 跳转方法
+function goToWorkTicket(id) {
+  showTodoDrawer.value = false;
+  router.push(`/work-permit/list`);
+}
+
+function goToHazard(id) {
+  showTodoDrawer.value = false;
+  router.push(`/risk-control/hazards`);
+}
+
+function goToCertificate(id) {
+  showTodoDrawer.value = false;
+  router.push(`/training/certificate`);
+}
 
 function toggleSideBar() {
   store.dispatch('app/toggleSideBar')
@@ -643,6 +754,125 @@ gettotalAlarm();
     .el-textarea__inner {
       background: transparent;
       color: #fff;
+    }
+  }
+}
+
+/* 待办提醒样式 */
+.todo-reminder {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 0 12px;
+  height: 100%;
+  cursor: pointer;
+  transition: background 0.3s;
+
+  &:hover {
+    background: rgba(0, 0, 0, 0.025);
+  }
+
+  .todo-icon {
+    font-size: 18px;
+    color: $blue-primary;
+  }
+
+  .todo-text {
+    font-size: 13px;
+    color: $gray-600;
+  }
+
+  .todo-badge {
+    .el-badge__content {
+      background: $red-500;
+    }
+  }
+}
+
+.todo-drawer {
+  :deep(.el-drawer) {
+    background: #f8fafc;
+  }
+
+  .todo-content {
+    padding: 16px;
+  }
+
+  .todo-section {
+    margin-bottom: 20px;
+    background: #fff;
+    border-radius: 8px;
+    padding: 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  }
+
+  .todo-section-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 12px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid #e2e8f0;
+
+    .section-icon {
+      font-size: 16px;
+      color: $blue-primary;
+    }
+
+    .section-title {
+      font-size: 14px;
+      font-weight: 600;
+      color: #1e293b;
+    }
+
+    .section-count {
+      margin-left: auto;
+      background: $red-500;
+      color: #fff;
+      font-size: 12px;
+      padding: 2px 8px;
+      border-radius: 10px;
+    }
+  }
+
+  .todo-list {
+    .todo-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: background 0.2s;
+
+      &:hover {
+        background: #f1f5f9;
+      }
+
+      .item-icon {
+        font-size: 16px;
+        color: $orange-500;
+        flex-shrink: 0;
+      }
+
+      .item-content {
+        flex: 1;
+        min-width: 0;
+
+        .item-title {
+          font-size: 13px;
+          color: #334155;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          white-space: nowrap;
+        }
+
+        .item-time {
+          font-size: 11px;
+          color: #94a3b8;
+          margin-top: 2px;
+        }
+      }
     }
   }
 }

@@ -5,7 +5,7 @@ import { asyncHandler } from '../utils/errors';
 
 // 扩展 Request 类型以包含 user
 interface AuthRequest extends Request {
-  user?: { userId: number; role?: string };
+  user?: { userId: number; username: string; role: number };
 }
 
 interface TrainingProgressRow extends RowDataPacket {
@@ -36,27 +36,27 @@ export const saveProgress = asyncHandler(async (req: Request, res: Response) => 
   const { planId, watchedTime, lastPosition, completed } = req.body;
 
   if (!planId) {
-    return res.status(400).json({ success: false, message: '培训计划ID不能为空' });
+    return res.status(400).json({ success: false, message: '课程ID不能为空' });
   }
 
   const conn = await getConnection();
 
   // 检查是否已有进度记录
-  const [existing] = await conn.execute<TrainingProgressRow[]>(
-    'SELECT id FROM training_records WHERE plan_id = ? AND user_id = ?',
+  const [existing] = await conn.execute<RowDataPacket[]>(
+    'SELECT id FROM learning_progress WHERE course_id = ? AND user_id = ?',
     [planId, userId]
   );
 
   if (existing && existing.length > 0) {
     // 更新已有进度
     await conn.execute(
-      'UPDATE training_records SET watched_time = ?, last_position = ?, completed = ?, updated_at = NOW() WHERE plan_id = ? AND user_id = ?',
-      [watchedTime || 0, lastPosition || 0, completed ? 1 : 0, planId, userId]
+      'UPDATE learning_progress SET watched_seconds = ?, last_position = ?, is_completed = ?, updated_at = NOW() WHERE id = ?',
+      [watchedTime || 0, lastPosition || 0, completed ? 1 : 0, existing[0].id]
     );
   } else {
     // 创建新进度记录
     await conn.execute<ResultSetHeader>(
-      'INSERT INTO training_records (plan_id, user_id, watched_time, last_position, completed, created_at, updated_at) VALUES (?, ?, ?, ?, ?, NOW(), NOW())',
+      'INSERT INTO learning_progress (course_id, user_id, watched_seconds, last_position, is_completed, created_at, updated_at) VALUES (?, ?, ?, ?, ?, NOW(), NOW())',
       [planId, userId, watchedTime || 0, lastPosition || 0, completed ? 1 : 0]
     );
   }
@@ -73,13 +73,13 @@ export const getProgress = asyncHandler(async (req: Request, res: Response) => {
   const { planId } = req.query;
 
   if (!planId) {
-    return res.status(400).json({ success: false, message: '培训计划ID不能为空' });
+    return res.status(400).json({ success: false, message: '课程ID不能为空' });
   }
 
   const conn = await getConnection();
 
-  const [rows] = await conn.execute<TrainingProgressRow[]>(
-    'SELECT id, plan_id, watched_time, last_position, completed, created_at, updated_at FROM training_records WHERE plan_id = ? AND user_id = ?',
+  const [rows] = await conn.execute<RowDataPacket[]>(
+    'SELECT id, course_id, watched_seconds, last_position, is_completed, created_at, updated_at FROM learning_progress WHERE course_id = ? AND user_id = ?',
     [planId, userId]
   );
 
@@ -87,9 +87,9 @@ export const getProgress = asyncHandler(async (req: Request, res: Response) => {
     res.json({
       success: true,
       data: {
-        watchedTime: rows[0].watched_time,
+        watchedTime: rows[0].watched_seconds,
         lastPosition: rows[0].last_position,
-        completed: rows[0].completed === 1,
+        completed: rows[0].is_completed === 1,
         updatedAt: rows[0].updated_at
       }
     });

@@ -427,7 +427,177 @@ export const constantRoutes = [
             { path: 'statistics', component: () => import('@/views/training/Statistics.vue'), name: 'TrainingStatistics', meta: { title: '培训统计' } }
         ]
     },
-    // 统一作业票管理（GB 30871-2022）hidden路由，通过现有菜单跳转
+    // 作业许可管理（GB 30871-2022）
+    {
+        path: '/work-permit',
+        component: Layout,
+        redirect: '/work-permit/list',
+        name: 'WorkPermit',
+        meta: { title: '作业许可管理', icon: 'lock' },
+        children: [
+            {
+                path: 'list',
+                component: () => import('@/views/safework/WorkTicketList.vue'),
+                name: 'WorkPermitList',
+                meta: { title: '作业票列表' }
+            },
+            {
+                path: 'apply',
+                component: () => import('@/views/safework/apply/index.vue'),
+                name: 'WorkPermitApply',
+                meta: { title: '作业票申请' }
+            },
+            {
+                path: 'hot-work',
+                component: () => import('@/views/safework/apply/HotWorkApply.vue'),
+                name: 'HotWork',
+                meta: { title: '动火作业' }
+            },
+            {
+                path: 'confined-space',
+                component: () => import('@/views/safework/apply/ConfinedSpaceApply.vue'),
+                name: 'ConfinedSpace',
+                meta: { title: '受限空间' }
+            },
+            {
+                path: 'high-work',
+                component: () => import('@/views/safework/apply/index.vue'),
+                name: 'HighWork',
+                meta: { title: '高处作业' }
+            },
+            {
+                path: 'electric-work',
+                component: () => import('@/views/safework/apply/index.vue'),
+                name: 'ElectricWork',
+                meta: { title: '电气作业' }
+            },
+            {
+                path: 'hoisting-work',
+                component: () => import('@/views/safework/apply/index.vue'),
+                name: 'HoistingWork',
+                meta: { title: '吊装作业' }
+            },
+            {
+                path: 'detail/:id',
+                component: () => import('@/views/safework/WorkTicketDetail.vue'),
+                name: 'WorkPermitDetail',
+                meta: { title: '作业票详情', hidden: true }
+            }
+        ]
+    },
+    // 双重预防机制
+    {
+        path: '/risk-control',
+        component: Layout,
+        redirect: '/risk-control/points',
+        name: 'RiskControl',
+        meta: { title: '双重预防机制', icon: 'shield' },
+        children: [
+            {
+                path: 'points',
+                component: () => import('@/views/system/shuangchongyf/index.vue'),
+                name: 'RiskPoints',
+                meta: { title: '风险分级管控' }
+            },
+            {
+                path: 'hazards',
+                component: () => import('@/views/safework/investigate'),
+                name: 'HazardInvestigation',
+                meta: { title: '隐患排查治理' }
+            },
+            {
+                path: 'statistics',
+                component: () => import('@/views/system/statisticanalysis/index.vue'),
+                name: 'RiskStatistics',
+                meta: { title: '统计分析' }
+            }
+        ]
+    },
+    // 气体监测
+    {
+        path: '/gas-monitor',
+        component: Layout,
+        redirect: '/gas-monitor/index',
+        name: 'GasMonitor',
+        meta: { title: '气体监测', icon: 'monitor' },
+        children: [
+            {
+                path: 'index',
+                component: () => import('@/views/gasMonitor/index.vue'),
+                name: 'GasMonitorIndex',
+                meta: { title: '实时监测' }
+            }
+        ]
+    },
+    // 综合管理
+    {
+        path: '/comprehensive',
+        component: Layout,
+        redirect: '/comprehensive/equipment',
+        name: 'Comprehensive',
+        meta: { title: '综合管理', icon: 'folder' },
+        children: [
+            {
+                path: 'equipment',
+                component: () => import('@/views/unitmanage/device'),
+                name: 'EquipmentManage',
+                meta: { title: '设备管理' }
+            },
+            {
+                path: 'document',
+                component: () => import('@/views/system/safeproduction/index.vue'),
+                name: 'DocumentManage',
+                meta: { title: '文档管理' }
+            },
+            {
+                path: 'emergency',
+                component: () => import('@/views/safework/yingjiguanli/index.vue'),
+                name: 'EmergencyManage',
+                meta: { title: '应急管理' }
+            }
+        ]
+    },
+    // 系统管理
+    {
+        path: '/system',
+        component: Layout,
+        redirect: '/system/user',
+        name: 'System',
+        meta: { title: '系统管理', icon: 'system' },
+        children: [
+            {
+                path: 'user',
+                component: () => import('@/views/system/user/index'),
+                name: 'SystemUser',
+                meta: { title: '用户管理' }
+            },
+            {
+                path: 'role',
+                component: () => import('@/views/system/role/index'),
+                name: 'SystemRole',
+                meta: { title: '角色管理' }
+            },
+            {
+                path: 'dept',
+                component: () => import('@/views/system/dept/index'),
+                name: 'SystemDept',
+                meta: { title: '部门管理' }
+            },
+            {
+                path: 'menu',
+                component: () => import('@/views/system/menu/index'),
+                name: 'SystemMenu',
+                meta: { title: '菜单管理' }
+            },
+            {
+                path: 'config',
+                component: () => import('@/views/system/config/index'),
+                name: 'SystemConfig',
+                meta: { title: '系统配置' }
+            }
+        ]
+    },
+    // 统一作业票管理（旧路由兼容）
     {
         path: '/safework',
         component: Layout,

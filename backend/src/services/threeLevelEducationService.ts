@@ -313,7 +313,7 @@ export async function getAnnualCreditReport(
       MAX(tr.updated_at) as lastLearnDate,
       CASE WHEN COALESCE(SUM(tr.credit_hours), 0) >= ${minRequiredHours} THEN '达标' ELSE '未达标' END as status
     FROM users u
-    LEFT JOIN departments d ON u.department_id = d.id
+    LEFT JOIN departments d ON d.name = u.department
     LEFT JOIN training_records tr ON u.id = tr.user_id 
       AND YEAR(COALESCE(tr.updated_at, tr.created_at)) = ?
     WHERE u.status = 'active' OR u.status = 1
@@ -321,7 +321,7 @@ export async function getAnnualCreditReport(
   const params: any[] = [year];
 
   if (departmentId) {
-    sql += ' AND u.department_id = ?';
+    sql += ' AND u.department = (SELECT name FROM departments WHERE id = ?)';
     params.push(departmentId);
   }
 

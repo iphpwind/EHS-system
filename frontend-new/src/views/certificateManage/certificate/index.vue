@@ -93,7 +93,7 @@
           clearable
         >
           <el-option
-            v-for="dict in status"
+            v-for="dict in sys_normal_disable"
             :key="dict.value"
             :label="dict.label"
             :value="dict.value"
@@ -203,7 +203,7 @@
       </el-table-column>
       <el-table-column label="状态" align="center" prop="status">
         <template #default="scope">
-          <dict-tag :options="status" :value="scope.row.status" />
+          <dict-tag :options="sys_normal_disable" :value="scope.row.status" />
         </template>
       </el-table-column>
       <el-table-column
@@ -362,7 +362,7 @@
         <el-form-item label="状态">
           <el-radio-group v-model="form.status">
             <el-radio
-              v-for="dict in status"
+              v-for="dict in sys_normal_disable"
               :key="dict.value"
               :label="dict.value"
               >{{ dict.label }}</el-radio
@@ -397,9 +397,9 @@ import { listPost } from "@/api/system/post";
 import { h } from "vue";
 
 const { proxy } = getCurrentInstance();
-const { certificate_personnel_type, status } = proxy.useDict(
+const { certificate_personnel_type, sys_normal_disable } = proxy.useDict(
   "certificate_personnel_type",
-  "status"
+  "sys_normal_disable"
 );
 
 const certificateList = ref([]);
@@ -467,7 +467,7 @@ const data = reactive({
     certificateName: null,
     postIdss: null,
     deptIdss: null,
-    status: "0",
+    status: null,
     personnelType: "0",
     delFlag: "0",
   },

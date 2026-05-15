@@ -12,7 +12,7 @@
       <el-form-item label="状态" prop="status">
         <el-select v-model="queryParams.status" placeholder="请选择状态" clearable>
           <el-option
-            v-for="dict in status"
+            v-for="dict in sys_normal_disable"
             :key="dict.value"
             :label="dict.label"
             :value="dict.value"
@@ -73,7 +73,7 @@
       <el-table-column label="人员证书类型" align="center" prop="typeName" />
       <el-table-column label="状态" align="center" prop="status">
         <template #default="scope">
-          <dict-tag :options="status" :value="scope.row.status"/>
+          <dict-tag :options="sys_normal_disable" :value="scope.row.status"/>
         </template>
       </el-table-column>
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
@@ -111,9 +111,9 @@
         <el-form-item label="状态" prop="status">
           <el-radio-group v-model="form.status">
             <el-radio
-              v-for="dict in status"
+              v-for="dict in sys_normal_disable"
               :key="dict.value"
-							:label="dict.value"
+              :label="dict.value"
             >{{dict.label}}</el-radio>
           </el-radio-group>
         </el-form-item>
@@ -133,7 +133,7 @@ import { listCertificateTypeDic, getCertificateTypeDic, delCertificateTypeDic, a
 import {h} from "vue";
 
 const { proxy } = getCurrentInstance();
-const { status } = proxy.useDict('status');
+const { sys_normal_disable } = proxy.useDict('sys_normal_disable');
 
 const certificateTypeDicList = ref([]);
 const open = ref(false);

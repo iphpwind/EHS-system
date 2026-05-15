@@ -180,8 +180,9 @@ export const assignUserRoles = async (req: Request, res: Response, next: NextFun
     const conn = await getConnection();
     await conn.execute('DELETE FROM user_roles WHERE user_id = ?', [userId]);
     if (roleIds && roleIds.length > 0) {
-      const values = roleIds.map((rid: any) => `(${userId}, ${rid})`).join(',');
-      await conn.execute(`INSERT INTO user_roles (user_id, role_id) VALUES ${values}`);
+      const placeholders = roleIds.map(() => '(?, ?)').join(',');
+      const params = roleIds.flatMap((rid: any) => [userId, rid]);
+      await conn.execute(`INSERT INTO user_roles (user_id, role_id) VALUES ${placeholders}`, params);
     }
     res.json({ code: 200, msg: 'success' });
   } catch (error) {
@@ -212,8 +213,9 @@ export const assignRoleMenus = async (req: Request, res: Response, next: NextFun
     const conn = await getConnection();
     await conn.execute('DELETE FROM role_menus WHERE role_id = ?', [roleId]);
     if (menuIds && menuIds.length > 0) {
-      const values = menuIds.map((mid: any) => `(${roleId}, ${mid})`).join(',');
-      await conn.execute(`INSERT INTO role_menus (role_id, menu_id) VALUES ${values}`);
+      const placeholders = menuIds.map(() => '(?, ?)').join(',');
+      const params = menuIds.flatMap((mid: any) => [roleId, mid]);
+      await conn.execute(`INSERT INTO role_menus (role_id, menu_id) VALUES ${placeholders}`, params);
     }
     res.json({ code: 200, msg: 'success' });
   } catch (error) {

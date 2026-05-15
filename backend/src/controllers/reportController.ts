@@ -288,7 +288,7 @@ export const riskTips = async (req: Request, res: Response, next: NextFunction) 
     // 2. 检查逾期未整改的隐患
     const [overdueHazards] = await conn.execute<RowDataPacket[]>(
       `SELECT id, hazard_description FROM hazard_inspection 
-       WHERE status IN (1, 2) AND rectify_deadline < NOW()
+       WHERE status IN (1, 2) AND rectification_deadline < NOW()
        AND discoverer_id = ?`,
       [userId]
     );

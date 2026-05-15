@@ -32,7 +32,7 @@ router.get('/health', async (req: Request, res: Response) => {
       `SELECT 
         COUNT(*) as total,
         SUM(IF(status != 4 AND status != 'closed', 1, 0)) as open,
-        SUM(IF(rectify_deadline < NOW() AND status != 4 AND status != 'closed', 1, 0)) as overdue
+        SUM(IF(rectification_deadline < NOW() AND status != 4 AND status != 'closed', 1, 0)) as overdue
        FROM hazard_inspection`
     );
     const [trainingCount] = await conn.execute(
@@ -85,7 +85,7 @@ router.get('/summary', authenticateToken, async (req: Request, res: Response) =>
       `SELECT COUNT(*) as count FROM work_permits WHERE status = '2'`
     );
     const [overdueHazard] = await conn.execute(
-      `SELECT COUNT(*) as count FROM hazard_inspection WHERE rectify_deadline < NOW() AND status != 4 AND status != 'closed'`
+      `SELECT COUNT(*) as count FROM hazard_inspection WHERE rectification_deadline < NOW() AND status != 4 AND status != 'closed'`
     );
     const [training] = await conn.execute(
       `SELECT COUNT(*) as count FROM training_records WHERE user_id = ? AND status = 'learning'`,

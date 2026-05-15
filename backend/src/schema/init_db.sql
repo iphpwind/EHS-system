@@ -32,16 +32,16 @@ CREATE TABLE `users` (
   `username` VARCHAR(50) NOT NULL UNIQUE COMMENT '用户名',
   `password` VARCHAR(255) NOT NULL COMMENT '密码（bcrypt加密）',
   `real_name` VARCHAR(50) NOT NULL COMMENT '真实姓名',
-  `department_id` INT UNSIGNED DEFAULT 0 COMMENT '部门ID',
+  `department` VARCHAR(100) DEFAULT '' COMMENT '部门名称',
   `phone` VARCHAR(20) DEFAULT '' COMMENT '手机号',
   `email` VARCHAR(100) DEFAULT '' COMMENT '邮箱',
-  `role` TINYINT DEFAULT 5 COMMENT '角色：1超级管理员 2管理员 3安全管理人员 4部门负责人 5普通用户',
+  `role_id` INT DEFAULT 5 COMMENT '角色ID，关联roles表',
   `status` TINYINT DEFAULT 1 COMMENT '状态：1启用 0禁用',
   `last_login_time` TIMESTAMP NULL COMMENT '最后登录时间',
   `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   `updated_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   INDEX `idx_username` (`username`),
-  INDEX `idx_department` (`department_id`)
+  INDEX `idx_department` (`department`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='用户表';
 
 -- 作业票主表

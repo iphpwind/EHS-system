@@ -51,7 +51,7 @@ export const getList = async (req: Request, res: Response, next: NextFunction) =
              u.real_name as applicant_name, d.name as dept_name
       FROM work_permits wp
       LEFT JOIN users u ON wp.applicant_id = u.id
-      LEFT JOIN departments d ON u.department_id = d.id
+      LEFT JOIN departments d ON d.name = u.department
       WHERE wp.ticket_type = ?
     `;
     const params: any[] = [cfg.ticketType];
@@ -104,7 +104,7 @@ export const getDetail = async (req: Request, res: Response, next: NextFunction)
       SELECT wp.*, u.real_name as applicant_name, d.name as dept_name
       FROM work_permits wp
       LEFT JOIN users u ON wp.applicant_id = u.id
-      LEFT JOIN departments d ON u.department_id = d.id
+      LEFT JOIN departments d ON d.name = u.department
       WHERE wp.id = ?
     `, [id]);
 
