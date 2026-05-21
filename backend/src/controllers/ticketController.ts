@@ -3,7 +3,8 @@ import { getConnection } from '../config/database';
 import { RowDataPacket, OkPacket } from 'mysql2';
 import { checkTrainingEligibility } from './trainingChecker';
 import { AppError } from '../utils/errors';
-import { createSubTicketRecord } from './ticketTypeSubController';
+import { createSubTicketRecord } from './ticketTypeSub';
+import { getApprovalLevels, RISK_LEVEL_LABEL } from '../types/ticket';
 
 interface TicketRow extends RowDataPacket {
   id: number;
@@ -515,7 +516,7 @@ export const approveTicket = async (req: Request, res: Response, next: NextFunct
 
     // 检查作业票
     const [tickets] = await conn.execute<RowDataPacket[]>(
-      'SELECT id, ticket_no, status, current_node, flow_config FROM work_permits WHERE id = ?',
+      'SELECT id, ticket_no, status, risk_level, current_approval_level, flow_config FROM work_permits WHERE id = ?',
       [id]
     );
 
@@ -545,28 +546,37 @@ export const approveTicket = async (req: Request, res: Response, next: NextFunct
     }
 
     if (action === 'approve') {
-      // 获取流程配置
-      const flowConfig = ticket.flow_config ? JSON.parse(ticket.flow_config) : null;
-      const totalNodes = flowConfig ? (flowConfig.nodes ? flowConfig.nodes.length : 1) : 1;
+      // ✅ GB 30871：基于risk_level动态判断审批层级
+      const riskLevel = ticket.risk_level || 'level2';
+      const totalLevels = getApprovalLevels(riskLevel as any);
+      const currentLevel = ticket.current_approval_level || 1;
 
-      // 检查是否所有节点都审批完成
-      if (ticket.current_node >= totalNodes) {
-        // 所有节点审批完成，状态改为已批准
+      // 记录审批日志
+      await conn.execute(
+        `INSERT INTO work_ticket_approval_logs 
+         (ticket_id, approver_id, approver_name, action, remark, approval_level, create_time)
+         VALUES (?, ?, ?, 'approved', ?, ?, NOW())`,
+        [id, userId, (req as any).user.username, comment || null, currentLevel]
+      );
+
+      // 检查是否所有层级都审批完成
+      if (currentLevel >= totalLevels) {
+        // 所有层级审批完成，状态改为已批准
         await conn.execute(
           "UPDATE work_permits SET status = 'approved', updated_at = NOW() WHERE id = ?",
           [id]
         );
       } else {
-        // 进入下一个审批节点
+        // 进入下一个审批层级
         await conn.execute(
-          'UPDATE work_permits SET current_node = current_node + 1, updated_at = NOW() WHERE id = ?',
+          'UPDATE work_permits SET current_approval_level = current_approval_level + 1, updated_at = NOW() WHERE id = ?',
           [id]
         );
       }
     } else {
-      // 拒绝：状态改回草稿
+      // 拒绝：状态改为已拒绝
       await conn.execute(
-        "UPDATE work_permits SET status = 'draft', current_node = 0, updated_at = NOW() WHERE id = ?",
+        "UPDATE work_permits SET status = 'rejected', updated_at = NOW() WHERE id = ?",
         [id]
       );
     }
@@ -766,6 +776,28 @@ export const verifyQrCode = async (req: Request, res: Response, next: NextFuncti
     });
   } catch (error) {
     console.error('Verify QR code error:', error);
+    next(error);
+  } finally {
+    if (conn) conn.release();
+  }
+};
+
+/**
+ * 获取作业票审批日志（GB 30871 合规）
+ */
+export const getTicketApprovalLogs = async (req: Request, res: Response, next: NextFunction) => {
+  let conn: any = null;
+  try {
+    const { id } = req.params;
+    conn = await getConnection();
+
+    const [logs] = await conn.execute(
+      'SELECT * FROM work_ticket_approval_logs WHERE ticket_id = ? ORDER BY create_time ASC',
+      [id]
+    );
+
+    res.json({ success: true, data: logs });
+  } catch (error) {
     next(error);
   } finally {
     if (conn) conn.release();

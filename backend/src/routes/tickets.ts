@@ -8,7 +8,8 @@ import {
   submitApproval,
   approveTicket,
   getTicketStats,
-  verifyQrCode
+  verifyQrCode,
+  getTicketApprovalLogs
 } from '../controllers/ticketController';
 import { authenticateToken } from '../middleware/authMiddleware';
 
@@ -139,6 +140,19 @@ router.delete('/:id', authenticateToken, async (req: Request, res: Response, nex
     await deleteTicket(req, res, next);
   } catch (error) {
     console.error('Delete ticket error:', error);
+    next(error);
+  }
+});
+
+/**
+ * 获取作业票审批日志（GB 30871 合规）
+ * GET /api/tickets/:id/approval-logs
+ */
+router.get('/:id/approval-logs', authenticateToken, async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    await getTicketApprovalLogs(req, res, next);
+  } catch (error) {
+    console.error('Get ticket approval logs error:', error);
     next(error);
   }
 });
