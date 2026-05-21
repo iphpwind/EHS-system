@@ -464,7 +464,7 @@
   background: #f8f8f8;
   padding: 15px;
 
-	:deep .el-row{
+	:deep(.el-row) {
 		height: 100%;
 		.el-col{
 			height: 100%;
@@ -477,7 +477,7 @@
 	  padding: 10px 30px 0;
 	  margin: 0 0 20px;
 		height: 100px;
-		:deep .el-form-item{
+		:deep(.el-form-item) {
 			display: block;
 			.el-select{
 				width: 100%;

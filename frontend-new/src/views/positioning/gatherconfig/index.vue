@@ -361,11 +361,11 @@ form.value.deptId = store.getters.user.thirdDeptId==null?store.getters.user.dept
 	label.el-radio{
 		min-width: auto;
 	}
-  :deep .el-select{
+  :deep(.el-select) {
     display: inline-block;width: 100px;
     margin: 0 5px;
   }
-	:deep .el-input{
+	:deep(.el-input) {
 		width: 220px;
 	}
 }
@@ -392,13 +392,13 @@ form.value.deptId = store.getters.user.thirdDeptId==null?store.getters.user.dept
 	label{
 		font-size: 14px;color: #555;
 	}
-	:deep .el-input__inner{
+	:deep(.el-input__inner) {
 		margin: 0 10px;
 	}
 }
 .bottomSave{
 	text-align: center;margin: 25px 0 0;
-	:deep .el-button{
+	:deep(.el-button) {
 		width: 300px;
 	}
 	
