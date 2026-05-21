@@ -25,11 +25,12 @@ const getSubTableInfo = (ticketType: string) => {
  * GET /api/ticket-types/:type/detail/:ticketId
  */
 export const getSubTicketDetail = async (req: Request, res: Response, next: NextFunction) => {
+  let conn: any = null;
   try {
     const { type, ticketId } = req.params;
     const info = getSubTableInfo(type);
     
-    const conn = await getConnection();
+    conn = await getConnection();
     const safeTableName = info.tableName.replace(/[^a-z_]/g, '');
     
     const [rows] = await conn.execute<SubTicketRow[]>(
@@ -43,6 +44,8 @@ export const getSubTicketDetail = async (req: Request, res: Response, next: Next
     });
   } catch (error) {
     next(error);
+  } finally {
+    if (conn) conn.release();
   }
 };
 
@@ -51,14 +54,15 @@ export const getSubTicketDetail = async (req: Request, res: Response, next: Next
  * POST /api/ticket-types/:type/detail/:ticketId
  */
 export const saveSubTicketDetail = async (req: Request, res: Response, next: NextFunction) => {
+  let conn: any = null;
   try {
     const { type, ticketId } = req.params;
     const info = getSubTableInfo(type);
     const detailData = req.body;
     
-    const conn = await getConnection();
+    conn = await getConnection();
     const safeTableName = info.tableName.replace(/[^a-z_]/g, '');
-
+    
     // 安全过滤：仅允许更新子表已定义的字段
     const allowedFields = [
       ...info.detailFields,
@@ -84,28 +88,28 @@ export const saveSubTicketDetail = async (req: Request, res: Response, next: Nex
       'fire_guardian_id', 'fire_guardian_name',
       'guardian_name'
     ];
-
+    
     // 检查是否已存在
     const [existing] = await conn.execute<SubTicketRow[]>(
       `SELECT id FROM \`${safeTableName}\` WHERE ticket_id = ?`,
       [ticketId]
     );
-
+    
     // 构建更新字段集（只包含允许的字段）
     const fields: string[] = [];
     const values: any[] = [];
-
+    
     for (const key of Object.keys(detailData)) {
       if (allowedFields.includes(key)) {
         fields.push(`\`${key}\` = ?`);
         values.push(detailData[key] === undefined ? null : detailData[key]);
       }
     }
-
+    
     if (fields.length === 0) {
       throw new BadRequestError('未提供有效的更新字段');
     }
-
+    
     if (existing.length > 0) {
       // 更新
       values.push(existing[0].id);
@@ -121,7 +125,7 @@ export const saveSubTicketDetail = async (req: Request, res: Response, next: Nex
       });
     } else {
       // 创建子表记录
-      const fieldNames = fields.map(f => f.split(' = ')[0]);
+      const fieldNames = fields.map(f => f.split(' = ?')[0]);
       const placeholders = fields.map(() => '?');
       
       await conn.execute<OkPacket>(
@@ -137,6 +141,8 @@ export const saveSubTicketDetail = async (req: Request, res: Response, next: Nex
     }
   } catch (error) {
     next(error);
+  } finally {
+    if (conn) conn.release();
   }
 };
 
@@ -145,11 +151,12 @@ export const saveSubTicketDetail = async (req: Request, res: Response, next: Nex
  * GET /api/ticket-types/:type/full/:ticketId
  */
 export const getFullTicketDetail = async (req: Request, res: Response, next: NextFunction) => {
+  let conn: any = null;
   try {
     const { type, ticketId } = req.params;
     const info = getSubTableInfo(type);
     
-    const conn = await getConnection();
+    conn = await getConnection();
     const safeTableName = info.tableName.replace(/[^a-z_]/g, '');
     
     // 查询主表和子表
@@ -187,6 +194,8 @@ export const getFullTicketDetail = async (req: Request, res: Response, next: Nex
     });
   } catch (error) {
     next(error);
+  } finally {
+    if (conn) conn.release();
   }
 };
 
@@ -198,11 +207,18 @@ export const createSubTicketRecord = async (ticketId: number, ticketType: string
   const info = TICKET_TYPE_MAP[ticketType];
   if (!info) return; // 不是支持的作业类型，跳过
   
-  const conn = await getConnection();
-  const safeTableName = info.tableName.replace(/[^a-z_]/g, '');
-  
-  await conn.execute<OkPacket>(
-    `INSERT INTO \`${safeTableName}\` (ticket_id) VALUES (?)`,
-    [ticketId]
-  );
+  let conn: any = null;
+  try {
+    conn = await getConnection();
+    const safeTableName = info.tableName.replace(/[^a-z_]/g, '');
+    
+    await conn.execute<OkPacket>(
+      `INSERT INTO \`${safeTableName}\` (ticket_id) VALUES (?)`,
+      [ticketId]
+    );
+  } catch (error) {
+    console.error('Create sub ticket record error (non-fatal):', error);
+  } finally {
+    if (conn) conn.release();
+  }
 };

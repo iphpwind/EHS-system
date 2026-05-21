@@ -26,12 +26,13 @@ export async function checkTrainingEligibility(
   userId: number,
   workType: string
 ): Promise<{ eligible: boolean; reason?: string }> {
+  let conn: any = null;
   const label = WORK_TYPE_LABELS[workType];
   if (!label) {
     return { eligible: true };
   }
 
-  const conn = await getConnection();
+  conn = await getConnection();
 
   try {
     // ── 1. 检查该类型在系统中是否有配置记录 ──
@@ -90,6 +91,6 @@ export async function checkTrainingEligibility(
 
     return { eligible: true };
   } finally {
-    conn.release();
+    if (conn) conn.release();
   }
 }

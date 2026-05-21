@@ -3,9 +3,10 @@ import { getConnection } from '../../config/database';
 import { RowDataPacket, OkPacket } from 'mysql2';
 
 export const getExamResultList = async (req: Request, res: Response, next: NextFunction) => {
+  let conn: any = null;
   try {
     const { page = 1, pageSize = 20, userId, paperId, isPassed } = req.query;
-    const conn = await getConnection();
+    conn = await getConnection();
     let where = 'WHERE 1=1';
     const params: any[] = [];
     if (userId) { where += ' AND r.user_id = ?'; params.push(Number(userId)); }
@@ -19,14 +20,16 @@ export const getExamResultList = async (req: Request, res: Response, next: NextF
       [...params, Number(pageSize), offset]);
     res.json({ success: true, data: { list: rows, pagination: { page: Number(page), pageSize: Number(pageSize), total } } });
   } catch (e) { next(e); }
+  finally { if (conn) conn.release(); }
 };
 
 export const startExam = async (req: Request, res: Response, next: NextFunction) => {
+  let conn: any = null;
   try {
     const { paperId } = req.body;
     const userId = (req as any).user.userId;
     if (!paperId) return res.status(400).json({ success: false, message: '试卷ID不能为空' });
-    const conn = await getConnection();
+    conn = await getConnection();
     // 检查试卷
     const [papers] = await conn.execute<RowDataPacket[]>('SELECT * FROM exam_papers WHERE id = ? AND status = 1', [paperId]);
     if (!papers[0]) return res.status(404).json({ success: false, message: '试卷不存在或已禁用' });
@@ -64,14 +67,16 @@ export const startExam = async (req: Request, res: Response, next: NextFunction)
     }));
     res.json({ success: true, data: { examId: result.insertId, paperTitle: paper.title, totalScore: paper.total_score, passScore: paper.pass_score, durationMinutes: paper.duration_minutes, questions: safeQuestions } });
   } catch (e) { next(e); }
+  finally { if (conn) conn.release(); }
 };
 
 export const submitExam = async (req: Request, res: Response, next: NextFunction) => {
+  let conn: any = null;
   try {
     const { examId, answers } = req.body;
     const userId = (req as any).user.userId;
     if (!examId || !answers) return res.status(400).json({ success: false, message: '参数不完整' });
-    const conn = await getConnection();
+    conn = await getConnection();
     const [records] = await conn.execute<RowDataPacket[]>('SELECT er.*, p.pass_score, p.is_random, p.fixed_questions, p.random_rule FROM exam_results er LEFT JOIN exam_papers p ON er.paper_id = p.id WHERE er.id = ? AND er.user_id = ?', [examId, userId]);
     if (!records[0]) return res.status(404).json({ success: false, message: '考试记录不存在' });
     const exam = records[0];
@@ -94,4 +99,5 @@ export const submitExam = async (req: Request, res: Response, next: NextFunction
       [totalScore, isPassed ? 1 : 0, JSON.stringify(gradedAnswers), durationSecs, examId]);
     res.json({ success: true, message: '考试提交成功', data: { score: totalScore, totalScore: exam.total_score, isPassed, durationSeconds: durationSecs } });
   } catch (e) { next(e); }
+  finally { if (conn) conn.release(); }
 };

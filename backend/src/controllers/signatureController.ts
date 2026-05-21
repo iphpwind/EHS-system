@@ -17,6 +17,7 @@ if (!fs.existsSync(SIGN_DIR)) {
  * POST /api/signatures
  */
 export const saveSignature = async (req: Request, res: Response, next: NextFunction) => {
+  let conn: any = null;
   try {
     const {
       bizType,       // hot_work / confined_space / high_work 等
@@ -44,7 +45,7 @@ export const saveSignature = async (req: Request, res: Response, next: NextFunct
     const relativePath = `/uploads/signatures/${fileName}`;
 
     // 3. 写入数据库
-    const conn = await getConnection();
+    conn = await getConnection();
     const [result] = await conn.execute<OkPacket>(
       `INSERT INTO signatures
        (biz_type, biz_id, sign_type, signer_id, signer_name, sign_image, sign_time, ip_address, device_info)
@@ -78,7 +79,7 @@ export const saveSignature = async (req: Request, res: Response, next: NextFunct
     });
   } catch (error) {
     next(error);
-  }
+  } finally { if (conn) conn.release(); }
 };
 
 /**
@@ -86,9 +87,10 @@ export const saveSignature = async (req: Request, res: Response, next: NextFunct
  * GET /api/signatures?bizType=hot_work&bizId=123
  */
 export const getSignatures = async (req: Request, res: Response, next: NextFunction) => {
+  let conn: any = null;
   try {
     const { bizType, bizId, signType } = req.query;
-    const conn = await getConnection();
+    conn = await getConnection();
 
     let sql = 'SELECT * FROM signatures WHERE 1=1';
     const params: any[] = [];
@@ -111,7 +113,7 @@ export const getSignatures = async (req: Request, res: Response, next: NextFunct
     res.json({ code: 200, msg: 'success', data: rows });
   } catch (error) {
     next(error);
-  }
+  } finally { if (conn) conn.release(); }
 };
 
 /**

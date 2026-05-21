@@ -7,11 +7,12 @@ import { RowDataPacket } from 'mysql2';
  * GET /api/training-v2/archive/:userId
  */
 export const getUserArchive = async (req: Request, res: Response, next: NextFunction) => {
+  let conn: any = null;
   try {
     const userId = Number(req.params.userId) || (req as any).user?.userId;
     if (!userId) return res.status(400).json({ success: false, message: '用户ID不能为空' });
 
-    const conn = await getConnection();
+    conn = await getConnection();
 
     // 1. 用户基本信息
     const [userRows] = await conn.execute<RowDataPacket[]>(
@@ -73,20 +74,22 @@ export const getUserArchive = async (req: Request, res: Response, next: NextFunc
 
     res.json({ success: true, data: archive });
   } catch (e) { next(e); }
+  finally { if (conn) conn.release(); }
 };
 
 /**
  * 导出用户培训档案为 PDF（简化版：返回 JSON）
  * GET /api/training-v2/archive/:userId/pdf
- * 
+ *
  * 注：如需真实 PDF 生成，可启用 puppeteer（已在 package.json 依赖中）
  */
 export const exportArchivePdf = async (req: Request, res: Response, next: NextFunction) => {
+  let conn: any = null;
   try {
     const userId = Number(req.params.userId) || (req as any).user?.userId;
     if (!userId) return res.status(400).json({ success: false, message: '用户ID不能为空' });
 
-    const conn = await getConnection();
+    conn = await getConnection();
 
     const [userRows] = await conn.execute<RowDataPacket[]>(
       `SELECT u.id, u.real_name, u.user_name, u.department, u.position FROM users u WHERE u.id = ?`, [userId]
@@ -127,6 +130,7 @@ export const exportArchivePdf = async (req: Request, res: Response, next: NextFu
       });
     }
   } catch (e) { next(e); }
+  finally { if (conn) conn.release(); }
 };
 
 function buildArchiveHtml(profile: any, learns: any[], exams: any[], certs: any[]): string {

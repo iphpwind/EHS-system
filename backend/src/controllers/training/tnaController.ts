@@ -7,11 +7,12 @@ import { RowDataPacket, OkPacket } from 'mysql2';
  * GET /api/training-v2/tna/required-courses?userId=
  */
 export const getRequiredCourses = async (req: Request, res: Response, next: NextFunction) => {
+  let conn: any = null;
   try {
     const userId = Number(req.query.userId) || (req as any).user?.userId;
     if (!userId) return res.status(400).json({ success: false, message: '用户ID不能为空' });
 
-    const conn = await getConnection();
+    conn = await getConnection();
 
     // 获取用户岗位
     const [userRows] = await conn.execute<RowDataPacket[]>(
@@ -46,6 +47,7 @@ export const getRequiredCourses = async (req: Request, res: Response, next: Next
 
     res.json({ success: true, data: { position, courses } });
   } catch (e) { next(e); }
+  finally { if (conn) conn.release(); }
 };
 
 /**
@@ -55,7 +57,7 @@ export const getRequiredCourses = async (req: Request, res: Response, next: Next
 export async function autoAssignTasks(): Promise<{ assigned: number; errors: string[] }> {
   let assigned = 0;
   const errors: string[] = [];
-  const conn = await getConnection();
+  let conn = await getConnection();
 
   try {
     // 查询最近岗位变动的用户（简化版：直接从 training_tasks 未下发的新岗位判断）
@@ -113,8 +115,9 @@ export async function autoAssignTasks(): Promise<{ assigned: number; errors: str
  * GET /api/training-v2/tna/matrix
  */
 export const getTrainingMatrix = async (req: Request, res: Response, next: NextFunction) => {
+  let conn: any = null;
   try {
-    const conn = await getConnection();
+    conn = await getConnection();
     const [rows] = await conn.execute<RowDataPacket[]>(
       `SELECT pcm.id, pcm.position_name, pcm.course_id, tc.title AS course_title,
               pcm.requirement_level, pcm.created_at
@@ -124,6 +127,7 @@ export const getTrainingMatrix = async (req: Request, res: Response, next: NextF
     );
     res.json({ success: true, data: rows });
   } catch (e) { next(e); }
+  finally { if (conn) conn.release(); }
 };
 
 /**
@@ -131,10 +135,11 @@ export const getTrainingMatrix = async (req: Request, res: Response, next: NextF
  * GET /api/training-v2/tna/tasks?userId=&status=
  */
 export const getTrainingTasks = async (req: Request, res: Response, next: NextFunction) => {
+  let conn: any = null;
   try {
     const userId = Number(req.query.userId) || (req as any).user?.userId;
     const { status } = req.query;
-    const conn = await getConnection();
+    conn = await getConnection();
 
     let where = 'WHERE tt.user_id = ?';
     const params: any[] = [userId];
@@ -150,4 +155,5 @@ export const getTrainingTasks = async (req: Request, res: Response, next: NextFu
 
     res.json({ success: true, data: rows });
   } catch (e) { next(e); }
+  finally { if (conn) conn.release(); }
 };

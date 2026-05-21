@@ -29,6 +29,7 @@ interface CountResult extends RowDataPacket {
  * 获取作业票列表
  */
 export const getTickets = async (req: Request, res: Response, next: NextFunction) => {
+  let conn: any = null;
   try {
     const { 
       page = 1, 
@@ -44,7 +45,7 @@ export const getTickets = async (req: Request, res: Response, next: NextFunction
     const userId = (req as any).user.userId;
     const userRole = (req as any).user.role;
 
-    const conn = await getConnection();
+    conn = await getConnection();
 
     let query = 'SELECT wp.*, u.real_name as applicant_name, wtc.type_name FROM work_permits wp LEFT JOIN users u ON wp.applicant_id = u.id LEFT JOIN work_type_configs wtc ON wp.work_type = wtc.type_code WHERE 1=1';
     const params: any[] = [];
@@ -112,6 +113,8 @@ export const getTickets = async (req: Request, res: Response, next: NextFunction
   } catch (error) {
     console.error('Get tickets error:', error);
     next(error);
+  } finally {
+    if (conn) conn.release();
   }
 };
 
@@ -119,12 +122,13 @@ export const getTickets = async (req: Request, res: Response, next: NextFunction
  * 获取单个作业票详情
  */
 export const getTicketById = async (req: Request, res: Response, next: NextFunction) => {
+  let conn: any = null;
   try {
     const { id } = req.params;
     const userId = (req as any).user.userId;
     const userRole = (req as any).user.role;
 
-    const conn = await getConnection();
+    conn = await getConnection();
 
     const [tickets] = await conn.execute<TicketRow[]>(
       `SELECT wp.*, u.real_name as applicant_name, u.department as applicant_department 
@@ -176,6 +180,8 @@ export const getTicketById = async (req: Request, res: Response, next: NextFunct
   } catch (error) {
     console.error('Get ticket by id error:', error);
     next(error);
+  } finally {
+    if (conn) conn.release();
   }
 };
 
@@ -183,6 +189,7 @@ export const getTicketById = async (req: Request, res: Response, next: NextFunct
  * 创建作业票
  */
 export const createTicket = async (req: Request, res: Response, next: NextFunction) => {
+  let conn: any = null;
   try {
     const {
       ticketType,
@@ -216,7 +223,7 @@ export const createTicket = async (req: Request, res: Response, next: NextFuncti
       });
     }
 
-    const conn = await getConnection();
+    conn = await getConnection();
 
     // 生成作业票编号
     const ticketNo = `WP${Date.now()}${Math.floor(Math.random() * 1000).toString().padStart(3, '0')}`;
@@ -282,6 +289,8 @@ export const createTicket = async (req: Request, res: Response, next: NextFuncti
   } catch (error) {
     console.error('Create ticket error:', error);
     next(error);
+  } finally {
+    if (conn) conn.release();
   }
 };
 
@@ -289,6 +298,7 @@ export const createTicket = async (req: Request, res: Response, next: NextFuncti
  * 更新作业票
  */
 export const updateTicket = async (req: Request, res: Response, next: NextFunction) => {
+  let conn: any = null;
   try {
     const { id } = req.params;
     const {
@@ -307,7 +317,7 @@ export const updateTicket = async (req: Request, res: Response, next: NextFuncti
     const userId = (req as any).user.userId;
     const userRole = (req as any).user.role;
 
-    const conn = await getConnection();
+    conn = await getConnection();
 
     // 检查作业票是否存在及权限
     const [tickets] = await conn.execute<RowDataPacket[]>(
@@ -375,6 +385,8 @@ export const updateTicket = async (req: Request, res: Response, next: NextFuncti
   } catch (error) {
     console.error('Update ticket error:', error);
     next(error);
+  } finally {
+    if (conn) conn.release();
   }
 };
 
@@ -382,11 +394,12 @@ export const updateTicket = async (req: Request, res: Response, next: NextFuncti
  * 提交审批
  */
 export const submitApproval = async (req: Request, res: Response, next: NextFunction) => {
+  let conn: any = null;
   try {
     const { id } = req.params;
     const userId = (req as any).user.userId;
 
-    const conn = await getConnection();
+    conn = await getConnection();
 
     // 检查作业票
     const [tickets] = await conn.execute<RowDataPacket[]>(
@@ -438,6 +451,8 @@ export const submitApproval = async (req: Request, res: Response, next: NextFunc
   } catch (error) {
     console.error('Submit approval error:', error);
     next(error);
+  } finally {
+    if (conn) conn.release();
   }
 };
 
@@ -445,6 +460,7 @@ export const submitApproval = async (req: Request, res: Response, next: NextFunc
  * 审批操作
  */
 export const approveTicket = async (req: Request, res: Response, next: NextFunction) => {
+  let conn: any = null;
   try {
     const { id } = req.params;
     const { action, comment } = req.body; // action: approve/reject
@@ -458,7 +474,7 @@ export const approveTicket = async (req: Request, res: Response, next: NextFunct
       });
     }
 
-    const conn = await getConnection();
+    conn = await getConnection();
 
     // 检查作业票
     const [tickets] = await conn.execute<RowDataPacket[]>(
@@ -531,6 +547,8 @@ export const approveTicket = async (req: Request, res: Response, next: NextFunct
   } catch (error) {
     console.error('Approve ticket error:', error);
     next(error);
+  } finally {
+    if (conn) conn.release();
   }
 };
 
@@ -538,12 +556,13 @@ export const approveTicket = async (req: Request, res: Response, next: NextFunct
  * 删除作业票
  */
 export const deleteTicket = async (req: Request, res: Response, next: NextFunction) => {
+  let conn: any = null;
   try {
     const { id } = req.params;
     const userId = (req as any).user.userId;
     const userRole = (req as any).user.role;
 
-    const conn = await getConnection();
+    conn = await getConnection();
 
     // 检查作业票
     const [tickets] = await conn.execute<RowDataPacket[]>(
@@ -595,6 +614,8 @@ export const deleteTicket = async (req: Request, res: Response, next: NextFuncti
   } catch (error) {
     console.error('Delete ticket error:', error);
     next(error);
+  } finally {
+    if (conn) conn.release();
   }
 };
 
@@ -602,28 +623,45 @@ export const deleteTicket = async (req: Request, res: Response, next: NextFuncti
  * 获取作业票统计数据
  */
 export const getTicketStats = async (req: Request, res: Response, next: NextFunction) => {
+  let conn: any = null;
   try {
-    const conn = await getConnection();
+    conn = await getConnection();
 
     // 按状态统计
     const [statusStats] = await conn.execute<RowDataPacket[]>(
-      'SELECT status, COUNT(*) as count FROM work_permits GROUP BY status'
+      `SELECT 
+         COUNT(*) as total,
+         SUM(CASE WHEN status = 'completed' THEN 1 ELSE 0 END) as completed,
+         SUM(CASE WHEN status = 'pending' THEN 1 ELSE 0 END) as pending,
+         SUM(CASE WHEN status = 'in_progress' THEN 1 ELSE 0 END) as in_progress,
+         SUM(CASE WHEN status = 'expired' THEN 1 ELSE 0 END) as expired
+       FROM work_permits`
     );
 
     // 按类型统计
     const [typeStats] = await conn.execute<RowDataPacket[]>(
-      'SELECT ticket_type, COUNT(*) as count FROM work_permits GROUP BY ticket_type'
+      `SELECT 
+         ticket_type,
+         COUNT(*) as count
+       FROM work_permits
+       GROUP BY ticket_type`
     );
 
     // 按月份统计（今年）
     const [monthStats] = await conn.execute<RowDataPacket[]>(
-      'SELECT MONTH(created_at) as month, COUNT(*) as count FROM work_permits WHERE YEAR(created_at) = YEAR(NOW()) GROUP BY MONTH(created_at)'
+      `SELECT 
+         MONTH(created_at) as month,
+         COUNT(*) as count
+       FROM work_permits
+       WHERE YEAR(created_at) = YEAR(NOW())
+       GROUP BY MONTH(created_at)
+       ORDER BY month`
     );
 
     res.json({
       success: true,
       data: {
-        statusStats,
+        statusStats: statusStats[0],
         typeStats,
         monthStats
       }
@@ -631,6 +669,8 @@ export const getTicketStats = async (req: Request, res: Response, next: NextFunc
   } catch (error) {
     console.error('Get ticket stats error:', error);
     next(error);
+  } finally {
+    if (conn) conn.release();
   }
 };
 
@@ -639,6 +679,7 @@ export const getTicketStats = async (req: Request, res: Response, next: NextFunc
  * GET /api/tickets/verify-qr?code=xxx
  */
 export const verifyQrCode = async (req: Request, res: Response, next: NextFunction) => {
+  let conn: any = null;
   try {
     const { code } = req.query;
 
@@ -646,7 +687,7 @@ export const verifyQrCode = async (req: Request, res: Response, next: NextFuncti
       return res.status(400).json({ success: false, message: '请提供二维码编号' });
     }
 
-    const conn = await getConnection();
+    conn = await getConnection();
 
     const codeStr = String(code);
     const [tickets] = await conn.execute<RowDataPacket[]>(
@@ -689,5 +730,7 @@ export const verifyQrCode = async (req: Request, res: Response, next: NextFuncti
   } catch (error) {
     console.error('Verify QR code error:', error);
     next(error);
+  } finally {
+    if (conn) conn.release();
   }
 };

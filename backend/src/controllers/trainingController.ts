@@ -32,6 +32,7 @@ interface PlanCountRow extends RowDataPacket {
  * POST /api/training/progress
  */
 export const saveProgress = asyncHandler(async (req: Request, res: Response) => {
+  let conn;
   const userId = (req as any).user?.userId;
   const { planId, watchedTime, lastPosition, completed } = req.body;
 
@@ -39,7 +40,8 @@ export const saveProgress = asyncHandler(async (req: Request, res: Response) => 
     return res.status(400).json({ success: false, message: '课程ID不能为空' });
   }
 
-  const conn = await getConnection();
+  try {
+  conn = await getConnection();
 
   // 检查是否已有进度记录
   const [existing] = await conn.execute<RowDataPacket[]>(
@@ -62,6 +64,7 @@ export const saveProgress = asyncHandler(async (req: Request, res: Response) => 
   }
 
   res.json({ success: true, message: '学习进度已保存' });
+  } finally { if (conn) conn.release(); }
 });
 
 /**
@@ -69,6 +72,7 @@ export const saveProgress = asyncHandler(async (req: Request, res: Response) => 
  * GET /api/training/progress?planId=&userId=
  */
 export const getProgress = asyncHandler(async (req: Request, res: Response) => {
+  let conn;
   const userId = (req as any).user?.userId;
   const { planId } = req.query;
 
@@ -76,7 +80,8 @@ export const getProgress = asyncHandler(async (req: Request, res: Response) => {
     return res.status(400).json({ success: false, message: '课程ID不能为空' });
   }
 
-  const conn = await getConnection();
+  try {
+  conn = await getConnection();
 
   const [rows] = await conn.execute<RowDataPacket[]>(
     'SELECT id, course_id, watched_seconds, last_position, is_completed, created_at, updated_at FROM learning_progress WHERE course_id = ? AND user_id = ?',
@@ -99,6 +104,7 @@ export const getProgress = asyncHandler(async (req: Request, res: Response) => {
       data: { watchedTime: 0, lastPosition: 0, completed: false }
     });
   }
+  } finally { if (conn) conn.release(); }
 });
 
 /**
@@ -106,8 +112,10 @@ export const getProgress = asyncHandler(async (req: Request, res: Response) => {
  * GET /api/training/analysis?startDate=&endDate=&department=
  */
 export const getAnalysis = asyncHandler(async (req: Request, res: Response) => {
+  let conn;
   const { startDate, endDate, department } = req.query;
-  const conn = await getConnection();
+  try {
+  conn = await getConnection();
 
   let whereClause = 'WHERE 1=1';
   const params: any[] = [];
@@ -216,6 +224,7 @@ export const getAnalysis = asyncHandler(async (req: Request, res: Response) => {
       }))
     }
   });
+  } finally { if (conn) conn.release(); }
 });
 
 /**
@@ -223,10 +232,12 @@ export const getAnalysis = asyncHandler(async (req: Request, res: Response) => {
  * GET /api/training?page=&pageSize=&type=&status=&keyword=&startDate=&endDate=
  */
 export const getTrainingList = asyncHandler(async (req: Request, res: Response) => {
+  let conn;
   const { page = 1, pageSize = 20, type, status, keyword, startDate, endDate } = req.query;
   const offset = (Number(page) - 1) * Number(pageSize);
 
-  const conn = await getConnection();
+  try {
+  conn = await getConnection();
 
   let where = 'WHERE 1=1';
   const params: any[] = [];
@@ -280,6 +291,7 @@ export const getTrainingList = asyncHandler(async (req: Request, res: Response) 
       pagination: { page: Number(page), pageSize: Number(pageSize), total }
     }
   });
+  } finally { if (conn) conn.release(); }
 });
 
 /**
@@ -287,8 +299,10 @@ export const getTrainingList = asyncHandler(async (req: Request, res: Response) 
  * GET /api/training/:id
  */
 export const getTrainingById = asyncHandler(async (req: Request, res: Response) => {
+  let conn;
   const { id } = req.params;
-  const conn = await getConnection();
+  try {
+  conn = await getConnection();
   const [rows] = await conn.execute<RowDataPacket[]>(
     'SELECT p.*, (SELECT COUNT(*) FROM training_records r WHERE r.plan_id = p.id) as participantCount FROM training_plans p WHERE p.id = ?',
     [id]
@@ -301,6 +315,7 @@ export const getTrainingById = asyncHandler(async (req: Request, res: Response) 
     success: true,
     data: { ...rows[0], statusText: statusNames[rows[0].status] || 'unknown' }
   });
+  } finally { if (conn) conn.release(); }
 });
 
 /**
@@ -308,11 +323,13 @@ export const getTrainingById = asyncHandler(async (req: Request, res: Response) 
  * POST /api/training
  */
 export const createTraining = asyncHandler(async (req: Request, res: Response) => {
+  let conn;
   const { title, type, targetDepartment, startDate, endDate, hours, instructor, location, description } = req.body;
   if (!title) {
     return res.status(400).json({ success: false, message: '培训主题不能为空' });
   }
-  const conn = await getConnection();
+  try {
+  conn = await getConnection();
   const planNo = `TR${Date.now()}`;
   const [result] = await conn.execute<ResultSetHeader>(
     `INSERT INTO training_plans (plan_no, title, type, target_department, start_date, end_date, hours, instructor, location, status, description, created_at, updated_at)
@@ -324,6 +341,7 @@ export const createTraining = asyncHandler(async (req: Request, res: Response) =
     message: '培训计划创建成功',
     data: { id: result.insertId, planNo }
   });
+  } finally { if (conn) conn.release(); }
 });
 
 /**
@@ -331,9 +349,11 @@ export const createTraining = asyncHandler(async (req: Request, res: Response) =
  * PUT /api/training/:id
  */
 export const updateTraining = asyncHandler(async (req: Request, res: Response) => {
+  let conn;
   const { id } = req.params;
   const { title, type, targetDepartment, startDate, endDate, hours, instructor, location, status, description } = req.body;
-  const conn = await getConnection();
+  try {
+  conn = await getConnection();
   const [existing] = await conn.execute<RowDataPacket[]>('SELECT id FROM training_plans WHERE id = ?', [id]);
   if (!existing || existing.length === 0) {
     return res.status(404).json({ success: false, message: '培训计划不存在' });
@@ -345,6 +365,7 @@ export const updateTraining = asyncHandler(async (req: Request, res: Response) =
     [title, type, targetDepartment, startDate, endDate, hours, instructor, location, description, ...(statusValue ? [statusValue] : []), id].filter(v => v !== undefined)
   );
   res.json({ success: true, message: '培训计划更新成功' });
+  } finally { if (conn) conn.release(); }
 });
 
 /**
@@ -352,8 +373,10 @@ export const updateTraining = asyncHandler(async (req: Request, res: Response) =
  * DELETE /api/training/:id
  */
 export const deleteTraining = asyncHandler(async (req: Request, res: Response) => {
+  let conn;
   const { id } = req.params;
-  const conn = await getConnection();
+  try {
+  conn = await getConnection();
   const [existing] = await conn.execute<RowDataPacket[]>('SELECT id FROM training_plans WHERE id = ?', [id]);
   if (!existing || existing.length === 0) {
     return res.status(404).json({ success: false, message: '培训计划不存在' });
@@ -361,6 +384,7 @@ export const deleteTraining = asyncHandler(async (req: Request, res: Response) =
   // 软删除：将状态设为已取消
   await conn.execute('UPDATE training_plans SET status = 4, updated_at = NOW() WHERE id = ?', [id]);
   res.json({ success: true, message: '培训计划已取消' });
+  } finally { if (conn) conn.release(); }
 });
 
 /**
@@ -371,6 +395,7 @@ export const deleteTraining = asyncHandler(async (req: Request, res: Response) =
  * 每30秒调用一次，后端累计学习时长并防止挂机
  */
 export const heartbeat = asyncHandler(async (req: Request, res: Response) => {
+  let conn;
   const userId = (req as any).user?.userId;
   const { courseId, sectionId, currentTime } = req.body;
 
@@ -378,7 +403,8 @@ export const heartbeat = asyncHandler(async (req: Request, res: Response) => {
     return res.status(400).json({ success: false, message: '课程ID不能为空' });
   }
 
-  const conn = await getConnection();
+  try {
+  conn = await getConnection();
 
   // 1. 更新 learning_progress 表（如果存在则更新，不存在则创建）
   const [existing] = await conn.execute<RowDataPacket[]>(
@@ -435,4 +461,5 @@ export const heartbeat = asyncHandler(async (req: Request, res: Response) => {
   }
 
   res.json({ code: 200, success: true, msg: '心跳已记录' });
+  } finally { if (conn) conn.release(); }
 });
