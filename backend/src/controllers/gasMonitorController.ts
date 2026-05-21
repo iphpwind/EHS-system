@@ -11,8 +11,10 @@ const router = Router();
  * query: ticketId, locationId, source(iot/manual), startTime, endTime
  */
 export const getGasMonitorList = asyncHandler(async (req: Request, res: Response) => {
+  let conn;
   const { ticketId, locationId, source, startTime, endTime, page = 1, pageSize = 20 } = req.query;
-  const conn = await getConnection();
+  try {
+  conn = await getConnection();
   const offset = (Number(page) - 1) * Number(pageSize);
 
   let where = 'WHERE 1=1';
@@ -56,6 +58,7 @@ export const getGasMonitorList = asyncHandler(async (req: Request, res: Response
     page: Number(page),
     pageSize: Number(pageSize)
   });
+  } finally { if (conn) conn.release(); }
 });
 
 /**
@@ -64,8 +67,10 @@ export const getGasMonitorList = asyncHandler(async (req: Request, res: Response
  * query: locationId - 区域ID，不传则返回所有区域最新数据
  */
 export const getLatestGasData = asyncHandler(async (req: Request, res: Response) => {
+  let conn;
   const { locationId } = req.query;
-  const conn = await getConnection();
+  try {
+  conn = await getConnection();
 
   let sql = `SELECT g.*, a.area_name, a.lel_threshold, a.toxic_threshold
     FROM (
@@ -93,6 +98,7 @@ export const getLatestGasData = asyncHandler(async (req: Request, res: Response)
   }));
 
   res.json({ success: true, data: formattedRows });
+  } finally { if (conn) conn.release(); }
 });
 
 /**
@@ -101,6 +107,7 @@ export const getLatestGasData = asyncHandler(async (req: Request, res: Response)
  * 设备通过API Key认证
  */
 export const iotUpload = asyncHandler(async (req: Request, res: Response) => {
+  let conn;
   const {
     deviceId,
     locationId,
@@ -118,7 +125,8 @@ export const iotUpload = asyncHandler(async (req: Request, res: Response) => {
     return res.status(400).json({ success: false, message: '设备ID和区域ID不能为空' });
   }
 
-  const conn = await getConnection();
+  try {
+  conn = await getConnection();
 
   const [locationRows] = await conn.execute<RowDataPacket[]>(
     'SELECT lel_threshold, toxic_threshold FROM monitor_areas WHERE id = ?',
@@ -154,6 +162,7 @@ export const iotUpload = asyncHandler(async (req: Request, res: Response) => {
       toxic_ok: toxicOk
     }
   });
+  } finally { if (conn) conn.release(); }
 });
 
 /**
@@ -161,6 +170,7 @@ export const iotUpload = asyncHandler(async (req: Request, res: Response) => {
  * POST /api/gas-monitor/manual
  */
 export const manualEntry = asyncHandler(async (req: Request, res: Response) => {
+  let conn;
   const userId = (req as any).user?.userId;
   const username = (req as any).user?.username;
   const {
@@ -178,7 +188,8 @@ export const manualEntry = asyncHandler(async (req: Request, res: Response) => {
     remark
   } = req.body;
 
-  const conn = await getConnection();
+  try {
+  conn = await getConnection();
 
   const [locationRows] = await conn.execute<RowDataPacket[]>(
     'SELECT lel_threshold, toxic_threshold FROM monitor_areas WHERE id = ?',
@@ -213,6 +224,7 @@ export const manualEntry = asyncHandler(async (req: Request, res: Response) => {
     },
     message: '气体检测记录已保存'
   });
+  } finally { if (conn) conn.release(); }
 });
 
 /**
@@ -220,6 +232,7 @@ export const manualEntry = asyncHandler(async (req: Request, res: Response) => {
  * PUT /api/gas-monitor/:id
  */
 export const updateGasRecord = asyncHandler(async (req: Request, res: Response) => {
+  let conn;
   const { id } = req.params;
   const {
     oxygenPercent,
@@ -233,7 +246,8 @@ export const updateGasRecord = asyncHandler(async (req: Request, res: Response) 
     remark
   } = req.body;
 
-  const conn = await getConnection();
+  try {
+  conn = await getConnection();
 
   const [rows] = await conn.execute<RowDataPacket[]>(
     'SELECT location_id FROM gas_monitor WHERE id = ?',
@@ -276,6 +290,7 @@ export const updateGasRecord = asyncHandler(async (req: Request, res: Response) 
     },
     message: '气体检测记录已更新'
   });
+  } finally { if (conn) conn.release(); }
 });
 
 /**
@@ -283,11 +298,14 @@ export const updateGasRecord = asyncHandler(async (req: Request, res: Response) 
  * DELETE /api/gas-monitor/:id
  */
 export const deleteGasRecord = asyncHandler(async (req: Request, res: Response) => {
+  let conn;
   const { id } = req.params;
-  const conn = await getConnection();
+  try {
+  conn = await getConnection();
 
   await conn.execute('DELETE FROM gas_monitor WHERE id = ?', [id]);
   res.json({ success: true, message: '记录已删除' });
+  } finally { if (conn) conn.release(); }
 });
 
 /**
@@ -296,13 +314,15 @@ export const deleteGasRecord = asyncHandler(async (req: Request, res: Response) 
  * query: locationId, startTime, endTime
  */
 export const getGasTrend = asyncHandler(async (req: Request, res: Response) => {
+  let conn;
   const { locationId, startTime, endTime } = req.query;
 
   if (!locationId) {
     return res.status(400).json({ success: false, message: '区域ID不能为空' });
   }
 
-  const conn = await getConnection();
+  try {
+  conn = await getConnection();
   const params: any[] = [locationId];
 
   let where = 'WHERE location_id = ?';
@@ -324,6 +344,7 @@ export const getGasTrend = asyncHandler(async (req: Request, res: Response) => {
   );
 
   res.json({ success: true, data: rows });
+  } finally { if (conn) conn.release(); }
 });
 
 /**
@@ -332,8 +353,10 @@ export const getGasTrend = asyncHandler(async (req: Request, res: Response) => {
  * query: locationId, startTime, endTime
  */
 export const getGasStats = asyncHandler(async (req: Request, res: Response) => {
+  let conn;
   const { locationId, startTime, endTime } = req.query;
-  const conn = await getConnection();
+  try {
+  conn = await getConnection();
 
   let where = 'WHERE 1=1';
   const params: any[] = [];
@@ -365,6 +388,7 @@ export const getGasStats = asyncHandler(async (req: Request, res: Response) => {
   );
 
   res.json({ success: true, data: rows[0] });
+  } finally { if (conn) conn.release(); }
 });
 
 /**
@@ -372,8 +396,10 @@ export const getGasStats = asyncHandler(async (req: Request, res: Response) => {
  * GET /api/gas-monitor/ticket/:ticketId
  */
 export const getTicketGasRecords = asyncHandler(async (req: Request, res: Response) => {
+  let conn;
   const { ticketId } = req.params;
-  const conn = await getConnection();
+  try {
+  conn = await getConnection();
 
   const [rows] = await conn.execute<RowDataPacket[]>(
     `SELECT * FROM gas_monitor
@@ -383,6 +409,7 @@ export const getTicketGasRecords = asyncHandler(async (req: Request, res: Respon
   );
 
   res.json({ success: true, data: rows });
+  } finally { if (conn) conn.release(); }
 });
 
 /**
@@ -390,16 +417,19 @@ export const getTicketGasRecords = asyncHandler(async (req: Request, res: Respon
  * POST /api/gas-monitor/:id/link-ticket
  */
 export const linkTicket = asyncHandler(async (req: Request, res: Response) => {
+  let conn;
   const { id } = req.params;
   const { ticketId } = req.body;
 
-  const conn = await getConnection();
+  try {
+  conn = await getConnection();
   await conn.execute(
     'UPDATE gas_monitor SET ticket_id = ?, updated_at = NOW() WHERE id = ?',
     [ticketId, id]
   );
 
   res.json({ success: true, message: '作业票关联成功' });
+  } finally { if (conn) conn.release(); }
 });
 
 export default router;

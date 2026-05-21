@@ -7,7 +7,9 @@ import { asyncHandler } from '../utils/errors';
  * 获取隐患列表（分页+筛选）
  */
 export const getHazardList = asyncHandler(async (req: Request, res: Response) => {
-  const conn = await getConnection();
+  let conn;
+  try {
+  conn = await getConnection();
   const { page = 1, pageSize = 20, level, status, department, keyword, startDate, endDate } = req.query;
   const offset = (Number(page) - 1) * Number(pageSize);
   const where: string[] = [];
@@ -66,13 +68,16 @@ export const getHazardList = asyncHandler(async (req: Request, res: Response) =>
       }
     }
   });
+  } finally { if (conn) conn.release(); }
 });
 
 /**
  * 获取隐患详情
  */
 export const getHazardById = asyncHandler(async (req: Request, res: Response) => {
-  const conn = await getConnection();
+  let conn;
+  try {
+  conn = await getConnection();
   const [rows] = await conn.execute<RowDataPacket[]>(
     `SELECT h.*, u.real_name AS discoverer_name, uv.real_name AS verifier_name 
      FROM hazard_inspection h 
@@ -85,32 +90,38 @@ export const getHazardById = asyncHandler(async (req: Request, res: Response) =>
     return res.status(404).json({ success: false, message: '隐患记录不存在' });
   }
   res.json({ success: true, data: rows[0] });
+  } finally { if (conn) conn.release(); }
 });
 
 /**
  * 新增隐患
  */
 export const createHazard = asyncHandler(async (req: Request, res: Response) => {
+  let conn;
   const { inspection_no, hazard_description, hazard_level, location, department, discoverer_id, rectification_deadline, rectification_responsible } = req.body;
   if (!hazard_description) {
     return res.status(400).json({ success: false, message: '隐患描述不能为空' });
   }
-  const conn = await getConnection();
+  try {
+  conn = await getConnection();
   const [result] = await conn.execute<ResultSetHeader>(
     `INSERT INTO hazard_inspection (inspection_no, hazard_description, hazard_level, location, department, discoverer_id, rectification_deadline, rectification_responsible, status, created_at, updated_at)
      VALUES (?, ?, ?, ?, ?, ?, ?, ?, 1, NOW(), NOW())`,
     [inspection_no || ('HZ-' + Date.now()), hazard_description, hazard_level || 'general', location, department, discoverer_id || null, rectification_deadline || null, rectification_responsible || null]
   );
   res.status(201).json({ success: true, message: '隐患登记成功', data: { id: result.insertId } });
+  } finally { if (conn) conn.release(); }
 });
 
 /**
  * 更新隐患
  */
 export const updateHazard = asyncHandler(async (req: Request, res: Response) => {
+  let conn;
   const { id } = req.params;
   const { hazard_description, hazard_level, location, department, status, rectification_measure, rectification_deadline, rectification_responsible } = req.body;
-  const conn = await getConnection();
+  try {
+  conn = await getConnection();
   const fields: string[] = [];
   const params: any[] = [];
   if (hazard_description !== undefined) { fields.push('hazard_description = ?'); params.push(hazard_description); }
@@ -128,50 +139,62 @@ export const updateHazard = asyncHandler(async (req: Request, res: Response) => 
   params.push(id);
   await conn.execute(`UPDATE hazard_inspection SET ${fields.join(', ')} WHERE id = ?`, params);
   res.json({ success: true, message: '隐患记录已更新' });
+  } finally { if (conn) conn.release(); }
 });
 
 /**
  * 删除隐患
  */
 export const deleteHazard = asyncHandler(async (req: Request, res: Response) => {
-  const conn = await getConnection();
+  let conn;
+  try {
+  conn = await getConnection();
   await conn.execute('DELETE FROM hazard_inspection WHERE id = ?', [req.params.id]);
   res.json({ success: true, message: '隐患记录已删除' });
+  } finally { if (conn) conn.release(); }
 });
 
 /**
  * 整改隐患
  */
 export const rectifyHazard = asyncHandler(async (req: Request, res: Response) => {
+  let conn;
   const { id } = req.params;
   const { rectification_measure, rectification_deadline, rectification_responsible } = req.body;
-  const conn = await getConnection();
+  try {
+  conn = await getConnection();
   await conn.execute(
     `UPDATE hazard_inspection SET status = 2, rectification_measure = ?, rectification_deadline = ?, rectification_responsible = ?, rectification_time = NOW(), updated_at = NOW() WHERE id = ? AND status = 1`,
     [rectification_measure || null, rectification_deadline || null, rectification_responsible || null, id]
   );
   res.json({ success: true, message: '隐患已提交整改' });
+  } finally { if (conn) conn.release(); }
 });
 
 /**
  * 验收隐患
  */
 export const acceptHazard = asyncHandler(async (req: Request, res: Response) => {
+  let conn;
   const { id } = req.params;
   const { verification_result, verifier_id } = req.body;
-  const conn = await getConnection();
+  try {
+  conn = await getConnection();
   await conn.execute(
     `UPDATE hazard_inspection SET status = 4, verification_result = ?, verifier_id = ?, verification_time = NOW(), updated_at = NOW() WHERE id = ? AND status = 3`,
     [verification_result || 1, verifier_id || null, id]
   );
   res.json({ success: true, message: '隐患验收完成' });
+  } finally { if (conn) conn.release(); }
 });
 
 /**
  * 隐患统计
  */
 export const getHazardStats = asyncHandler(async (req: Request, res: Response) => {
-  const conn = await getConnection();
+  let conn;
+  try {
+  conn = await getConnection();
   const [rows] = await conn.execute<RowDataPacket[]>(
     `SELECT 
        COUNT(*) AS total,
@@ -183,4 +206,5 @@ export const getHazardStats = asyncHandler(async (req: Request, res: Response) =
      FROM hazard_inspection`
   );
   res.json({ success: true, data: rows[0] });
+  } finally { if (conn) conn.release(); }
 });

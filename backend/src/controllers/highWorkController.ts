@@ -3,6 +3,7 @@ import { getConnection } from '../config/database';
 import { RowDataPacket, OkPacket } from 'mysql2';
 import { checkCanWork } from '../utils/validateState';
 import { recordTrace } from '../utils/operationTracer';
+import { createGuardianSignInHandler, createGuardianConfirmEndHandler } from './guardianSignInHelper';
 
 const statusTextMap: Record<string, string> = {
   '1': '草稿', '2': '已提交', '3': '部门审批通过',
@@ -14,26 +15,29 @@ const extTable = 'highwork_tickets';
 const prefix = 'HW';
 
 export const getHighWorkList = async (req: Request, res: Response, next: NextFunction) => {
+  let conn: any = null;
   try {
     const { page = 1, pageSize = 10, status, keyword, deptId, startDate, endDate } = req.query;
     const userId = (req as any).user?.userId;
     const userRole = (req as any).user?.role;
-    const userDeptName = (req as any).user?.department || '';
+    // ✅ P0迁移：改用 scopeMiddleware 注入的 department_id INT
+    const userDeptId = (req as any).userDeptId || null;
     const userOrgId = (req as any).user?.orgId || 1;
-    const conn = await getConnection();
+    conn = await getConnection();
     let sql = `SELECT wp.id, wp.ticket_no, wp.status as main_status, wp.applicant_id, wp.created_at,
-      u.real_name as applicant_name, d.name as dept_name,
+      u.real_name as applicant_name, u.department_id as applicant_dept_id, d.name as dept_name,
       ext.work_height, ext.work_level, ext.weather_condition
       FROM work_permits wp
       LEFT JOIN users u ON wp.applicant_id = u.id
-      LEFT JOIN departments d ON d.name = u.department
+      LEFT JOIN departments d ON d.id = u.department_id  -- ✅ INT 外键
       LEFT JOIN ${extTable} ext ON wp.id = ext.permit_id
       WHERE wp.ticket_type = ?`;
     const params: any[] = [ticketType];
     if (userRole > 1) { sql += ' AND wp.org_id = ?'; params.push(userOrgId); }
-    if (userRole >= 4) { sql += ' AND u.department = ?'; params.push(userDeptName); }
+    // ✅ P0迁移：使用 INT department_id 过滤
+    if (userDeptId) { sql += ' AND u.department_id = ?'; params.push(userDeptId); }
     if (status) { sql += ' AND wp.status = ?'; params.push(status); }
-    if (deptId) { sql += ' AND u.department = (SELECT name FROM departments WHERE id = ?)'; params.push(deptId); }
+    if (deptId) { sql += ' AND u.department_id = ?'; params.push(deptId); }
     if (keyword) { sql += ' AND (wp.ticket_no LIKE ? OR wp.project_name LIKE ?)'; params.push(`%${keyword}%`, `%${keyword}%`); }
     if (startDate) { sql += ' AND DATE(wp.created_at) >= ?'; params.push(startDate); }
     if (endDate) { sql += ' AND DATE(wp.created_at) <= ?'; params.push(endDate); }
@@ -45,21 +49,25 @@ export const getHighWorkList = async (req: Request, res: Response, next: NextFun
     const list = (rows as any[]).map(r => ({ ...r, statusText: statusTextMap[r.main_status] || r.main_status }));
     res.json({ code: 200, msg: 'success', data: list, total });
   } catch (error) { next(error); }
+  finally { if (conn) conn.release(); }
 };
 
 export const getHighWorkDetail = async (req: Request, res: Response, next: NextFunction) => {
+  let conn: any = null;
   try {
-    const { id } = req.params; const conn = await getConnection();
-    const [mainRows] = await conn.execute<RowDataPacket[]>(`SELECT wp.*, u.real_name as applicant_name, d.name as dept_name FROM work_permits wp LEFT JOIN users u ON wp.applicant_id = u.id LEFT JOIN departments d ON d.name = u.department WHERE wp.id = ?`, [id]);
+    const { id } = req.params; conn = await getConnection();
+    const [mainRows] = await conn.execute<RowDataPacket[]>(`SELECT wp.*, u.real_name as applicant_name, d.name as dept_name FROM work_permits wp LEFT JOIN users u ON wp.applicant_id = u.id LEFT JOIN departments d ON d.id = u.department_id WHERE wp.id = ?`, [id]);
     if (!mainRows.length) return res.status(404).json({ code: 404, msg: '作业票不存在' });
     const [extRows] = await conn.execute<RowDataPacket[]>(`SELECT * FROM ${extTable} WHERE permit_id = ?`, [id]);
     const [signRows] = await conn.execute<RowDataPacket[]>(`SELECT * FROM signatures WHERE biz_id = ? AND biz_type = ? ORDER BY sign_time ASC`, [id, ticketType]);
     const [approvalRows] = await conn.execute<RowDataPacket[]>(`SELECT * FROM ticket_approvals WHERE ticket_id = ? ORDER BY approval_time ASC`, [id]);
     res.json({ code: 200, msg: 'success', data: { ...mainRows[0], statusText: statusTextMap[String((mainRows[0] as any).status)] || (mainRows[0] as any).status, extension: extRows[0] || {}, signatures: signRows, approvals: approvalRows } });
   } catch (error) { next(error); }
+  finally { if (conn) conn.release(); }
 };
 
 export const createHighWork = async (req: Request, res: Response, next: NextFunction) => {
+  let conn: any = null;
   try {
     const { projectName, workLocation, workContent, startTime, endTime, workHeight, workLevel, weatherCondition, hasGroundProtection, hasSafetyNet, safetyMeasures, deptId } = req.body;
     const userId = (req as any).user?.userId;
@@ -70,7 +78,7 @@ export const createHighWork = async (req: Request, res: Response, next: NextFunc
       return res.status(403).json({ code: 403, msg: canWork.reason });
     }
 
-    const conn = await getConnection();
+    conn = await getConnection();
     await conn.beginTransaction();
     try {
       const ticketNo = `${prefix}${Date.now()}${Math.floor(Math.random()*1000).toString().padStart(3,'0')}`;
@@ -90,12 +98,14 @@ export const createHighWork = async (req: Request, res: Response, next: NextFunc
       res.status(201).json({ code: 200, msg: 'success', data: { id: ticketId, ticketNo } });
     } catch (err) { await conn.rollback(); throw err; }
   } catch (error) { next(error); }
+  finally { if (conn) conn.release(); }
 };
 
 export const updateHighWork = async (req: Request, res: Response, next: NextFunction) => {
+  let conn: any = null;
   try {
     const { id } = req.params; const { projectName, workLocation, workContent, startTime, endTime, workHeight, workLevel, weatherCondition, hasGroundProtection, hasSafetyNet, safetyMeasures } = req.body;
-    const userId = (req as any).user?.userId; const conn = await getConnection();
+    const userId = (req as any).user?.userId; conn = await getConnection();
     const [checkRows] = await conn.execute<RowDataPacket[]>('SELECT status, applicant_id FROM work_permits WHERE id = ?', [id]);
     if (!checkRows.length) return res.status(404).json({ code: 404, msg: '作业票不存在' });
     const check = checkRows[0] as any;
@@ -108,11 +118,13 @@ export const updateHighWork = async (req: Request, res: Response, next: NextFunc
       await conn.commit(); res.json({ code: 200, msg: 'success' });
     } catch (err) { await conn.rollback(); throw err; }
   } catch (error) { next(error); }
+  finally { if (conn) conn.release(); }
 };
 
 export const submitHighWork = async (req: Request, res: Response, next: NextFunction) => {
+  let conn: any = null;
   try {
-    const { id } = req.params; const userId = (req as any).user?.userId; const conn = await getConnection();
+    const { id } = req.params; const userId = (req as any).user?.userId; conn = await getConnection();
     const [rows] = await conn.execute<RowDataPacket[]>('SELECT status, applicant_id FROM work_permits WHERE id = ?', [id]);
     if (!rows.length) return res.status(404).json({ code: 404, msg: '作业票不存在' });
     const ticket = rows[0] as any;
@@ -130,12 +142,14 @@ export const submitHighWork = async (req: Request, res: Response, next: NextFunc
 
     res.json({ code: 200, msg: '提交成功' });
   } catch (error) { next(error); }
+  finally { if (conn) conn.release(); }
 };
 
 export const approveHighWork = async (req: Request, res: Response, next: NextFunction) => {
+  let conn: any = null;
   try {
     const { id } = req.params; const { action, comment = '' } = req.body;
-    const userId = (req as any).user?.userId; const userName = (req as any).user?.username || ''; const userRole = (req as any).user?.role; const conn = await getConnection();
+    const userId = (req as any).user?.userId; const userName = (req as any).user?.username || ''; const userRole = (req as any).user?.role; conn = await getConnection();
     if (!action || !['dept','safety','final','reject'].includes(action)) return res.status(400).json({ code: 400, msg: '审批动作不正确' });
     const [rows] = await conn.execute<RowDataPacket[]>('SELECT id, ticket_no, status, current_node FROM work_permits WHERE id = ?', [id]);
     if (!rows.length) return res.status(404).json({ code: 404, msg: '作业票不存在' });
@@ -162,11 +176,13 @@ export const approveHighWork = async (req: Request, res: Response, next: NextFun
       res.json({ code: 200, msg: action === 'reject' ? '已驳回' : '审批通过' });
     } catch (err) { await conn.rollback(); throw err; }
   } catch (error) { next(error); }
+  finally { if (conn) conn.release(); }
 };
 
 export const startWork = async (req: Request, res: Response, next: NextFunction) => {
+  let conn: any = null;
   try {
-    const { id } = req.params; const conn = await getConnection();
+    const { id } = req.params; conn = await getConnection();
     const [rows] = await conn.execute<RowDataPacket[]>('SELECT status FROM work_permits WHERE id = ?', [id]);
     if (!rows.length) return res.status(404).json({ code: 404, msg: '作业票不存在' });
     if ((rows[0] as any).status !== '5') return res.status(400).json({ code: 400, msg: '只有已批准状态才能开始作业' });
@@ -182,11 +198,13 @@ export const startWork = async (req: Request, res: Response, next: NextFunction)
 
     res.json({ code: 200, msg: '作业开始' });
   } catch (error) { next(error); }
+  finally { if (conn) conn.release(); }
 };
 
 export const finishWork = async (req: Request, res: Response, next: NextFunction) => {
+  let conn: any = null;
   try {
-    const { id } = req.params; const conn = await getConnection();
+    const { id } = req.params; conn = await getConnection();
     const [rows] = await conn.execute<RowDataPacket[]>('SELECT status FROM work_permits WHERE id = ?', [id]);
     if (!rows.length) return res.status(404).json({ code: 404, msg: '作业票不存在' });
     if ((rows[0] as any).status !== '6') return res.status(400).json({ code: 400, msg: '只有作业中状态才能完成作业' });
@@ -203,11 +221,13 @@ export const finishWork = async (req: Request, res: Response, next: NextFunction
 
     res.json({ code: 200, msg: '作业完成，待验收' });
   } catch (error) { next(error); }
+  finally { if (conn) conn.release(); }
 };
 
 export const closeWork = async (req: Request, res: Response, next: NextFunction) => {
+  let conn: any = null;
   try {
-    const { id } = req.params; const { comment = '' } = req.body; const userId = (req as any).user?.userId; const conn = await getConnection();
+    const { id } = req.params; const { comment = '' } = req.body; const userId = (req as any).user?.userId; conn = await getConnection();
     const [rows] = await conn.execute<RowDataPacket[]>('SELECT status FROM work_permits WHERE id = ?', [id]);
     if (!rows.length) return res.status(404).json({ code: 404, msg: '作业票不存在' });
     const s = (rows[0] as any).status;
@@ -225,4 +245,9 @@ export const closeWork = async (req: Request, res: Response, next: NextFunction)
 
     res.json({ code: 200, msg: '已关闭归档' });
   } catch (error) { next(error); }
+  finally { if (conn) conn.release(); }
 };
+
+// ==================== 监护人签到（通用模块注入） ====================
+export const guardianSignIn = createGuardianSignInHandler(ticketType, extTable);
+export const guardianConfirmEnd = createGuardianConfirmEndHandler(ticketType);
