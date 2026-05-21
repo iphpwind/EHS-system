@@ -6,7 +6,8 @@ import {
   getConfinedSpaceList, getConfinedSpaceDetail,
   createConfinedSpace, updateConfinedSpace,
   submitConfinedSpace, approveConfinedSpace,
-  startWork, finishWork, closeWork
+  startWork, finishWork, closeWork,
+  guardianSignIn, guardianConfirmEnd
 } from '../controllers/confinedSpaceController';
 
 const router = Router();
@@ -22,5 +23,8 @@ router.post('/:id/approve', authenticateToken, gb30871ApproveValidator('confined
 router.post('/:id/start', authenticateToken, startWork);
 router.post('/:id/finish', authenticateToken, finishWork);
 router.post('/:id/close', authenticateToken, closeWork);
+// 监护人签到（GB 30871 强制）
+router.post('/:id/guardian-sign-in', authenticateToken, guardianSignIn);
+router.post('/:id/guardian-confirm', authenticateToken, guardianConfirmEnd);
 
 export default router;

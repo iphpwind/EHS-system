@@ -9,8 +9,9 @@ const router = Router();
  * GET /api/system-monitor/health
  */
 router.get('/health', async (req: Request, res: Response) => {
+  let conn;
   try {
-    const conn = await getConnection();
+    conn = await getConnection();
     const start = Date.now();
 
     // 数据库延迟检测
@@ -20,20 +21,20 @@ router.get('/health', async (req: Request, res: Response) => {
     // 各业务统计
     const [workCount] = await conn.execute(
       `SELECT 
-        COUNT(*) as total,
-        SUM(IF(status = '2', 1, 0)) as pending,
-        SUM(IF(status = '3', 1, 0)) as deptApprove,
-        SUM(IF(status = '4', 1, 0)) as safetyApprove,
-        SUM(IF(status IN ('5','6'), 1, 0)) as working,
-        SUM(IF(status = '8', 1, 0)) as closed
-       FROM work_permits`
+          COUNT(*) as total,
+          SUM(IF(status = '2', 1, 0)) as pending,
+          SUM(IF(status = '3', 1, 0)) as deptApprove,
+          SUM(IF(status = '4', 1, 0)) as safetyApprove,
+          SUM(IF(status IN ('5','6'), 1, 0)) as working,
+          SUM(IF(status = '8', 1, 0)) as closed
+         FROM work_permits`
     );
     const [hazardCount] = await conn.execute(
       `SELECT 
-        COUNT(*) as total,
-        SUM(IF(status != 4 AND status != 'closed', 1, 0)) as open,
-        SUM(IF(rectification_deadline < NOW() AND status != 4 AND status != 'closed', 1, 0)) as overdue
-       FROM hazard_inspection`
+          COUNT(*) as total,
+          SUM(IF(status != 4 AND status != 'closed', 1, 0)) as open,
+          SUM(IF(rectification_deadline < NOW() AND status != 4 AND status != 'closed', 1, 0)) as overdue
+         FROM hazard_inspection`
     );
     const [trainingCount] = await conn.execute(
       `SELECT COUNT(*) as total FROM training_records`
@@ -65,6 +66,8 @@ router.get('/health', async (req: Request, res: Response) => {
     });
   } catch (error: any) {
     res.status(500).json({ code: 500, msg: error.message || '系统错误' });
+  } finally {
+    if (conn) conn.release();
   }
 });
 
@@ -73,9 +76,10 @@ router.get('/health', async (req: Request, res: Response) => {
  * GET /api/system-monitor/summary
  */
 router.get('/summary', authenticateToken, async (req: Request, res: Response) => {
+  let conn;
   try {
     const userId = (req as any).user?.userId;
-    const conn = await getConnection();
+    conn = await getConnection();
 
     const [myWork] = await conn.execute(
       `SELECT COUNT(*) as count FROM work_permits WHERE applicant_id = ? AND status IN ('1','2','3','4')`,
@@ -105,6 +109,8 @@ router.get('/summary', authenticateToken, async (req: Request, res: Response) =>
     });
   } catch (error: any) {
     res.status(500).json({ code: 500, msg: error.message || '系统错误' });
+  } finally {
+    if (conn) conn.release();
   }
 });
 

@@ -8,14 +8,16 @@ router.get('/menu/getRouters', async (req: express.Request, res: express.Respons
   try {
     // 获取启用的模块配置
     let enabledModules: string[] = [];
+    let conn;
     try {
-      const conn = await getConnection();
+      conn = await getConnection();
       const [rows] = await conn.execute('SELECT module_key FROM module_config WHERE enabled = 1');
       enabledModules = (rows as any[]).map(r => r.module_key);
-      conn.release();
     } catch (e) {
       console.error('Module config query error:', e);
       enabledModules = ['safework', 'system', 'equipment', 'sensor', 'hazard', 'monitor'];
+    } finally {
+      if (conn) conn.release();
     }
 
     // 返回完整菜单结构
@@ -75,7 +77,8 @@ router.get('/menu/getRouters', async (req: express.Request, res: express.Respons
           { name: 'TrainingTestStat', path: 'testStat', hidden: false, component: 'safework/testStat/index', meta: { title: '考试统计', icon: 'data-line', noCache: false, link: null } },
           { name: 'TrainingClassHour', path: 'classHour', hidden: false, component: 'safework/classHour/index', meta: { title: '学时管理', icon: 'time', noCache: false, link: null } },
           { name: 'TrainingCategory', path: 'category', hidden: false, component: 'safework/category/index', meta: { title: '培训分类', icon: 'folder', noCache: false, link: null } },
-          { name: 'TrainingGuardian', path: 'guardian', hidden: false, component: 'safework/guardian/index', meta: { title: '监护人管理', icon: 'user-solid', noCache: false, link: null } }
+          { name: 'TrainingGuardian', path: 'guardian', hidden: false, component: 'safework/guardian/index', meta: { title: '监护人管理', icon: 'user-solid', noCache: false, link: null } },
+          { name: 'TrainingStatistics', path: 'statistics', hidden: false, component: 'training/Statistics', meta: { title: '培训统计', icon: 'data-analysis', noCache: false, link: null } }
         ]
       },
       {

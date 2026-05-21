@@ -6,7 +6,8 @@ import {
   createHotWork, updateHotWork,
   submitHotWork, approveHotWork,
   startWork, finishWork, closeWork,
-  gasCheck, getGasChecks
+  gasCheck, getGasChecks,
+  guardianSignIn, guardianConfirmEnd
 } from '../controllers/hotWorkController';
 
 const router = Router();
@@ -29,5 +30,9 @@ router.post('/:id/close', authenticateToken, closeWork);
 // 气体检测
 router.get('/:id/gas', authenticateToken, getGasChecks);
 router.post('/:id/gas', authenticateToken, gasCheck);
+
+// 监护人签到（GB 30871 强制）
+router.post('/:id/guardian-sign-in', authenticateToken, guardianSignIn);
+router.post('/:id/guardian-confirm', authenticateToken, guardianConfirmEnd);
 
 export default router;

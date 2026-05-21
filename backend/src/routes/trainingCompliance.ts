@@ -13,6 +13,11 @@ import {
   preCheckTrainingStatus,
   annualReport,
   creditCalculator,
+  listThreeLevelRecords,
+  getThreeLevelRecord,
+  createThreeLevelRecord,
+  updateThreeLevelRecord,
+  assessThreeLevelRecord,
 } from '../controllers/trainingComplianceController';
 
 const router = Router();
@@ -34,5 +39,12 @@ router.get('/annual-report', authenticateToken, annualReport);
 
 // ===== 学时换算计算器 =====
 router.get('/credit-calc', authenticateToken, creditCalculator);
+
+// ===== 三级教育记录 CRUD =====
+router.get('/records', authenticateToken, listThreeLevelRecords);
+router.get('/records/:id', authenticateToken, getThreeLevelRecord);
+router.post('/records', authenticateToken, createThreeLevelRecord);
+router.put('/records/:id', authenticateToken, updateThreeLevelRecord);
+router.post('/records/:id/assess', authenticateToken, assessThreeLevelRecord);
 
 export default router;
