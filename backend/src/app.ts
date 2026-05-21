@@ -103,6 +103,7 @@ import { errorHandler } from './utils/errors';
 import { getConnection } from './config/database';
 import { deduplicateMiddleware } from './middleware/deduplicateMiddleware';
 import { startAllJobs } from './utils/scheduler';
+import { initRedis } from './utils/cache';
 import systemMonitorRoutes from './routes/systemMonitor';
 // Phase2 新增路由
 import operationTraceRoutes from './routes/operationTrace';
@@ -682,6 +683,14 @@ const startServer = (): Promise<void> => {
       try {
         const { connectDB } = require('./config/database');
         await connectDB();
+
+        // 初始化 Redis 连接（缓存模块）
+        try {
+          await initRedis();
+          logger.info('✅ Redis 初始化成功');
+        } catch (error: any) {
+          logger.warn('⚠️ Redis 初始化失败，缓存已禁用', { error: error.message });
+        }
 
         // 启动定时任务引擎（隐患检查、作业票过期、证书扫描等）
         try {
