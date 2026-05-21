@@ -37,6 +37,10 @@ export interface HotWorkPDFData {
   gasChecks: any[];
   signatures: any[];
   approvals: any[];
+  // GB 30871-2022 合规字段
+  safetyDisclosureText?: string;  // 安全交底文本
+  disclosureTime?: string;     // 交底时间
+  guardianSignature?: string; // 监护人签字
 }
 
 /**
@@ -141,6 +145,19 @@ export async function generateHotWorkPDF(data: HotWorkPDFData): Promise<Uint8Arr
     <tr>
       <td class="label">实际时间</td><td colspan="3">${data.actualStartTime || '——'} 至 ${data.actualEndTime || '——'}</td>
     </tr>
+  </table>
+
+  <div class="section-title">安全交底记录 (GB 30871-2022)</div>
+  <table>
+    <tr>
+      <td class="label">交底时间</td>
+      <td>${data.disclosureTime || '——'}</td>
+    </tr>
+    <tr>
+      <td class="label">交底内容</td>
+      <td>${data.safetyDisclosureText || '（无）'}</td>
+    </tr>
+    ${buildSignRow('监护人签字', data.guardianSignature)}
   </table>
 
   <div class="section-title">风险分析</div>

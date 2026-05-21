@@ -114,6 +114,20 @@
       </el-table>
     </el-card>
 
+    <!-- 监控视频上传（特级作业，GB 30871-2022 合规） -->
+    <el-card v-if="detail.risk_level === 'special'" class="mt-4" shadow="never">
+      <template #header>
+        <div class="card-header">
+          <span>监控视频上传</span>
+        </div>
+      </template>
+      <VideoUpload
+        :ticket-id="ticketId"
+        v-model="detail.video_url"
+        @success="handleVideoSuccess"
+      />
+    </el-card>
+
     <!-- 签字记录 -->
     <el-card class="mt-4" shadow="never">
       <template #header>
@@ -249,6 +263,7 @@ import { useRoute, useRouter } from 'vue-router'
 import { parseTime } from '@/utils/ruoyi'
 import { saveSignature } from '@/api/signature'
 import RiskMeasureTable from './components/RiskMeasureTable.vue'
+import VideoUpload from './VideoUpload.vue'
 
 const { proxy } = getCurrentInstance()
 const route = useRoute()
@@ -440,6 +455,12 @@ const submitApprove = async () => {
       load()
     }
   } catch { /* ignore */ }
+}
+
+// =========== 视频上传成功 ===========
+const handleVideoSuccess = (data: any) => {
+  proxy?.$modal.msgSuccess('视频上传成功')
+  load() // 重新加载详情，刷新video_url
 }
 
 // ============ 电子签字 ============

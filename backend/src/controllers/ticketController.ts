@@ -3,7 +3,7 @@ import { getConnection } from '../config/database';
 import { RowDataPacket, OkPacket } from 'mysql2';
 import { checkTrainingEligibility } from './trainingChecker';
 import { AppError } from '../utils/errors';
-import { createSubTicketRecord } from './ticketTypeSub';
+import { createSubTicketRecord } from './ticketTypeSubController';
 import { getApprovalLevels, RISK_LEVEL_LABEL } from '../types/ticket';
 
 interface TicketRow extends RowDataPacket {
@@ -783,21 +783,179 @@ export const verifyQrCode = async (req: Request, res: Response, next: NextFuncti
 };
 
 /**
- * 获取作业票审批日志（GB 30871 合规）
+ * 获取气体检测记录（受限空间作业，GB 30871-2022 合规）
  */
-export const getTicketApprovalLogs = async (req: Request, res: Response, next: NextFunction) => {
+export const getGasDetectionRecords = async (req: Request, res: Response, next: NextFunction) => {
   let conn: any = null;
   try {
     const { id } = req.params;
     conn = await getConnection();
 
-    const [logs] = await conn.execute(
-      'SELECT * FROM work_ticket_approval_logs WHERE ticket_id = ? ORDER BY create_time ASC',
+    const [rows] = await conn.execute(
+      'SELECT continuous_gas_detection FROM work_permits WHERE id = ? LIMIT 1',
       [id]
     );
 
-    res.json({ success: true, data: logs });
+    if (!rows || rows.length === 0) {
+      return res.json({ success: false, message: '作业票不存在' });
+    }
+
+    let records = [];
+    try {
+      records = rows[0].continuous_gas_detection ? JSON.parse(rows[0].continuous_gas_detection) : [];
+    } catch (e) {
+      records = [];
+    }
+
+    res.json({ success: true, data: records });
   } catch (error) {
+    next(error);
+  } finally {
+    if (conn) conn.release();
+  }
+};
+
+/**
+ * 添加气体检测记录（受限空间作业，GB 30871-2022 合规）
+ */
+export const addGasDetectionRecord = async (req: Request, res: Response, next: NextFunction) => {
+  let conn: any = null;
+  try {
+    const { id } = req.params;
+    const { detection_time, gas_type, concentration, detector, is_qualified, remarks } = req.body;
+    conn = await getConnection();
+
+    // 验证必填字段
+    if (!detection_time || !gas_type || !concentration) {
+      return res.json({ success: false, message: '检测时间、气体类型、浓度为必填项' });
+    }
+
+    // 获取现有记录
+    const [rows] = await conn.execute(
+      'SELECT continuous_gas_detection FROM work_permits WHERE id = ? LIMIT 1',
+      [id]
+    );
+
+    if (!rows || rows.length === 0) {
+      return res.json({ success: false, message: '作业票不存在' });
+    }
+
+    let records = [];
+    try {
+      records = rows[0].continuous_gas_detection ? JSON.parse(rows[0].continuous_gas_detection) : [];
+    } catch (e) {
+      records = [];
+    }
+
+    // 添加新记录
+    const newRecord = {
+      id: Date.now().toString(),
+      detection_time,
+      gas_type,
+      concentration: parseFloat(concentration),
+      detector: detector || '',
+      is_qualified: is_qualified || '合格',
+      remarks: remarks || '',
+      create_time: new Date().toISOString()
+    };
+    records.push(newRecord);
+
+    // 保存回数据库
+    await conn.execute(
+      'UPDATE work_permits SET continuous_gas_detection = ? WHERE id = ?',
+      [JSON.stringify(records), id]
+    );
+
+    res.json({ success: true, data: newRecord, message: '气体检测记录添加成功' });
+  } catch (error) {
+    next(error);
+  } finally {
+    if (conn) conn.release();
+  }
+};
+
+/**
+ * 删除气体检测记录（受限空间作业，GB 30871-2022 合规）
+ */
+export const deleteGasDetectionRecord = async (req: Request, res: Response, next: NextFunction) => {
+  let conn: any = null;
+  try {
+    const { id, recordId } = req.params;
+    conn = await getConnection();
+
+    // 获取现有记录
+    const [rows] = await conn.execute(
+      'SELECT continuous_gas_detection FROM work_permits WHERE id = ? LIMIT 1',
+      [id]
+    );
+
+    if (!rows || rows.length === 0) {
+      return res.json({ success: false, message: '作业票不存在' });
+    }
+
+    let records = [];
+    try {
+      records = rows[0].continuous_gas_detection ? JSON.parse(rows[0].continuous_gas_detection) : [];
+    } catch (e) {
+      records = [];
+    }
+
+    // 删除指定记录
+    records = records.filter((r: any) => r.id !== recordId);
+
+    // 保存回数据库
+    await conn.execute(
+      'UPDATE work_permits SET continuous_gas_detection = ? WHERE id = ?',
+      [JSON.stringify(records), id]
+    );
+
+    res.json({ success: true, message: '气体检测记录删除成功' });
+  } catch (error) {
+    next(error);
+  } finally {
+    if (conn) conn.release();
+  }
+};
+
+/**
+ * 上传作业票监控视频（特级作业，GB 30871-2022 合规）
+ */
+export const uploadVideo = async (req: Request, res: Response, next: NextFunction) => {
+  let conn: any = null;
+  try {
+    const { id } = req.params;
+    // multer 上传的文件在 req.file
+    if (!req.file) {
+      return res.json({ success: false, message: '请上传视频文件' });
+    }
+
+    // 构造文件访问 URL
+    const fileUrl = `/uploads/videos/${req.file.filename}`;
+
+    conn = await getConnection();
+
+    // 更新 work_permits 表的 video_url 字段
+    const [updateResult] = await conn.execute(
+      'UPDATE work_permits SET video_url = ? WHERE id = ?',
+      [fileUrl, id]
+    );
+
+    if (updateResult.affectedRows === 0) {
+      return res.json({ success: false, message: '作业票不存在' });
+    }
+
+    res.json({
+      success: true,
+      data: {
+        fileName: req.file.filename,
+        originalName: req.file.originalname,
+        fileUrl: fileUrl,
+        fileSize: req.file.size,
+      },
+      message: '视频上传成功'
+    });
+  } catch (error) {
+    console.error('Upload video error:', error);
     next(error);
   } finally {
     if (conn) conn.release();

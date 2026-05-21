@@ -9,8 +9,13 @@ import {
   approveTicket,
   getTicketStats,
   verifyQrCode,
-  getTicketApprovalLogs
+  getTicketApprovalLogs,
+  getGasDetectionRecords,
+  addGasDetectionRecord,
+  deleteGasDetectionRecord,
+  uploadVideo
 } from '../controllers/ticketController';
+import upload from '../middleware/uploadMiddleware';
 import { authenticateToken } from '../middleware/authMiddleware';
 
 const router = Router();
@@ -153,6 +158,58 @@ router.get('/:id/approval-logs', authenticateToken, async (req: Request, res: Re
     await getTicketApprovalLogs(req, res, next);
   } catch (error) {
     console.error('Get ticket approval logs error:', error);
+    next(error);
+  }
+});
+
+/**
+ * 获取气体检测记录（受限空间作业，GB 30871-2022 合规）
+ * GET /api/tickets/:id/gas-detection
+ */
+router.get('/:id/gas-detection', authenticateToken, async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    await getGasDetectionRecords(req, res, next);
+  } catch (error) {
+    console.error('Get gas detection records error:', error);
+    next(error);
+  }
+});
+
+/**
+ * 添加气体检测记录（受限空间作业，GB 30871-2022 合规）
+ * POST /api/tickets/:id/gas-detection
+ */
+router.post('/:id/gas-detection', authenticateToken, async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    await addGasDetectionRecord(req, res, next);
+  } catch (error) {
+    console.error('Add gas detection record error:', error);
+    next(error);
+  }
+});
+
+/**
+ * 删除气体检测记录（受限空间作业，GB 30871-2022 合规）
+ * DELETE /api/tickets/:id/gas-detection/:recordId
+ */
+router.delete('/:id/gas-detection/:recordId', authenticateToken, async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    await deleteGasDetectionRecord(req, res, next);
+  } catch (error) {
+    console.error('Delete gas detection record error:', error);
+    next(error);
+  }
+});
+
+/**
+ * 上传作业票监控视频（特级作业，GB 30871-2022 合规）
+ * POST /api/tickets/:id/upload-video
+ */
+router.post('/:id/upload-video', authenticateToken, upload.single('video'), async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    await uploadVideo(req, res, next);
+  } catch (error) {
+    console.error('Upload video error:', error);
     next(error);
   }
 });

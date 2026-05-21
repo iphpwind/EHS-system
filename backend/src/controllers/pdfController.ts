@@ -73,7 +73,11 @@ export const exportHotWorkPDF = async (req: Request, res: Response, next: NextFu
       actualEndTime: main.actual_end_time ? new Date(main.actual_end_time).toLocaleString() : undefined,
       gasChecks: gasRows,
       signatures: signRows,
-      approvals: approvalRows
+      approvals: approvalRows,
+      // GB 30871-2022 合规字段
+      safetyDisclosureText: main.safety_disclosure_text || '',
+      disclosureTime: main.disclosure_time ? new Date(main.disclosure_time).toLocaleString() : '',
+      guardianSignature: main.guardian_signature || '',
     };
 
     const pdfBuffer = await generateHotWorkPDF(pdfData);

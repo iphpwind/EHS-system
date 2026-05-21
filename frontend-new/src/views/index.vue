@@ -434,6 +434,7 @@ let resizeHandler = null
 // 当前时间
 const currentTime = ref('')
 let timeTimer = null
+let dashboardTimer = null
 
 function updateTime() {
   const now = new Date()
@@ -541,6 +542,41 @@ function fetchTrendChart() {
     // 默认空图
     renderTrendChart({ months: [], major: [], majorRisk: [], general: [] })
   })
+}
+
+// ===== Dashboard 智能轮询 =====
+function startDashboardPolling() {
+  stopDashboardPolling() // 防止重复
+  fetchCockpitData()
+  dashboardTimer = setInterval(() => {
+    if (!document.hidden) {
+      fetchCockpitData()
+    }
+  }, 60000) // 60秒轮询一次
+}
+
+function stopDashboardPolling() {
+  if (dashboardTimer) {
+    clearInterval(dashboardTimer)
+    dashboardTimer = null
+  }
+}
+
+// 标签页可见性变化处理
+function handleVisibilityChange() {
+  if (document.hidden) {
+    // 标签页隐藏时暂停轮询
+    if (timeTimer) clearInterval(timeTimer)
+    if (dashboardTimer) clearInterval(dashboardTimer)
+  } else {
+    // 标签页恢复时立即更新一次，然后恢复定时器
+    updateTime()
+    fetchCockpitData()
+    timeTimer = setInterval(updateTime, 1000)
+    dashboardTimer = setInterval(() => {
+      if (!document.hidden) fetchCockpitData()
+    }, 60000)
+  }
 }
 
 function switchTrendPeriod(period) {
@@ -805,10 +841,18 @@ onMounted(() => {
   getEnterpriseList()
   fetchWorkTickets()
   fetchHazards()
+
+  // 启动Dashboard智能轮询（60秒间隔，标签页隐藏时自动暂停）
+  startDashboardPolling()
+  document.addEventListener('visibilitychange', handleVisibilityChange)
 })
 
 onUnmounted(() => {
   if (timeTimer) clearInterval(timeTimer)
+  // 清理Dashboard轮询定时器
+  stopDashboardPolling()
+  // 移除 visibility 监听器，避免内存泄漏
+  document.removeEventListener('visibilitychange', handleVisibilityChange)
   // 移除 resize 监听器，避免内存泄漏
   if (resizeHandler) {
     window.removeEventListener('resize', resizeHandler)

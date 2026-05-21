@@ -220,11 +220,7 @@ app.use(cors({
 
 // ✅ 新增：启用gzip压缩
 app.use(compression({
-  filter: (req, res) => {
-    // 压缩所有响应
-    return true;
-  },
-  threshold: 1024,  // 大于1KB的响应才压缩
+  threshold: 0,  // 临时设为0，测试compression是否生效
 }));
 
 app.use(helmet({
@@ -277,6 +273,9 @@ app.use('/api/auth/login', authLimiter);
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 app.use(morgan('dev'));
+
+// 静态文件服务（上传文件访问）
+app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
 
 // 请求日志（保留Morgan，同时用Winston记录关键请求）
 app.use((req: Request, res: Response, next: NextFunction) => {
