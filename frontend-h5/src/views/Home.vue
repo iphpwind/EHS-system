@@ -149,13 +149,18 @@ function doLogout() {
   })
 }
 
-onMounted(() => {
+onMounted(async () => {
   if (!localStorage.getItem('token')) {
     router.push('/login')
   } else {
-    loadKPI()
-    loadPendingTasks()
+    // 串行执行，避免并发风暴
+    await loadKPI()
+    await loadPendingTasks()
   }
+})
+
+onUnmounted(() => {
+  // 清理逻辑（如果后续添加 setInterval 等，这里统一清理）
 })
 </script>
 
