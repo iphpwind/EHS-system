@@ -128,6 +128,47 @@
         </el-row>
       </el-card>
 
+      <!-- ⚠️ 安全交底记录（GB 30871 强制要求） -->
+      <el-card shadow="never" class="mb-4">
+        <template #header>
+          <span class="font-bold text-red-600">⚠️ 作业前安全交底记录（GB 30871-2022 强制要求）</span>
+        </template>
+        
+        <el-form-item 
+          label="交底内容" 
+          prop="safetyDisclosureText"
+          :rules="[{ required: true, message: '安全交底记录为必填项', trigger: 'blur' }]"
+        >
+          <el-input 
+            v-model="form.safetyDisclosureText" 
+            type="textarea" 
+            :rows="6"
+            placeholder="请详细填写：&#10;1. 作业现场危险有害因素&#10;2. 风险控制措施&#10;3. 应急措施&#10;4. 作业人员安全要求&#10;（GB 30871-2022 第5.2.1条）"
+          />
+        </el-form-item>
+
+        <el-form-item label="交底时间" prop="disclosureTime">
+          <el-date-picker 
+            v-model="form.disclosureTime" 
+            type="datetime" 
+            value-format="YYYY-MM-DD HH:mm:ss"
+            placeholder="交底完成时间"
+            :disabled="isReadonly"
+          />
+        </el-form-item>
+
+        <el-form-item label="风险等级">
+          <el-tag :type="form.riskLevel === 'special' ? 'danger' : form.riskLevel === 'level1' ? 'warning' : 'info'">
+            {{ form.riskLevel === 'special' ? '特级' : form.riskLevel === 'level1' ? '一级' : '二级' }}
+          </el-tag>
+          <span class="ml-2 text-gray-500">（根据作业类型自动判断）</span>
+        </el-form-item>
+
+        <el-form-item v-if="form.videoRequired" label="视频监控">
+          <el-tag type="danger">特级作业需要视频监控</el-tag>
+        </el-form-item>
+      </el-card>
+
       <!-- 备注 -->
       <el-card v-if="!isReadonly" shadow="never" class="mb-4">
         <template #header><span class="font-bold">备注</span></template>
@@ -152,7 +193,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, computed, onMounted, getCurrentInstance } from 'vue'
+import { ref, reactive, computed, watchEffect, onMounted, getCurrentInstance } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { listUser } from '@/api/system/user'
 import RiskMeasureTable from '../components/RiskMeasureTable.vue'
@@ -212,8 +253,13 @@ const form = reactive<any>({
   // 风险辨识
   riskMeasures: [],
   // 备注
-  remark: ''
-})
+      remark: '',
+      // GB 30871 安全交底
+      safetyDisclosureText: '',
+      disclosureTime: '',
+      riskLevel: 'level2',
+      videoRequired: false
+    })
 
 const rules = {
   projectName: [{ required: true, message: '请输入项目名称', trigger: 'blur' }],
@@ -260,6 +306,12 @@ const loadDetail = async () => {
       guardianUserId: d.guardian_user_id || d.guardianUserId || null,
       workerUserId: d.worker_user_id || d.workerUserId || null,
       safetyDisclosureUserId: d.safety_disclosure_user_id || d.safetyDisclosureUserId || null,
+      // GB 30871 安全交底
+      safetyDisclosureText: d.safety_disclosure_text || d.safetyDisclosureText || '',
+      disclosureTime: d.disclosure_time || d.disclosureTime || '',
+      // 风险等级（后端自动判断，前端展示）
+      riskLevel: d.risk_level || d.riskLevel || 'level2',
+      videoRequired: d.video_required || d.videoRequired || false,
       riskMeasures: d.risk_measures || d.riskMeasures || [],
       remark: d.remark || ''
     })
@@ -322,6 +374,31 @@ onMounted(async () => {
     await loadDetail()
   }
 })
+
+// 自动计算风险等级（根据GB 30871-2022）
+watchEffect(() => {
+  const tt = ticketType.value
+  let risk = 'level2'
+  let video = false
+
+  if (tt === 'firework') {
+    if (form.fireLevel === 1) { risk = 'special'; video = true }
+    else if (form.fireLevel === 2) { risk = 'level1' }
+  }
+
+  if (tt === 'confined') {
+    risk = 'level1'
+  }
+
+  if (tt === 'highwork') {
+    if (form.highLevel === 1 || form.highLevel === 2) { risk = 'special' }
+    else if (form.highLevel === 3) { risk = 'level1' }
+  }
+
+  form.riskLevel = risk
+  form.videoRequired = video
+})
+
 </script>
 
 <script lang="ts">
