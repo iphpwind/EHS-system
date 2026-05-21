@@ -1497,7 +1497,7 @@ export default {
     margin-left: 10px;
   }
 
-  :deep .el-dialog {
+  :deep(.el-dialog) {
     .el-input {
       max-width: 300px;
     }
@@ -1507,12 +1507,12 @@ export default {
     }
   }
 
-  :deep .el-range-editor {
+  :deep(.el-range-editor) {
     width: 100%;
     max-width: 300px;
   }
 	
-	:deep .xinjianTanchu{
+	:deep(.xinjianTanchu) {
 		.el-dialog__body{
 			position: relative;border-top: 1px solid #eee;
 		}
@@ -1524,7 +1524,7 @@ export default {
 		}
 	}
 	
-  :deep .chooseTanchu {
+  :deep(.chooseTanchu) {
     .el-row {
       height: 100%;
 
@@ -1564,7 +1564,7 @@ export default {
   .bmchoose {
     margin: 10px 0 0;
 
-    :deep .el-checkbox {
+    :deep(.el-checkbox) {
       width: 100%;
       margin-right: 0;
     }
@@ -1574,12 +1574,12 @@ export default {
     height: calc(100% - 80px);
     background: #fff;
 
-    :deep .el-table {
+    :deep(.el-table) {
 
     }
   }
 
-  :deep .bianjiedialog {
+  :deep(.bianjiedialog) {
     height: 88vh;
     overflow: auto;
 
@@ -1619,7 +1619,7 @@ export default {
     }
   }
 
-  :deep .infodialog {
+  :deep(.infodialog) {
     height: 88vh;
     overflow: auto;
 

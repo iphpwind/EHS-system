@@ -508,7 +508,7 @@
 		
 		.floor1{
 			height: 33%;margin: 0 0 10px;
-			:deep .el-row{
+			:deep(.el-row) {
 				height: 100%;
 				.el-col{
 					height: 100%;

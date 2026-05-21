@@ -803,7 +803,7 @@ export default {
 	}
 	.main{
 		padding: 0 20px;
-		:deep .el-row{
+		:deep(.el-row) {
 			height: 100%;
 			.el-col{
 				height: 100%;position: relative;
@@ -943,7 +943,7 @@ export default {
 						height: calc(100% - 40px);
 						padding: 0 10px 10px;background: #0d2a4a;
 					}
-					:deep .el-table{
+					:deep(.el-table) {
 						background: transparent;
 						td.el-table__cell,
 						th.el-table__cell.is-leaf{
@@ -1172,7 +1172,7 @@ export default {
 			}
 			.rightbox3{
 				height: calc(50% - 55px);
-				:deep .el-table{
+				:deep(.el-table) {
 					margin: 10px 0 0;
 					background: transparent;
 					td.el-table__cell,

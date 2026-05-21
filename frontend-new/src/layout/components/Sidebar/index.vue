@@ -48,3 +48,11 @@ const activeMenu = computed(() => {
 })
 
 </script>
+
+<style lang="scss">
+/* 侧边栏激活项 — 左侧 3px 主题色指示条 */
+.scrollbar-wrapper .el-menu--vertical .el-menu-item.is-active {
+  border-left: 3px solid var(--theme, #09bec5) !important;
+  background: rgba(9, 190, 197, 0.08) !important;
+}
+</style>

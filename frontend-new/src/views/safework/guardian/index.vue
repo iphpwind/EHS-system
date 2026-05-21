@@ -788,7 +788,7 @@ function waibuSave() {
 		background: #f9f9f9;padding: 10px;
 		height: calc(100vh - 84px);
 		overflow: auto;
-		:deep .el-tabs{
+		:deep(.el-tabs) {
 			.el-tabs__header{
 				margin: 0;background: #fff;padding: 0 15px;
 			}
@@ -807,7 +807,7 @@ function waibuSave() {
 			position: absolute;right: 30px;top: 15px;
 			z-index: 1;
 		}
-		:deep .daoruTanchu{
+		:deep(.daoruTanchu) {
 			.el-dialog__body{
 				padding: 15px;border-top: 1px solid #eee;
 			}

@@ -1,16 +1,14 @@
 <template>
   <div class="navbar">
-    <hamburger id="hamburger-container" :is-active="getters.sidebar.opened" class="hamburger-container"
+    <hamburger id="hamburger-container" :is-active="appStore.sidebar.opened" class="hamburger-container"
                @toggleClick="toggleSideBar"/>
-    <breadcrumb id="breadcrumb-container" class="breadcrumb-container" v-if="!$store.state.settings.topNav"/>
-    <top-nav id="topmenu-container" class="topmenu-container" v-if="$store.state.settings.topNav"/>
+    <breadcrumb id="breadcrumb-container" class="breadcrumb-container" v-if="!settingsStore.topNav"/>
+    <top-nav id="topmenu-container" class="topmenu-container" v-if="settingsStore.topNav"/>
 
     <div class="right-menu">
-      <template v-if="getters.device !== 'mobile'">
-        <!-- 全局搜索 -->
+      <template v-if="appStore.device !== 'mobile'">
         <header-search id="header-search" class="right-menu-item"/>
         
-        <!-- 待办提醒 -->
         <div class="todo-reminder" @click="showTodoDrawer = true">
           <el-badge :value="todoCount" class="todo-badge">
             <el-icon class="todo-icon">
@@ -21,10 +19,6 @@
         </div>
       </template>
       <div class="avatar-container">
-				<!-- 版本信息弹出 -->
-<!--				<div class="versionbtn" @click="versioninfo = true">版本信息</div>-->
-
-        <!-- 告警铃铛 -->
         <div class="bell" @click="drawer = true">
           <el-badge :value="num">
             <el-icon>
@@ -33,11 +27,10 @@
           </el-badge>
         </div>
 
-        <!-- 头像 -->
         <el-dropdown @command="handleCommand" class="right-menu-item hover-effect" trigger="click">
           <div class="avatar-wrapper">
-            <img :src="getters.avatar || '/src/assets/images/profile.jpg'" class="user-avatar" @error="$event.target.src='/src/assets/images/profile.jpg'"/>
-            <span class="dept-name">{{ getters.user && getters.user.thirdDeptName ? getters.user.thirdDeptName : (getters.user && getters.user.dept ? getters.user.dept.deptName : '') }}</span>
+            <img :src="userStore.avatar || '/src/assets/images/profile.jpg'" class="user-avatar" @error="$event.target.src='/src/assets/images/profile.jpg'"/>
+            <span class="dept-name">{{ userStore.user && userStore.user.thirdDeptName ? userStore.user.thirdDeptName : (userStore.user && userStore.user.dept ? userStore.user.dept.deptName : '') }}</span>
             <el-icon>
               <caret-bottom/>
             </el-icon>
@@ -81,7 +74,6 @@
     </div>
   </div>
 
-	<!-- 版本信息弹出 -->
 	<div class="versioninfo">
 		<el-dialog
 			v-model="versioninfo"
@@ -116,7 +108,6 @@
 		</el-dialog>
 	</div>
 
-  <!-- 告警弹出 -->
   <div class="navbardrawer">
     <el-drawer v-model="drawer" title="">
       <div class="border-p warnbox">
@@ -125,7 +116,6 @@
             <img src="@/assets/images/screen/tit-9.png">告警
             <div class="handlebtn" @click="warnAllHandle">全部处理</div>
           </h4>
-          <!-- <span class="warnclose"><el-icon><Close/></el-icon></span> -->
         </div>
         <el-table
             :data="alramlist"
@@ -151,13 +141,10 @@
               label="告警时间">
           </el-table-column>
         </el-table>
-
-
       </div>
     </el-drawer>
   </div>
 
-  <!-- 告警详情弹出 -->
   <div class="warndetail">
     <el-dialog
         v-model="warndetbox"
@@ -221,11 +208,9 @@
     </el-dialog>
   </div>
 
-  <!-- 待办提醒抽屉 -->
   <div class="todo-drawer">
     <el-drawer v-model="showTodoDrawer" title="待办提醒" direction="rtl" size="380px">
       <div class="todo-content">
-        <!-- 作业票待审批 -->
         <div class="todo-section">
           <div class="todo-section-header">
             <el-icon class="section-icon"><FileText/></el-icon>
@@ -248,7 +233,6 @@
           </div>
         </div>
 
-        <!-- 隐患待整改 -->
         <div class="todo-section">
           <div class="todo-section-header">
             <el-icon class="section-icon"><Warning/></el-icon>
@@ -271,7 +255,6 @@
           </div>
         </div>
 
-        <!-- 证书即将到期 -->
         <div class="todo-section">
           <div class="todo-section-header">
             <el-icon class="section-icon"><Trophy/></el-icon>
@@ -305,16 +288,21 @@ import {handler} from '@/api/system/alarm';
 import Breadcrumb from '@/components/Breadcrumb'
 import TopNav from '@/components/TopNav'
 import Hamburger from '@/components/Hamburger'
-import Screenfull from '@/components/Screenfull'
-import SizeSelect from '@/components/SizeSelect'
 import HeaderSearch from '@/components/HeaderSearch'
-import RuoYiGit from '@/components/RuoYi/Git'
-import RuoYiDoc from '@/components/RuoYi/Doc'
 import {getDeptListBySecondDeptId, saveCurrChildrenDeptId} from "@/api/system/dept";
 import {totalAlarmList} from "@/api/system/alarm"
 import {Clock, Document, Warning, CircleCheck, Trophy, Star} from '@element-plus/icons-vue'
+import {useRouter} from 'vue-router'
+import {useUserStore} from '@/store/modules/user.ts'
+import {useAppStore} from '@/store/modules/app.ts'
+import {useSettingsStore} from '@/store/modules/settings.ts'
 
-import {ref} from 'vue'
+import {ref, reactive} from 'vue'
+
+const router = useRouter()
+const userStore = useUserStore()
+const appStore = useAppStore()
+const settingsStore = useSettingsStore()
 
 const drawer = ref(false);
 const warndetbox = ref(false);
@@ -327,10 +315,7 @@ const alarmDate = ref('')
 const checkId = ref('')
 const checkType = ref('')
 const deal = ref('')
-const store = useStore();
-const getters = computed(() => store.getters);
 const deptList = ref([]);
-const {proxy} = getCurrentInstance();
 
 const num = ref(0);
 const alramlist = ref([]);
@@ -340,7 +325,6 @@ const form = reactive({
   info: '',
 })
 
-// 待办数据（模拟）
 const todoItems = reactive({
   workTicketCount: 2,
   workTickets: [
@@ -359,7 +343,6 @@ const todoItems = reactive({
   ]
 });
 
-// 跳转方法
 function goToWorkTicket(id) {
   showTodoDrawer.value = false;
   router.push(`/work-permit/list`);
@@ -376,7 +359,7 @@ function goToCertificate(id) {
 }
 
 function toggleSideBar() {
-  store.dispatch('app/toggleSideBar')
+  appStore.toggleSideBar()
 }
 
 function handleCommand(command) {
@@ -399,12 +382,6 @@ function getDeptListDeptId() {
 }
 
 function gettotalAlarm() {
-  // console.log(getters)
-  // allAlertList().then(response => {
-  //   num.value = response.total;
-  //   alramlist.value = response.rows;
-  //   // console.log(alramlist.value[0].dt)
-  // })
 }
 
 function toggleClick(item) {
@@ -419,19 +396,16 @@ function logout() {
     cancelButtonText: '取消',
     type: 'warning'
   }).then(() => {
-    store.dispatch('LogOut').then(() => {
+    userStore.LogOut().then(() => {
       location.href = '/login';
     }).catch(() => {
-      // 后端退出接口失败时，前端强制清理状态并跳转
-      store.dispatch('FedLogOut').then(() => {
-        location.href = '/login';
-      });
+      userStore.FedLogOut();
+      location.href = '/login';
     });
   }).catch(() => {});
 }
 
 function warnclick(row) {
-  console.log(row)
   ycNameClick.value = row.pointName;
   eqNameClick.value = row.eqname;
   alarmContent.value = row.state;
@@ -449,7 +423,6 @@ function onSubmit() {
     yuexDealbz: form.info,
     type: checkType.value
   }]
-  console.log(handlerList)
   handler(handlerList).then(res => {
     warndetbox.value = false;
     gettotalAlarm()
@@ -497,6 +470,8 @@ gettotalAlarm();
   position: relative;
   background: #fff;
   border-bottom: 1px solid $gray-200;
+  display: flex;
+  align-items: center;
 
   .hamburger-container {
     line-height: $base-navbar-height;
@@ -516,13 +491,9 @@ gettotalAlarm();
   }
 
   .topmenu-container {
-    position: absolute;
-    left: 50px;
-  }
-
-  .errLog-container {
-    display: inline-block;
-    vertical-align: top;
+    flex: 1;
+    min-width: 0;
+    overflow-x: auto;
   }
 
   .right-menu {
@@ -531,6 +502,7 @@ gettotalAlarm();
     line-height: $base-navbar-height;
     display: flex;
     align-items: center;
+    margin-left: auto;
 
     &:focus {
       outline: none;
@@ -556,15 +528,6 @@ gettotalAlarm();
 
     .avatar-container {
       margin-right: 32px;
-
-      .versionbtn {
-        cursor: pointer;
-        display: inline-block;
-        float: left;
-        font-size: 13px;
-        margin-right: 30px;
-        color: $gray-400;
-      }
 
       .bell {
         font-size: 22px;
@@ -676,14 +639,6 @@ gettotalAlarm();
         cursor: pointer;
       }
     }
-
-    .warnclose {
-      color: #aaddff;
-      font-size: 20px;
-      position: absolute;
-      right: 0;
-      top: 2px;
-    }
   }
 
   :deep(.el-table__header-wrapper th) {
@@ -758,7 +713,6 @@ gettotalAlarm();
   }
 }
 
-/* 待办提醒样式 */
 .todo-reminder {
   display: flex;
   align-items: center;

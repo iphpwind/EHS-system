@@ -187,7 +187,7 @@ export default {
 		padding: 10px 0;
 		background: #fff;
 		position: relative;
-		:deep .el-icon{
+		:deep(.el-icon) {
 			position: absolute;left: 10px;top: 10px;
 			cursor: pointer;
 		}

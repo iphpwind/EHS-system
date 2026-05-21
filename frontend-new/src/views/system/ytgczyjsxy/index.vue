@@ -559,7 +559,7 @@ export default {
 	}
 	.main{
 		padding: 0 20px;
-		:deep .el-row{
+		:deep(.el-row) {
 			height: 100%;
 			.el-col{
 				height: 100%;position: relative;
@@ -567,7 +567,7 @@ export default {
 		}
 		.mytable{
 			height: 100%;
-			:deep .el-table{
+			:deep(.el-table) {
 				background: transparent;
 				td.el-table__cell,
 				th.el-table__cell.is-leaf{
@@ -777,7 +777,7 @@ export default {
 			.camera::before,.camera::after{
 				content: '';clear: both;display: table;
 			}
-			:deep .el-dialog{
+			:deep(.el-dialog) {
 				background: url("@/assets/images/ytgczyjsxy/info-titbg.png") repeat;
 				.tit{
 					background: url("@/assets/images/ytgczyjsxy/info-line2.png") no-repeat bottom;

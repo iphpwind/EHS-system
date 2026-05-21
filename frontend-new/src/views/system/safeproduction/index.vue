@@ -1753,7 +1753,7 @@ export default {
   height: calc(100vh - 84px);
 
   .warnDrawer {
-    :deep .el-drawer {
+    :deep(.el-drawer) {
       background: #031d42;
 
       .el-drawer__header {
@@ -1769,7 +1769,7 @@ export default {
       }
     }
 
-    :deep .el-dialog {
+    :deep(.el-dialog) {
       background: #031d42;
 
       .el-dialog__title {
@@ -1818,7 +1818,7 @@ export default {
     }
   }
 
-  :deep .el-table {
+  :deep(.el-table) {
     margin: 10px 0 0;
     background: transparent;
 
@@ -1933,7 +1933,7 @@ export default {
   .main {
     padding: 0 20px;
 
-    :deep .el-row {
+    :deep(.el-row) {
       height: 100%;
 
       .el-col {
@@ -2014,7 +2014,7 @@ export default {
           width: 100%;
           margin: 10px 0 0;
 
-          :deep .el-input {
+          :deep(.el-input) {
             .el-input-group__append {
               background: #203151;
               border: 0;
@@ -2046,7 +2046,7 @@ export default {
             }
           }
 
-          :deep .el-select {
+          :deep(.el-select) {
             display: block;
 
             .el-input__inner {
@@ -2175,7 +2175,7 @@ export default {
           font-size: 16px;
         }
 
-        :deep .el-tree {
+        :deep(.el-tree) {
           background: transparent;
 
           .el-tree-node__content {

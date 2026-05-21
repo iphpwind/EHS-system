@@ -890,7 +890,7 @@ export default {
 	}
 	.main{
 		padding: 0 20px;
-		:deep .el-row{
+		:deep(.el-row) {
 			height: 100%;
 			.el-col{
 				height: 100%;position: relative;
@@ -1085,7 +1085,7 @@ export default {
 			}
 			.gongdanjd{
 				height: calc(100% - 30px);
-				:deep .el-carousel{
+				:deep(.el-carousel) {
 					height: 100%;
 					.el-carousel__container{
 						height: 100%;
@@ -1289,7 +1289,7 @@ export default {
 			}
 			.model-rt{
 				height: calc(50% - 35px);padding: 0 15px;
-				:deep .el-carousel{
+				:deep(.el-carousel) {
 					height: 100%;
 					.el-carousel__container{
 						height: 100%;
@@ -1362,7 +1362,7 @@ export default {
 						justify-content: center;
 						flex-direction: column;
 					}
-					:deep .el-dropdown{
+					:deep(.el-dropdown) {
 						font-size: 15px;font-weight: bold;
 						cursor: pointer;
 						height: 50px;

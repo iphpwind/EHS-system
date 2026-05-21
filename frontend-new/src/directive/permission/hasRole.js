@@ -1,15 +1,12 @@
-/**
- * v-hasRole 角色权限处理
- * Copyright (c) 2019 ruoyi
- */
-
-import store from '@/store'
+import { useUserStore } from '@/store/modules/user.ts'
 
 export default {
-    mounted(el, binding, vnode) {
-        const {value} = binding
-        const super_admin = "admin";
-        const roles = store.getters && store.getters.roles
+    mounted(el, binding) {
+        const { value } = binding
+        const super_admin = "admin"
+        
+        const userStore = useUserStore()
+        const roles = userStore.roles || []
 
         if (value && value instanceof Array && value.length > 0) {
             const roleFlag = value
@@ -22,7 +19,7 @@ export default {
                 el.parentNode && el.parentNode.removeChild(el)
             }
         } else {
-            throw new Error(`请设置角色权限标签值"`)
+            throw new Error(`请设置角色权限标签值`)
         }
     }
 }

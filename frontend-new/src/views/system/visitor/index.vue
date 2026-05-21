@@ -297,7 +297,7 @@ export default {
 				padding: 5px 0;
 				font-size: 14px;color: #333;
 				cursor: pointer;
-				:deep .el-icon{
+				:deep(.el-icon) {
 					vertical-align: middle;
 				}
 			}

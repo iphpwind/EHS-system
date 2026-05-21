@@ -382,7 +382,7 @@ export default {
 				}
 			}
 		}
-		:deep .floor{
+		:deep(.floor) {
 			border: 0;
 			.el-collapse{
 				border: 1px solid #eee;
@@ -397,7 +397,7 @@ export default {
 				padding: 0 0 10px;
 			}
 		}
-		:deep .child{
+		:deep(.child) {
 			margin: 0 20px;
 			.el-collapse{
 				border: 0;

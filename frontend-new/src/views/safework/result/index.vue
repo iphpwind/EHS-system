@@ -649,19 +649,19 @@ setTimeout(() => {
 		.idtopchoose{
 			background: #fff;padding: 5px 10px;
 			margin: 0 0 10px;
-			:deep .el-form-item{
+			:deep(.el-form-item) {
 				margin-top: 5px;margin-bottom: 5px;
 			}
 		}
 		.chartrow{
 			height: 26%;margin: 0 0 10px;
-			:deep .el-row{
+			:deep(.el-row) {
 				height: 100%;
 				.el-col{
 					height: 100%;
 				}
 			}
-			:deep .el-card{
+			:deep(.el-card) {
 				height: 100%;
 				.el-card__body{
 					height: 100%;

@@ -31,19 +31,56 @@
 
       <pagination v-show="total > 0" :total="total" v-model:page="query.page" @pagination="getList" />
     </el-card>
+
+    <!-- 新增/编辑培训计划对话框 -->
+    <el-dialog v-model="dialogVisible" :title="dialogTitle" width="560px" destroy-on-close>
+      <el-form ref="formRef" :model="formData" label-width="100px" @submit.prevent>
+        <el-form-item label="计划名称" prop="name" :rules="[{ required: true, message: '请输入计划名称', trigger: 'blur' }]">
+          <el-input v-model="formData.name" placeholder="请输入培训计划名称" maxlength="100" />
+        </el-form-item>
+        <el-form-item label="开始日期" prop="startDate">
+          <el-date-picker v-model="formData.startDate" type="date" value-format="YYYY-MM-DD" placeholder="选择开始日期" style="width: 100%" />
+        </el-form-item>
+        <el-form-item label="结束日期" prop="endDate">
+          <el-date-picker v-model="formData.endDate" type="date" value-format="YYYY-MM-DD" placeholder="选择结束日期" style="width: 100%" />
+        </el-form-item>
+        <el-form-item label="计划描述" prop="description">
+          <el-input v-model="formData.description" type="textarea" :rows="3" placeholder="请输入计划描述" maxlength="500" show-word-limit />
+        </el-form-item>
+      </el-form>
+      <template #footer>
+        <el-button @click="dialogVisible = false">取消</el-button>
+        <el-button type="primary" :loading="dialogLoading" @click="submitForm">确定</el-button>
+      </template>
+    </el-dialog>
   </div>
 </template>
 
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
-import { ElMessage } from 'element-plus'
-import { getTrainingPlans, deleteTrainingPlan } from '@/api/training'
+import { useRouter } from 'vue-router'
+import { ElMessage, ElMessageBox } from 'element-plus'
+import { getTrainingPlans, deleteTrainingPlan, createTrainingPlan, updateTrainingPlan } from '@/api/training'
 import type { QueryParams } from './types'
 
+const router = useRouter()
 const tableData = ref([])
 const loading = ref(false)
 const total = ref(0)
 const query = ref<QueryParams>({ page: 1, limit: 10, keyword: '' })
+const formRef = ref()   // 表单引用，用于校验
+
+// 新增/编辑对话框
+const dialogVisible = ref(false)
+const dialogTitle = ref('新增培训计划')
+const dialogLoading = ref(false)
+const formData = ref({
+  id: null as number | null,
+  name: '',
+  startDate: '',
+  endDate: '',
+  description: ''
+})
 
 const getList = async () => {
   loading.value = true
@@ -59,19 +96,76 @@ const getList = async () => {
   }
 }
 
+/**
+ * 新增培训计划：打开对话框
+ */
 const handleAdd = () => {
-  // TODO: 打开新增对话框
-  ElMessage.info('新增培训计划功能待实现')
+  dialogTitle.value = '新增培训计划'
+  formData.value = { id: null, name: '', startDate: '', endDate: '', description: '' }
+  dialogVisible.value = true
 }
 
+/**
+ * 编辑培训计划：打开对话框并填充数据
+ */
 const handleEdit = (row: any) => {
-  // TODO: 打开编辑对话框
-  ElMessage.info('编辑培训计划功能待实现')
+  dialogTitle.value = '编辑培训计划'
+  formData.value = { ...row }
+  dialogVisible.value = true
 }
 
+/**
+ * 提交表单：校验后调用新增或编辑 API
+ */
+const submitForm = async () => {
+  // 表单校验
+  try {
+    await formRef.value.validate()
+  } catch {
+    return  // 校验失败，不提交
+  }
+
+  dialogLoading.value = true
+  try {
+    const payload = {
+      name: formData.value.name,
+      startDate: formData.value.startDate,
+      endDate: formData.value.endDate,
+      description: formData.value.description
+    }
+    if (formData.value.id) {
+      await updateTrainingPlan(formData.value.id, payload)
+      ElMessage.success('编辑成功')
+    } else {
+      await createTrainingPlan(payload)
+      ElMessage.success('新增成功')
+    }
+    dialogVisible.value = false
+    getList()   // 刷新列表
+  } catch (error) {
+    console.error('保存失败:', error)
+    ElMessage.error('保存失败')
+  } finally {
+    dialogLoading.value = false
+  }
+}
+
+/**
+ * 重置表单
+ */
+const resetForm = () => {
+  formRef.value?.resetFields()
+  formData.value = { id: null, name: '', startDate: '', endDate: '', description: '' }
+}
+
+/**
+ * 跳转到培训详情页
+ */
 const startTraining = (row: any) => {
-  // TODO: 跳转到培训详情页
-  ElMessage.info('开始培训功能待实现')
+  router.push({
+    path: '/training/plan/detail',
+    query: { id: row.id }
+  })
 }
 
 const handleDelete = async (id: number) => {

@@ -677,7 +677,7 @@ export default {
 	}
 	.main{
 		padding: 0 20px;
-		:deep .el-row{
+		:deep(.el-row) {
 			height: 100%;
 			.el-col{
 				height: 100%;position: relative;
@@ -727,7 +727,7 @@ export default {
 					}
 					.zydatart{
 						padding: 0 10px;height: 100%;
-						:deep .el-col{
+						:deep(.el-col) {
 							height: calc(33.33% - 6px);
 							margin: 3px 0;
 						}
@@ -766,7 +766,7 @@ export default {
 				.midselect{
 					position: relative;
 					width: 100%;margin: 10px 0 0;
-					:deep .el-select{
+					:deep(.el-select) {
 						display: block;
 						.el-input__inner{
 							border: 0;background: #203151;
@@ -786,7 +786,7 @@ export default {
 						}
 					}
 				}
-				:deep .el-table{
+				:deep(.el-table) {
 					margin: 10px 0 0;
 					background: transparent;
 					td.el-table__cell,
@@ -1004,7 +1004,7 @@ export default {
 				}
 				.cbsgl{
 					height: calc(100% - 31px);
-					:deep .el-col{
+					:deep(.el-col) {
 						height: 50%;
 					}
 					.item{
@@ -1030,7 +1030,7 @@ export default {
 				}
 				.wfjl{
 					height: calc(100% - 60px);
-					:deep .el-table{
+					:deep(.el-table) {
 						background: transparent;
 						td.el-table__cell,
 						th.el-table__cell.is-leaf{

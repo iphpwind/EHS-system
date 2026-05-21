@@ -300,7 +300,7 @@ export default {
 		.calendarbox{
 			padding: 0 20px;
 		}
-		:deep .el-calendar{
+		:deep(.el-calendar) {
 
 			.el-calendar__body{
 				padding: 0;

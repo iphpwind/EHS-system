@@ -140,8 +140,27 @@ var Store = (function StoreClosure() {
       this._coordinator.emit("renderall", this._getInternalData());
       return this;
     },
-    removeData: function () {
-      // TODO: implement
+    removeData: function (dataPoint) {
+      if (!dataPoint) {
+        // 清除所有数据
+        this._data = [];
+        this._radi = [];
+        this._min = 0;
+        this._max = 1;
+        this._onExtremaChange();
+        this._coordinator.emit('renderall', this._getInternalData());
+        return this;
+      }
+      // 清除指定坐标点
+      var x = dataPoint[this._xField];
+      var y = dataPoint[this._yField];
+      if (this._data[x] && this._data[x][y] !== undefined) {
+        delete this._data[x][y];
+        delete this._radi[x][y];
+        this._onExtremaChange();
+        this._coordinator.emit('renderall', this._getInternalData());
+      }
+      return this;
     },
     setDataMax: function (max) {
       this._max = max;

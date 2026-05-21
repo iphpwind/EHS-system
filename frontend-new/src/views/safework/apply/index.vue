@@ -156,6 +156,7 @@ import { ref, reactive, computed, onMounted, getCurrentInstance } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { listUser } from '@/api/system/user'
 import RiskMeasureTable from '../components/RiskMeasureTable.vue'
+import { loadWorkTicketApi, resolveAddFn, resolveUpdateFn, resolveGetFn, resolveSubmitFn } from '@/utils/apiHelper'
 
 const { proxy } = getCurrentInstance()
 const route = useRoute()
@@ -239,35 +240,29 @@ const loadUsers = async () => {
 const loadDetail = async () => {
   if (!ticketId.value) return
   try {
-    // 根据ticketType加载对应的详情API
-    const apiMap: Record<string, any> = {
-      firework: () => import('@/api/hotWork'),
-      restricted: () => import('@/api/safework/restrictedwork'),
-      // 其他类型按需扩展
-    }
-    const apiModule = await apiMap[ticketType.value]?.()
-    if (apiModule?.getHotWork) {
-      const res = await apiModule.getHotWork(ticketId.value)
-      const d = res.data || {}
-      Object.assign(form, {
-        projectName: d.project_name || d.projectName || '',
-        workLocation: d.work_location || d.workLocation || '',
-        workContent: d.work_content || d.workContent || '',
-        startTime: d.start_time || d.startTime || '',
-        endTime: d.end_time || d.endTime || '',
-        fireLevel: d.fire_level || d.fireLevel || 2,
-        fireArea: d.fire_area || d.fireArea || '',
-        fireType: d.fire_type || d.fireType || '',
-        mediumName: d.medium_name || d.mediumName || '',
-        highLevel: d.high_level || d.highLevel || 1,
-        responsibleUserId: d.responsible_user_id || d.responsibleUserId || null,
-        guardianUserId: d.guardian_user_id || d.guardianUserId || null,
-        workerUserId: d.worker_user_id || d.workerUserId || null,
-        safetyDisclosureUserId: d.safety_disclosure_user_id || d.safetyDisclosureUserId || null,
-        riskMeasures: d.risk_measures || d.riskMeasures || [],
-        remark: d.remark || ''
-      })
-    }
+    const apiMod = await loadWorkTicketApi(ticketType.value as string)
+    const getFn = resolveGetFn(apiMod, ticketType.value as string)
+    if (!getFn) return
+    const res = await getFn(ticketId.value)
+    const d = res.data || {}
+    Object.assign(form, {
+      projectName: d.project_name || d.projectName || '',
+      workLocation: d.work_location || d.workLocation || '',
+      workContent: d.work_content || d.workContent || '',
+      startTime: d.start_time || d.startTime || '',
+      endTime: d.end_time || d.endTime || '',
+      fireLevel: d.fire_level || d.fireLevel || 2,
+      fireArea: d.fire_area || d.fireArea || '',
+      fireType: d.fire_type || d.fireType || '',
+      mediumName: d.medium_name || d.mediumName || '',
+      highLevel: d.high_level || d.highLevel || 1,
+      responsibleUserId: d.responsible_user_id || d.responsibleUserId || null,
+      guardianUserId: d.guardian_user_id || d.guardianUserId || null,
+      workerUserId: d.worker_user_id || d.workerUserId || null,
+      safetyDisclosureUserId: d.safety_disclosure_user_id || d.safetyDisclosureUserId || null,
+      riskMeasures: d.risk_measures || d.riskMeasures || [],
+      remark: d.remark || ''
+    })
   } catch (e) {
     console.error('加载详情失败', e)
   }
@@ -276,8 +271,10 @@ const loadDetail = async () => {
 const saveDraft = async () => {
   saving.value = true
   try {
-    const apiModule = await import('@/api/hotWork')
-    const apiMethod = isEdit.value ? apiModule.updateHotWork : apiModule.addHotWork
+    const apiMod = await loadWorkTicketApi(ticketType.value as string)
+    const apiMethod = isEdit.value
+      ? resolveUpdateFn(apiMod, ticketType.value as string)
+      : resolveAddFn(apiMod, ticketType.value as string)
     const params = isEdit.value ? [ticketId.value, { ...form, status: '1' }] : [{ ...form, status: '1' }]
     await (apiMethod as Function)(...params)
     proxy.$modal.msgSuccess('草稿保存成功')
@@ -297,17 +294,18 @@ const submitForm = async () => {
 
   submitting.value = true
   try {
-    const apiModule = await import('@/api/hotWork')
-    const params = isEdit.value
-      ? [ticketId.value, { ...form }]
-      : [{ ...form }]
+    const apiMod = await loadWorkTicketApi(ticketType.value as string)
+    const apiMethod = isEdit.value
+      ? resolveUpdateFn(apiMod, ticketType.value as string)
+      : resolveAddFn(apiMod, ticketType.value as string)
+    const params = isEdit.value ? [ticketId.value, { ...form }] : [{ ...form }]
 
-    const apiMethod = isEdit.value ? apiModule.updateHotWork : apiModule.addHotWork
     const res = await (apiMethod as Function)(...params)
     const newId = res.data?.id || ticketId.value
 
     // 提交审批
-    await apiModule.submitHotWork(newId)
+    const submitFn = resolveSubmitFn(apiMod, ticketType.value as string)
+    if (submitFn) await submitFn(newId)
     proxy.$modal.msgSuccess('提交成功')
     router.push({ path: '/safework/firework/v2/detail', query: { id: newId } })
   } catch (e) {

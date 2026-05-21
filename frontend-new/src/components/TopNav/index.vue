@@ -1,42 +1,25 @@
 <template>
-  <el-menu
-      :default-active="activeMenu"
-      mode="horizontal"
-      @select="handleSelect"
-  >
-    <template v-for="(item, index) in topMenus">
-      <el-menu-item :style="{'--theme': theme}" :index="item.path" :key="index" v-if="index < visibleNumber"
-      >
-        <svg-icon :icon-class="item.meta.icon"/>
-        {{ item.meta.title }}
-      </el-menu-item
-      >
-    </template>
-
-    <!-- 顶部菜单超出数量折叠 -->
-    <el-sub-menu :style="{'--theme': theme}" index="more" v-if="topMenus.length > visibleNumber">
-      <template #title>更多菜单</template>
-      <template v-for="(item, index) in topMenus">
-        <el-menu-item
-            :index="item.path"
-            :key="index"
-            v-if="index >= visibleNumber"
-        >
+  <div class="topnav-scroll">
+    <el-menu
+        :default-active="activeMenu"
+        mode="horizontal"
+        @select="handleSelect"
+        class="topnav-menu"
+    >
+      <template v-for="(item, index) in topMenus" :key="index">
+        <el-menu-item :style="{'--theme': theme}" :index="item.path">
           <svg-icon :icon-class="item.meta.icon"/>
           {{ item.meta.title }}
-        </el-menu-item
-        >
+        </el-menu-item>
       </template>
-    </el-sub-menu>
-  </el-menu>
+    </el-menu>
+  </div>
 </template>
 
 <script setup>
 import {constantRoutes} from "@/router"
 import {isHttp} from '@/utils/validate'
 
-// 顶部栏初始数
-const visibleNumber = ref(null);
 // 当前激活菜单的 index
 const currentIndex = ref(null);
 // 隐藏侧边栏路由
@@ -104,11 +87,6 @@ const activeMenu = computed(() => {
   return activePath;
 })
 
-function setVisibleNumber() {
-  const width = document.body.getBoundingClientRect().width / 3;
-  visibleNumber.value = parseInt(width / 85);
-}
-
 function handleSelect(key, keyPath) {
   currentIndex.value = key;
   const route = routers.value.find(item => item.path === key);
@@ -140,41 +118,43 @@ function activeRoutes(key) {
   }
   return routes;
 }
-
-onMounted(() => {
-  window.addEventListener('resize', setVisibleNumber)
-})
-onBeforeUnmount(() => {
-  window.removeEventListener('resize', setVisibleNumber)
-})
-
-onMounted(() => {
-  setVisibleNumber()
-})
 </script>
 
 <style lang="scss">
-.topmenu-container.el-menu--horizontal > .el-menu-item {
-  float: left;
-  height: 50px !important;
-  line-height: 50px !important;
-  color: #999093 !important;
-  padding: 0 5px !important;
-  margin: 0 10px !important;
+.topnav-scroll {
+  flex: 1;
+  min-width: 0;
+  overflow-x: auto;
+  overflow-y: hidden;
+
+  &::-webkit-scrollbar {
+    height: 0;
+  }
 }
 
-.topmenu-container.el-menu--horizontal > .el-menu-item.is-active, .el-menu--horizontal > .el-sub-menu.is-active .el-submenu__title {
-  border-bottom: 2px solid #{'var(--theme)'} !important;
-  color: #303133;
-}
+.topnav-menu.el-menu--horizontal {
+  display: flex;
+  flex-wrap: nowrap;
+  border-bottom: none;
 
-/* sub-menu item */
-.topmenu-container.el-menu--horizontal > .el-sub-menu .el-sub-menu__title {
-  float: left;
-  height: 50px !important;
-  line-height: 50px !important;
-  color: #999093 !important;
-  padding: 0 5px !important;
-  margin: 0 10px !important;
+  > .el-menu-item {
+    float: none;
+    flex-shrink: 0;
+    height: 50px !important;
+    line-height: 50px !important;
+    color: #999093 !important;
+    padding: 0 5px !important;
+    margin: 0 10px !important;
+
+    &:hover {
+      color: var(--theme) !important;
+      background: transparent !important;
+    }
+
+    &.is-active {
+      border-bottom: 2px solid var(--theme) !important;
+      color: var(--theme) !important;
+    }
+  }
 }
 </style>

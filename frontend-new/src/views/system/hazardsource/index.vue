@@ -561,6 +561,7 @@
 
 <script>
 import {defineComponent, onMounted, ref, reactive} from 'vue';
+import {useAppStore} from '@/store/modules/app.ts'
 import bjt3D from "../../../utils/bjt3DMap";
 import {getImgSrc, getLayerColor, positionImg} from '@/utils/pointUtil'
 import {addHazardSource, loadHazardSource, addLayer, selectSensorData} from '@/api/system/hazard'
@@ -655,6 +656,8 @@ export default {
     }
   },
   setup() {
+    const appStore = useAppStore()
+    return { appStore }
   },
   created() {
 
@@ -662,7 +665,7 @@ export default {
   mounted() {
     jquery('#cesiumContainer').html('')
     this.nowDate()
-    this.$store.dispatch('app/topHide', false)
+    this.appStore.topHide(false)
 
 
     let that = this;

@@ -748,7 +748,7 @@ export default {
   background-size: cover !important;
 	height: calc(100vh - 84px);
 	.tanchubox{
-		:deep .el-dialog{
+		:deep(.el-dialog) {
 			background: url("@/assets/images/scyf/yingji-tanchubg.png") no-repeat;
 			background-size: cover;
 			.tit{
@@ -880,7 +880,7 @@ export default {
 	}
 	.main{
 		padding: 0 20px;
-		:deep .el-row{
+		:deep(.el-row) {
 			height: 100%;
 			.el-col{
 				height: 100%;position: relative;
@@ -953,7 +953,7 @@ export default {
 				height: 33%;
 				.scyfyxqk{
 					height: calc( 50% - 10px );margin-top: 10px;
-					:deep .el-col{
+					:deep(.el-col) {
 						position: relative;
 					}
 					.circle{
@@ -990,7 +990,7 @@ export default {
 							padding: 0 50px 0 10px;
 							position: absolute;
 							top: 50%;transform: translateY(-50%);
-							:deep .el-progress{
+							:deep(.el-progress) {
 								width: 100%;height: 100%;
 								.el-progress-circle{
 									width: 100% !important;height: 100% !important;
@@ -1046,7 +1046,7 @@ export default {
 				margin: 10px 0;overflow: hidden;
 				.search{
 					margin: 10px 0 0;
-					:deep .el-input{
+					:deep(.el-input) {
 						.el-input__inner{
 							border: 0;background: #203151;
 							border-radius: 20px;
@@ -1228,7 +1228,7 @@ export default {
 					background: rgba(12, 36, 68, 0.8);
 					padding-left: 80px;
 					border-radius: 20px;
-					:deep .el-select{
+					:deep(.el-select) {
 						.el-input__inner{
 							border: 0;background: rgba(12, 36, 68, 0.8);
 							color: #aecbe2;

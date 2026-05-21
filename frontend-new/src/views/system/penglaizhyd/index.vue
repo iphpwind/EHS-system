@@ -1451,7 +1451,7 @@ export default {
   }
 
   .detailDialog {
-    :deep .el-dialog {
+    :deep(.el-dialog) {
       background: transparent;
       box-shadow: 0 0 0 transparent;
       height: 80%;
@@ -1572,7 +1572,7 @@ export default {
         top: 0;
       }
 
-      :deep .el-row {
+      :deep(.el-row) {
         height: 100%;
 
         .el-col {
@@ -1631,7 +1631,7 @@ export default {
         .botchart {
           height: calc(50% - 25px);
 
-          :deep .el-tabs {
+          :deep(.el-tabs) {
             height: calc(100% - 40px);
 
             .el-tabs__header .el-tabs__item {
@@ -1848,7 +1848,7 @@ export default {
                 text-align: center;
                 padding: 2px 0 3px;
 
-                :deep .el-icon {
+                :deep(.el-icon) {
                   vertical-align: middle;
                 }
               }
@@ -1983,12 +1983,12 @@ export default {
       height: calc(100% - 60px);
     }
 
-    :deep .el-overlay {
+    :deep(.el-overlay) {
       pointer-events: none;
       background: transparent;
     }
 
-    :deep .el-drawer {
+    :deep(.el-drawer) {
       pointer-events: auto;
       width: 25% !important;
       height: calc(100vh - 84px);
@@ -2249,7 +2249,7 @@ export default {
       .tabs {
         height: calc(100% - 30px);
 
-        :deep .el-tabs {
+        :deep(.el-tabs) {
           height: 100%;
 
           .el-tabs__header .el-tabs__item {
@@ -2328,7 +2328,7 @@ export default {
               }
             }
 
-            :deep .el-button--mini {
+            :deep(.el-button--mini) {
               padding: 0 10px;
               border: 0;
               background: #00ebff;

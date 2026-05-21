@@ -953,7 +953,7 @@ export default {
 	}
 	.main{
 		height: calc(100% - 90px);padding: 0 30px;
-		:deep .el-row{
+		:deep(.el-row) {
 			height: 100%;
 			.el-col{
 				height: 100%;

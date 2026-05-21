@@ -55,10 +55,12 @@
 
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
+import { useRouter } from 'vue-router'
 import { ElMessage } from 'element-plus'
 import { getTrainingRecords } from '@/api/training'
 import type { QueryParams } from './types'
 
+const router = useRouter()
 const activeTab = ref('ongoing')
 const trainingList = ref([])
 const total = ref(0)
@@ -90,14 +92,44 @@ const handleTabChange = () => {
   getList()
 }
 
+/**
+ * 继续学习：跳转到课程学习页
+ * @param item 培训记录项
+ */
 const continueLearning = (item: any) => {
-  // TODO: 跳转到课程学习页
-  ElMessage.info('继续学习功能待实现')
+  // 跳转到课程学习页面，携带培训记录ID和课程ID
+  router.push({
+    path: '/training/course/study',
+    query: {
+      recordId: item.id,
+      courseId: item.courseId,
+      planId: item.planId
+    }
+  })
 }
 
-const downloadCertificate = (item: any) => {
-  // TODO: 下载证书
-  ElMessage.info('下载证书功能待实现')
+/**
+ * 下载证书：根据培训记录ID请求后端生成并下载PDF证书
+ * @param item 培训记录项
+ */
+const downloadCertificate = async (item: any) => {
+  if (!item.id) {
+    ElMessage.warning('培训记录ID不存在，无法下载证书')
+    return
+  }
+  try {
+    // 调用后端证书下载接口（需后端实现 /api/training/certificate/download）
+    const link = document.createElement('a')
+    link.href = `/api/training/certificate/download?id=${item.id}`
+    link.download = `培训证书_${item.planName || item.courseName || item.id}.pdf`
+    document.body.appendChild(link)
+    link.click()
+    document.body.removeChild(link)
+    ElMessage.success('证书下载已触发')
+  } catch (error) {
+    console.error('下载证书失败:', error)
+    ElMessage.error('下载证书失败，请稍后重试')
+  }
 }
 
 onMounted(getList)

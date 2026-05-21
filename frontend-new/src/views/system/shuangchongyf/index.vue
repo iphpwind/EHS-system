@@ -1047,7 +1047,7 @@ export default {
 	}
 	.main{
 		padding: 0 20px;
-		:deep .el-row{
+		:deep(.el-row) {
 			height: 100%;
 			.el-col{
 				height: 100%;position: relative;
@@ -1074,7 +1074,7 @@ export default {
 				height: 28%;
 				.scyfyxqk{
 					height: calc( 100% - 50px );margin-top: 15px;
-					:deep .el-col{
+					:deep(.el-col) {
 						position: relative;
 					}
 					.circle{
@@ -1164,7 +1164,7 @@ export default {
 					}
 				}
 				.search{
-					:deep .el-input{
+					:deep(.el-input) {
 						.el-input__inner{
 							border: 0;background: #203151;
 							border-radius: 20px;
@@ -1214,7 +1214,7 @@ export default {
 			}
 			.leftbox3{
 				height: 30%;
-				:deep .el-table{
+				:deep(.el-table) {
 					margin: 10px 0 0;
 					background: transparent;
 					td.el-table__cell,
@@ -1322,7 +1322,7 @@ export default {
 				}
 				.midselect{
 					position: relative;float: right;
-					:deep .el-select{
+					:deep(.el-select) {
 						.el-input__inner{
 							border: 0;background: rgba(12, 36, 68, 0.8);
 							border-radius: 20px;
