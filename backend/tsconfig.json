@@ -12,6 +12,15 @@
     "resolveJsonModule": true,
     "moduleResolution": "node"
   },
+  "ts-node": {
+    "transpileOnly": true,
+    "compilerOptions": {
+      "module": "commonjs",
+      "moduleResolution": "node",
+      "target": "ES2020",
+      "esModuleInterop": true
+    }
+  },
   "include": ["src/**/*"],
   "exclude": ["node_modules"]
 }

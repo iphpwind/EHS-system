@@ -8,6 +8,8 @@ declare global {
         userId: number;
         username: string;
         role: number;
+        department_id?: number | null;  // ✅ P0新增
+        roleId?: number;              // ✅ P0新增（新 RBAC 主角色）
       };
     }
   }
