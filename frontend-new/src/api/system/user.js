@@ -10,6 +10,9 @@ export function listUser(query) {
     })
 }
 
+// 别名：兼容旧代码
+export const listUsers = listUser
+
 export function listUserNoLog(query) {
     return request({
         url: '/system/user/userList',

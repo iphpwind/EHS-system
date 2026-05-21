@@ -48,6 +48,9 @@ export function treeselect() {
     })
 }
 
+// 别名：兼容旧代码
+export const getDeptTree = treeselect
+
 export function treeselectByCompany() {
     return request({
         url: '/system/dept/treeselectByCompany',
