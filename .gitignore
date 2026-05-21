@@ -80,6 +80,8 @@ app_minimal.ts
 # Backup files
 *.backup
 .backup/
+backups/
+backend/backups/
 
 # 与网站运行无关的文件（文档、日志、备份、脚本等）
 # 文档文件（保留README.md）
