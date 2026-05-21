@@ -3,6 +3,25 @@ import jwt from 'jsonwebtoken';
 import dotenv from 'dotenv';
 import path from 'path';
 
+// 扩展 Request 类型（供控制器使用）
+export interface AuthRequest extends Request {
+  user?: {
+    userId: number;
+    username: string;
+    role: number;
+    department_id?: number | null;
+    roleId?: number;
+  };
+  // 快捷属性（兼容旧代码）
+  userId?: number;
+  userDeptId?: number | null;
+  // 数据权限
+  scope?: {
+    type: 'all' | 'dept' | 'self';
+    departmentId?: number;
+  };
+}
+
 // 确保在模块初始化前加载 .env（早于 app.ts 的 dotenv.config()）
 dotenv.config({ path: path.join(__dirname, '..', '..', '.env') });
 
@@ -97,6 +116,7 @@ export const authorizeRoles = (allowedRoles: number[]) => {
  */
 export const authorizePermission = (requiredPermission: string) => {
   return async (req: Request, res: Response, next: NextFunction) => {
+    let conn: any = null;
     const userId = (req as any).user?.userId;
     const userRole = (req as any).user?.role;
 
@@ -107,7 +127,7 @@ export const authorizePermission = (requiredPermission: string) => {
 
     try {
       const { getConnection } = require('../config/database');
-      const conn = await getConnection();
+      conn = await getConnection();
 
       // 获取用户角色权限
       const [roles] = await conn.execute(
@@ -145,6 +165,8 @@ export const authorizePermission = (requiredPermission: string) => {
         success: false,
         message: '权限检查失败'
       });
+    } finally {
+      if (conn) conn.release();
     }
   };
 };

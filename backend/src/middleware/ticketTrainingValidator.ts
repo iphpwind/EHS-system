@@ -32,17 +32,18 @@ export function ticketTrainingValidator(options: ValidatorOptions = {}) {
   } = options;
 
   return async (req: Request, res: Response, next: NextFunction) => {
-    const userId = (req as any).user?.userId;
-    const ticketType = req.body.ticketType || req.body.type || '';
-    const isHighRisk = HIGH_RISK_TYPES.includes(ticketType) || requireSpecialCert;
-
-    if (!userId) {
-      return res.status(401).json({ code: 401, msg: '未获取到用户信息，请重新登录' });
-    }
-
-    const conn = await getConnection();
-
+    let conn: any = null;
     try {
+      const userId = (req as any).user?.userId;
+      const ticketType = req.body.ticketType || req.body.type || '';
+      const isHighRisk = HIGH_RISK_TYPES.includes(ticketType) || requireSpecialCert;
+
+      if (!userId) {
+        return res.status(401).json({ code: 401, msg: '未获取到用户信息，请重新登录' });
+      }
+
+      conn = await getConnection();
+
       // ========== 1. 三级安全教育强制校验 ==========
       if (requireThreeLevel) {
         const threeLevelStatus = await checkThreeLevelCompletion(userId);
@@ -158,9 +159,11 @@ export function ticketTrainingValidator(options: ValidatorOptions = {}) {
       next();
 
     } catch (error) {
-      logger.error('[TicketValidator] 培训合规校验服务异常', { error, userId });
+      logger.error('[TicketValidator] 培训合规校验服务异常', { error, userId: (req as any).user?.userId });
       // 服务异常时记录但不阻塞（防止紧急作业无法创建）
       next();
+    } finally {
+      if (conn) conn.release();
     }
   };
 }
@@ -169,13 +172,14 @@ export function ticketTrainingValidator(options: ValidatorOptions = {}) {
  * 预校验接口（GET请求，给前端提前检查用）
  */
 export async function preCheckTrainingStatus(req: Request, res: Response) {
-  const userId = (req as any).user?.userId;
-  if (!userId) {
-    return res.status(401).json({ code: 401, msg: '未登录' });
-  }
-
+  let conn: any = null;
   try {
-    const conn = await getConnection();
+    const userId = (req as any).user?.userId;
+    if (!userId) {
+      return res.status(401).json({ code: 401, msg: '未登录' });
+    }
+
+    conn = await getConnection();
 
     // 三级教育
     const threeLevel = await checkThreeLevelCompletion(userId);
@@ -218,8 +222,10 @@ export async function preCheckTrainingStatus(req: Request, res: Response) {
       },
     });
   } catch (error) {
-    logger.error('[TicketValidator] 预校验失败', { error, userId });
+    logger.error('[TicketValidator] 预校验失败', { error, userId: (req as any).user?.userId });
     res.status(500).json({ code: 500, msg: '预校验服务异常' });
+  } finally {
+    if (conn) conn.release();
   }
 }
 

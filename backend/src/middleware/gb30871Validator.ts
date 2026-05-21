@@ -261,13 +261,14 @@ export function gb30871Validator(category: TicketCategory) {
  */
 export function gb30871ApproveValidator(category: TicketCategory) {
   return async (req: Request, res: Response, next: NextFunction) => {
+    let conn: any = null;
     const { action } = req.body;
 
     // 仅在特定审批节点强制校验
     if (category === 'confined' && (action === 'safety' || action === 'final')) {
       const { getConnection } = require('../config/database');
       try {
-        const conn = await getConnection();
+        conn = await getConnection();
         const ticketId = req.params.id;
 
         // 检查气体检测记录是否存在
@@ -285,6 +286,8 @@ export function gb30871ApproveValidator(category: TicketCategory) {
         }
       } catch (error) {
         logger.error('[GB30871] 审批前置校验异常', { error, ticketId: req.params.id });
+      } finally {
+        if (conn) conn.release();
       }
     }
 
