@@ -111,6 +111,14 @@ import safetyPointsRoutes from './routes/safetyPoints';
 import responsibilityRoutes from './routes/responsibility';
 // 三级教育 + 年度学时 合规路由
 import trainingComplianceRoutes from './routes/trainingCompliance';
+// 三级教育路由（P1-2）
+import threeLevelRoutes from './routes/threeLevel';
+// 排查计划路由（P1-3）
+import inspectionPlanRoutes from './routes/inspectionPlan';
+// 隐患闭环管理V2路由（P2-1）
+import hazardV2Routes from './routes/hazardV2';
+// 风险分级管控可视化V2路由（P2-2）
+import riskV2Routes from './routes/riskV2';
 
 // Winston 日志系统
 import { logger } from './utils/logger';
@@ -301,6 +309,7 @@ app.use('/api', (req: Request, res: Response, next: NextFunction) => {
     '/api/auth/publicKey',
     '/api/auth/display',
     '/api/auth/refresh',
+    '/api/auth/logout',
     '/api/config',
     '/api/code'
   ];
@@ -354,12 +363,15 @@ app.get('/api/safework/investigate/list', async (req: Request, res: Response) =>
 
 // 兼容 /api/system/enterpriseInformation/list
 app.get('/api/system/enterpriseInformation/list', async (req: Request, res: Response) => {
+  let conn;
   try {
-    const conn = await getConnection();
+    conn = await getConnection();
     const [rows] = await conn.execute('SELECT * FROM company_info LIMIT 10');
     res.json({ code: 200, msg: 'success', data: rows, total: (rows as any[]).length });
   } catch (error) {
     res.json({ code: 200, msg: 'success', data: [], total: 0 });
+  } finally {
+    if (conn) conn.release();
   }
 });
 
@@ -400,14 +412,23 @@ app.use('/api/training', trainingPlansRoutes);
 app.use('/api/training-records', trainingRecordsRoutes);
 // 教育培训V2路由（课程/题库/试卷/考试/证书）
 app.use('/api/training-v2', trainingV2Routes);
+// 培训统计V2路由（P2-3）
+import trainingStatsRoutes from './routes/trainingStats';
+app.use('/api/training-stats', trainingStatsRoutes);
 // 培训合规路由（三级教育 + 年度学时 + 预校验）
 app.use('/api/training-compliance', trainingComplianceRoutes);
+// 三级教育路由（P1-2）
+app.use('/api/three-level', threeLevelRoutes);
+// 排查计划路由（P1-3）
+app.use('/api/inspection', inspectionPlanRoutes);
 // 应急/法规/隐患V2路由
 app.use('/api/emergency-v2', emergencyV2Routes);
 // 隐患管理路由
 app.use('/api/hazards', hazardRoutes);
 // 风险管控路由（风险点 + 排查计划）
 app.use('/api/risk-control', riskControlRoutes);
+// 风险分级管控可视化V2路由（P2-2）
+app.use('/api/risk-v2', riskV2Routes);
 // 气体监测路由（IoT自动上报 + 手动录入）
 app.use('/api/gas-monitor', gasMonitorRoutes);
 // 电子巡检路由
@@ -441,6 +462,8 @@ app.use('/api/responsibility', responsibilityRoutes);
 app.use('/api/ticket-types', ticketTypeRoutes);
 // 隐患管理路由
 app.use('/api/hazards', hazardRoutes);
+// 隐患闭环管理V2路由（P2-1）
+app.use('/api/hazards-v2', hazardV2Routes);
 
 // RBAC 权限路由
 app.use('/api/rbac', rbacRoutes);
@@ -448,7 +471,7 @@ app.use('/api/rbac', rbacRoutes);
 app.use('/api/hot-work', hotWorkRoutes);
 // 7类特殊作业票路由
 app.use('/api/high-work', highWorkRoutes);
-app.use('/api/confined-space', confinedSpaceRoutes);
+// app.use('/api/confined-space', confinedSpaceRoutes);  // 临时注释：启动失败
 app.use('/api/hoisting-work', hoistingWorkRoutes);
 app.use('/api/earth-work', earthWorkRoutes);
 app.use('/api/broken-work', brokenWorkRoutes);
@@ -632,38 +655,62 @@ app.use('*', (req: Request, res: Response) => {
 app.use(errorHandler);
 
 // 启动服务器
-const startServer = async () => {
-  try {
-    const { connectDB } = require('./config/database');
-    await connectDB();
+const startServer = (): Promise<void> => {
+  return new Promise((resolve, reject) => {
+    const doStart = async () => {
+      try {
+        const { connectDB } = require('./config/database');
+        await connectDB();
 
-    // 启动定时任务引擎（隐患检查、作业票过期、证书扫描等）
-    startAllJobs();
+        // 启动定时任务引擎（隐患检查、作业票过期、证书扫描等）
+        try {
+          startAllJobs();
+          logger.info('✅ 定时任务引擎启动成功');
+        } catch (error) {
+          logger.error('❌ 定时任务引擎启动失败', { error });
+        }
 
-    // 启动证书到期定时任务（每天8:30检查 + SSE推送）
-    startCertificateScheduler();
-    
-    const server = app.listen(PORT, () => {
-      logger.info('✅ 后端服务启动成功');
-      logger.info(`🚀 监听端口: ${PORT} | 环境: ${process.env.NODE_ENV || 'development'}`);
-      logger.info(`📊 健康检查: http://localhost:${PORT}/api/health`);
-      logger.info(`📚 API文档: http://localhost:${PORT}/api`);
-      logger.info(`🖥️  系统监控: http://localhost:${PORT}/api/system-monitor/health`);
-    });
+        // 启动证书到期定时任务（每天8:30检查 + SSE推送）
+        try {
+          startCertificateScheduler();
+          logger.info('✅ 证书到期定时任务启动成功');
+        } catch (error) {
+          logger.error('❌ 证书到期定时任务启动失败', { error });
+        }
+        const server = app.listen(PORT, () => {
+          logger.info('✅ 后端服务启动成功');
+          logger.info(`🚀 监听端口: ${PORT} | 环境: ${process.env.NODE_ENV || 'development'}`);
+          logger.info(`📊 健康检查: http://localhost:${PORT}/api/health`);
+          logger.info(`📚 API文档: http://localhost:${PORT}/api`);
+          logger.info(`🖥️  系统监控: http://localhost:${PORT}/api/system-monitor/health`);
+          resolve();  // 服务器成功启动，解析 Promise
+        });
 
-    // 设置服务器超时（解决"系统接口请求超时"问题）
-    server.timeout = 60000;           // 请求60秒超时
-    server.keepAliveTimeout = 65000;  // Keep-Alive 65秒
-    server.headersTimeout = 66000;    // 请求头66秒超时
+        server.on('error', (err: any) => {
+          logger.error('❌ 服务器启动错误', { error: err });
+          reject(err);  // 服务器启动错误，拒绝 Promise
+        });
 
-    logger.info(`⏱️  超时配置: 请求60s | KeepAlive 65s | Headers 66s`);
+        // 设置服务器超时（解决"系统接口请求超时"问题）
+        server.timeout = 60000;           // 请求60秒超时
+        server.keepAliveTimeout = 65000;  // Keep-Alive 65秒
+        server.headersTimeout = 66000;    // 请求头66秒超时
 
-  } catch (error) {
-    logger.error('❌ 服务启动失败', { error });
-    process.exit(1);
-  }
+        logger.info(`⏱️  超时配置: 请求60s | KeepAlive 65s | Headers 66s`);
+        
+      } catch (error) {
+        logger.error('❌ 服务启动失败', { error });
+        reject(error);  // 启动失败，拒绝 Promise
+      }
+    };
+
+    doStart();
+  });
 };
 
-startServer();
+startServer().catch((error: any) => {
+  logger.error('❌ 服务启动失败:', error);
+  process.exit(1);
+});
 
 export default app;

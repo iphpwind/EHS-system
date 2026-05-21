@@ -1,10 +1,25 @@
 import { Request, Response, NextFunction } from 'express';
 import { getConnection } from '../config/database';
 import { RowDataPacket } from 'mysql2';
+import { getRedisClient } from '../config/redis';
 
 export const getKPI = async (req: Request, res: Response, next: NextFunction) => {
+  let conn: any = null;
   try {
-    const conn = await getConnection();
+    // 尝试从 Redis 获取缓存
+    const redis = getRedisClient();
+    const cacheKey = 'dashboard:kpi';
+    let cached = null;
+    try {
+      cached = await redis.get(cacheKey);
+    } catch (redisError) {
+      console.error('Redis 获取缓存失败，降级为数据库查询:', redisError);
+    }
+    if (cached) {
+      return res.json({ success: true, data: JSON.parse(cached), cached: true });
+    }
+
+    conn = await getConnection();
     
     // 安全天数（从系统设置读取，默认8353天）
     const [settings] = await conn.execute<RowDataPacket[]>(
@@ -44,19 +59,25 @@ export const getKPI = async (req: Request, res: Response, next: NextFunction) =>
       "SELECT COUNT(DISTINCT user_id) as count FROM user_logs WHERE DATE(login_time)=CURDATE()"
     );
 
-    res.json({
-      success: true,
-      data: {
-        safetyDays,
-        hazardTotal: hazardStats[0]?.total || 0,
-        hazardToday: hazardStats[0]?.today || 0,
-        hazardThisMonth: hazardStats[0]?.thisMonth || 0,
-        completionRate: `${rate}%`,
-        pendingTickets: pending[0]?.count || 0,
-        todayTickets: todayTickets[0]?.count || 0,
-        activeUsers: activeUsers[0]?.count || 0
-      }
-    });
+    const result = {
+      safetyDays,
+      hazardTotal: hazardStats[0]?.total || 0,
+      hazardToday: hazardStats[0]?.today || 0,
+      hazardThisMonth: hazardStats[0]?.thisMonth || 0,
+      completionRate: `${rate}%`,
+      pendingTickets: pending[0]?.count || 0,
+      todayTickets: todayTickets[0]?.count || 0,
+      activeUsers: activeUsers[0]?.count || 0
+    };
+
+    // 写入 Redis 缓存（5分钟过期）
+    try {
+      await redis.setex(cacheKey, 300, JSON.stringify(result));
+    } catch (redisError) {
+      console.error('Redis 写入缓存失败:', redisError);
+    }
+
+    res.json({ success: true, data: result });
   } catch (error) {
     console.error('Get KPI error:', error);
     res.json({ success: true, data: {
@@ -64,12 +85,27 @@ export const getKPI = async (req: Request, res: Response, next: NextFunction) =>
       completionRate: '0.0%', pendingTickets: 0, todayTickets: 0, activeUsers: 0
     }});
   }
+  finally { if (conn) conn.release(); }
 };
 
 export const getTrend = async (req: Request, res: Response, next: NextFunction) => {
+  let conn: any = null;
   try {
-    const conn = await getConnection();
     const { period = 'year' } = req.query;
+    // 尝试从 Redis 获取缓存
+    const redis = getRedisClient();
+    const cacheKey = `dashboard:trend:${period}`;
+    let cached = null;
+    try {
+      cached = await redis.get(cacheKey);
+    } catch (redisError) {
+      console.error('Redis 获取缓存失败，降级为数据库查询:', redisError);
+    }
+    if (cached) {
+      return res.json({ success: true, data: JSON.parse(cached), cached: true });
+    }
+
+    conn = await getConnection();
     let dateCondition = '';
     if (period === 'week') dateCondition = 'AND YEARWEEK(discovery_time)=YEARWEEK(CURDATE())';
     else if (period === 'month') dateCondition = 'AND MONTH(discovery_time)=MONTH(CURDATE()) AND YEAR(discovery_time)=YEAR(CURDATE())';
@@ -92,31 +128,62 @@ export const getTrend = async (req: Request, res: Response, next: NextFunction) 
       const i = item.month - 1;
       if (i >= 0 && i < 12) { major[i] = item.major; majorRisk[i] = item.major_risk; general[i] = item.general; }
     });
-    res.json({ success: true, data: { months: monthNames, major, majorRisk, general } });
+    const result = { months: monthNames, major, majorRisk, general };
+    // 写入 Redis 缓存（5分钟过期）
+    try {
+      await redis.setex(cacheKey, 300, JSON.stringify(result));
+    } catch (redisError) {
+      console.error('Redis 写入缓存失败:', redisError);
+    }
+    res.json({ success: true, data: result });
   } catch (error) {
     console.error('Get trend error:', error);
     next(error);
   }
+  finally { if (conn) conn.release(); }
 };
 
 export const getLevelDistribution = async (req: Request, res: Response, next: NextFunction) => {
+  let conn: any = null;
   try {
-    const conn = await getConnection();
+    // 尝试从 Redis 获取缓存
+    const redis = getRedisClient();
+    const cacheKey = 'dashboard:level_distribution';
+    let cached = null;
+    try {
+      cached = await redis.get(cacheKey);
+    } catch (redisError) {
+      console.error('Redis 获取缓存失败，降级为数据库查询:', redisError);
+    }
+    if (cached) {
+      return res.json({ success: true, data: JSON.parse(cached), cached: true });
+    }
+
+    conn = await getConnection();
     const [levels] = await conn.execute<RowDataPacket[]>(
       `SELECT hazard_level as level, COUNT(*) as count FROM hazard_inspection
        WHERE discovery_time >= DATE_SUB(CURDATE(), INTERVAL 30 DAY)
        GROUP BY hazard_level ORDER BY hazard_level`
     );
     const levelMap = ['', '重大隐患', '较大隐患', '一般隐患'];
-    res.json({ success: true, data: levels.map((item: any) => ({
+    const result = levels.map((item: any) => ({
       name: levelMap[item.level] || '未知', value: item.count
-    })) });
+    }));
+    // 写入 Redis 缓存（5分钟过期）
+    try {
+      await redis.setex(cacheKey, 300, JSON.stringify(result));
+    } catch (redisError) {
+      console.error('Redis 写入缓存失败:', redisError);
+    }
+    res.json({ success: true, data: result });
   } catch (error) { console.error(error); next(error); }
+  finally { if (conn) conn.release(); }
 };
 
 export const getDepartmentRanking = async (req: Request, res: Response, next: NextFunction) => {
+  let conn: any = null;
   try {
-    const conn = await getConnection();
+    conn = await getConnection();
     const [depts] = await conn.execute<RowDataPacket[]>(
       `SELECT u.department, COUNT(h.id) as count
        FROM hazard_inspection h LEFT JOIN users u ON h.discoverer_id = u.id
@@ -128,11 +195,13 @@ export const getDepartmentRanking = async (req: Request, res: Response, next: Ne
       counts: depts.map((d: any) => d.count)
     }});
   } catch (error) { console.error(error); next(error); }
+  finally { if (conn) conn.release(); }
 };
 
 export const getPendingTasks = async (req: Request, res: Response, next: NextFunction) => {
+  let conn: any = null;
   try {
-    const conn = await getConnection();
+    conn = await getConnection();
     // 待审批作业票
     const [pendingTickets] = await conn.execute<RowDataPacket[]>(
       `SELECT wp.id, wp.ticket_no as no, wp.ticket_type as type, u.real_name as applicant, wp.created_at as time
@@ -164,12 +233,14 @@ export const getPendingTasks = async (req: Request, res: Response, next: NextFun
     console.error('Get pending tasks error:', error);
     res.json({ success: true, data: { pendingTickets: [], pendingHazards: [], upcomingTickets: [] } });
   }
+  finally { if (conn) conn.release(); }
 };
 
 // 培训完成率统计
 export const getTrainingRate = async (req: Request, res: Response, next: NextFunction) => {
+  let conn: any = null;
   try {
-    const conn = await getConnection();
+    conn = await getConnection();
     
     // 总必修课程数
     const [mandatoryCourses] = await conn.execute<RowDataPacket[]>(
@@ -230,12 +301,14 @@ export const getTrainingRate = async (req: Request, res: Response, next: NextFun
       totalUsers: 0, monthlyCompleted: 0, totalLearningHours: 0
     }});
   }
+  finally { if (conn) conn.release(); }
 };
 
 // 区域风险分布
 export const getAreaRiskDistribution = async (req: Request, res: Response, next: NextFunction) => {
+  let conn: any = null;
   try {
-    const conn = await getConnection();
+    conn = await getConnection();
 
     // 先从隐患表按部门聚合，获取各部门的隐患风险分布
     const [deptRisks] = await conn.execute<RowDataPacket[]>(
@@ -327,4 +400,5 @@ export const getAreaRiskDistribution = async (req: Request, res: Response, next:
     console.error('Get area risk distribution error:', error);
     res.json({ success: true, data: { areas: [], ticketAreas: [], summary: { totalAreas: 0, dangerAreas: 0, warningAreas: 0, normalAreas: 0 } } });
   }
+  finally { if (conn) conn.release(); }
 };
