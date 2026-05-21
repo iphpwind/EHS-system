@@ -467,7 +467,7 @@ MIT License
 
 ## 🙏 致谢
 
-- 参考系统：[http://222.133.13.78:8088](http://222.133.13.78:8088)
+- 参考系统：
 - 技术栈：Vue 3、Element Plus、Vant、Node.js、Express、TypeScript
 
 ---
