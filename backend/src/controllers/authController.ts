@@ -4,13 +4,14 @@ import jwt from 'jsonwebtoken';
 import { getConnection } from '../config/database';
 import { AppError } from '../utils/errors';
 
-const JWT_SECRET = process.env.JWT_SECRET || 'safety-system-secret-2026';
+const JWT_SECRET = process.env.JWT_SECRET || (() => { throw new Error("JWT_SECRET 未配置，请在 .env 中设置") })();
 const JWT_EXPIRES_IN = process.env.JWT_EXPIRES_IN || '7d';
 
 /**
  * 用户登录
  */
 export const login = async (req: Request, res: Response, next: NextFunction) => {
+  let conn: any = null;
   try {
     const { username, password } = req.body;
 
@@ -21,7 +22,7 @@ export const login = async (req: Request, res: Response, next: NextFunction) => 
       });
     }
 
-    const conn = await getConnection();
+    conn = await getConnection();
 
     // 查询用户
     const [users] = await conn.execute(
@@ -93,6 +94,8 @@ export const login = async (req: Request, res: Response, next: NextFunction) => 
   } catch (error) {
     console.error('Login error:', error);
     next(error);
+  } finally {
+    if (conn) conn.release();
   }
 };
 
@@ -100,6 +103,7 @@ export const login = async (req: Request, res: Response, next: NextFunction) => 
  * 用户注册
  */
 export const register = async (req: Request, res: Response, next: NextFunction) => {
+  let conn: any = null;
   try {
     const { username, password, realName, email, department } = req.body;
 
@@ -110,7 +114,7 @@ export const register = async (req: Request, res: Response, next: NextFunction) 
       });
     }
 
-    const conn = await getConnection();
+    conn = await getConnection();
 
     // 检查用户名是否已存在
     const [existing] = await conn.execute(
@@ -144,6 +148,8 @@ export const register = async (req: Request, res: Response, next: NextFunction) 
   } catch (error) {
     console.error('Register error:', error);
     next(error);
+  } finally {
+    if (conn) conn.release();
   }
 };
 
@@ -151,10 +157,11 @@ export const register = async (req: Request, res: Response, next: NextFunction) 
  * 获取当前用户信息
  */
 export const getCurrentUser = async (req: Request, res: Response, next: NextFunction) => {
+  let conn: any = null;
   try {
     const userId = (req as any).user.userId;
 
-    const conn = await getConnection();
+    conn = await getConnection();
 
     const [users] = await conn.execute(
       `SELECT id, username, real_name, email, phone, department, position, role
@@ -199,6 +206,8 @@ export const getCurrentUser = async (req: Request, res: Response, next: NextFunc
   } catch (error) {
     console.error('Get current user error:', error);
     next(error);
+  } finally {
+    if (conn) conn.release();
   }
 };
 
@@ -206,12 +215,13 @@ export const getCurrentUser = async (req: Request, res: Response, next: NextFunc
  * 用户登出
  */
 export const logout = async (req: Request, res: Response, next: NextFunction) => {
+  let conn: any = null;
   try {
     const userId = (req as any).user.userId;
     const username = (req as any).user.username;
 
     // 记录登出日志
-    const conn = await getConnection();
+    conn = await getConnection();
     await conn.execute(
       'INSERT INTO system_logs (user_id, username, action, module, description, ip_address, created_at) VALUES (?, ?, ?, ?, ?, ?, NOW())',
       [userId, username, 'logout', 'auth', '用户登出', req.ip]
@@ -224,6 +234,8 @@ export const logout = async (req: Request, res: Response, next: NextFunction) =>
   } catch (error) {
     console.error('Logout error:', error);
     next(error);
+  } finally {
+    if (conn) conn.release();
   }
 };
 
