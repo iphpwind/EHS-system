@@ -8,11 +8,12 @@ import { RowDataPacket } from 'mysql2';
  * Body: { deptId, hazardType, reason }
  */
 export const hazardToTraining = async (req: Request, res: Response, next: NextFunction) => {
+  let conn: any = null;
   try {
     const { deptId, hazardType, reason } = req.body;
     if (!deptId) return res.status(400).json({ success: false, message: '部门ID不能为空' });
 
-    const conn = await getConnection();
+    conn = await getConnection();
 
     // 查找与该隐患类型相关的课程
     const [courses] = await conn.execute<RowDataPacket[]>(
@@ -47,7 +48,7 @@ export const hazardToTraining = async (req: Request, res: Response, next: NextFu
       message: `已为部门推送 ${assigned} 条定向培训任务`,
       data: { deptId, coursesCount: (courses as any[]).length, assigned }
     });
-  } catch (e) { next(e); }
+  } catch (e) { next(e); } finally { if (conn) conn.release(); }
 };
 
 /**
@@ -56,11 +57,12 @@ export const hazardToTraining = async (req: Request, res: Response, next: NextFu
  * Body: { accidentId, title, reason, targetUserIds? }
  */
 export const accidentToTraining = async (req: Request, res: Response, next: NextFunction) => {
+  let conn: any = null;
   try {
     const { accidentId, title, reason, targetUserIds } = req.body;
     if (!title && !accidentId) return res.status(400).json({ success: false, message: '事故标题或ID不能为空' });
 
-    const conn = await getConnection();
+    conn = await getConnection();
 
     // 查找以案促教相关课程
     const [courses] = await conn.execute<RowDataPacket[]>(
@@ -95,7 +97,7 @@ export const accidentToTraining = async (req: Request, res: Response, next: Next
       message: `已为 ${userIds.length} 名员工推送 "${title || reason || '以案促教'}" 培训`,
       data: { userIdsCount: userIds.length, assigned }
     });
-  } catch (e) { next(e); }
+  } catch (e) { next(e); } finally { if (conn) conn.release(); }
 };
 
 /**
@@ -103,6 +105,7 @@ export const accidentToTraining = async (req: Request, res: Response, next: Next
  * GET /api/integration/ptw-check?userId=&workType=
  */
 export const ptwCheck = async (req: Request, res: Response, next: NextFunction) => {
+  let conn: any = null;
   try {
     const userId = Number(req.query.userId) || (req as any).user?.userId;
     const { workType } = req.query;
@@ -111,7 +114,7 @@ export const ptwCheck = async (req: Request, res: Response, next: NextFunction) 
     const { checkTrainingEligibility } = require('./trainingChecker');
     const result = await checkTrainingEligibility(userId, workType as string);
 
-    const conn = await getConnection();
+    conn = await getConnection();
     // 额外获取用户的证书列表
     const [certs] = await conn.execute<RowDataPacket[]>(
       `SELECT c.*, ct.name AS cert_type_name, DATEDIFF(c.expire_date, NOW()) AS days_remaining
@@ -128,5 +131,5 @@ export const ptwCheck = async (req: Request, res: Response, next: NextFunction) 
         certificates: certs,
       }
     });
-  } catch (e) { next(e); }
+  } catch (e) { next(e); } finally { if (conn) conn.release(); }
 };

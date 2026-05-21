@@ -29,6 +29,7 @@ const statusTextMap: Record<number, string> = {
 
 // ==================== 获取动火作业列表（含扩展信息） ====================
 export const getHotWorkList = async (req: Request, res: Response, next: NextFunction) => {
+  let conn: any = null;
   try {
     const {
       page = 1,
@@ -43,23 +44,25 @@ export const getHotWorkList = async (req: Request, res: Response, next: NextFunc
 
     const userId = (req as any).user?.userId;
     const userRole = (req as any).user?.role;
-    const userDeptName = (req as any).user?.department || '';
+    // ✅ P0迁移：不再从 JWT 取 department（JWT不含此字段），改从 scopeMiddleware 注入手动获取
+    const userDeptId = (req as any).userDeptId || null;
     const userOrgId = (req as any).user?.orgId || 1;
 
-    const conn = await getConnection();
+    conn = await getConnection();
 
     let sql = `
       SELECT
         wp.id, wp.ticket_no, wp.ticket_type, wp.status as main_status,
         wp.applicant_id, wp.created_at,
-        u.real_name as applicant_name, u.department as applicant_dept_name,
+        u.real_name as applicant_name, u.department_id as applicant_dept_id,
+        u.department as applicant_dept_name,
         d.name as dept_name,
         hd.fire_level, hd.fire_area, hd.fire_type,
         hd.risk_analysis, hd.risk_analysis_time,
         hd.acceptance_time, hd.status_flow
       FROM work_permits wp
       LEFT JOIN users u ON wp.applicant_id = u.id
-      LEFT JOIN departments d ON d.name = u.department
+      LEFT JOIN departments d ON d.id = u.department_id  -- ✅ 改为 INT 外键 JOIN（替代旧版 d.name = u.department）
       LEFT JOIN hot_work_details hd ON wp.id = hd.ticket_id
       WHERE wp.ticket_type = 'hot_work'
     `;
@@ -71,11 +74,10 @@ export const getHotWorkList = async (req: Request, res: Response, next: NextFunc
       params.push(userOrgId);
     }
 
-    // 数据权限过滤
-    if (userRole >= 4) {
-      // 普通用户/部门负责人只能看本部门
-      sql += ' AND u.department = ?';
-      params.push(userDeptName);
+    // 数据权限过滤：使用 INT department_id（✅ 替代旧版字符串匹配 u.department = ?）
+    if (userDeptId) {
+      sql += ' AND u.department_id = ?';
+      params.push(userDeptId);
     }
 
     if (status) {
@@ -128,13 +130,15 @@ export const getHotWorkList = async (req: Request, res: Response, next: NextFunc
   } catch (error) {
     next(error);
   }
+  finally { if (conn) conn.release(); }
 };
 
 // ==================== 获取动火作业详情 ====================
 export const getHotWorkDetail = async (req: Request, res: Response, next: NextFunction) => {
+  let conn: any = null;
   try {
     const { id } = req.params;
-    const conn = await getConnection();
+    conn = await getConnection();
 
     // 主表 + 扩展表
     const [mainRows] = await conn.execute<RowDataPacket[]>(`
@@ -191,10 +195,12 @@ export const getHotWorkDetail = async (req: Request, res: Response, next: NextFu
   } catch (error) {
     next(error);
   }
+  finally { if (conn) conn.release(); }
 };
 
 // ==================== 创建动火作业票 ====================
 export const createHotWork = async (req: Request, res: Response, next: NextFunction) => {
+  let conn: any = null;
   try {
     const {
       projectName,
@@ -218,7 +224,7 @@ export const createHotWork = async (req: Request, res: Response, next: NextFunct
       return res.status(403).json({ code: 403, msg: canWork.reason });
     }
 
-    const conn = await getConnection();
+    conn = await getConnection();
 
     await conn.beginTransaction();
 
@@ -271,10 +277,12 @@ export const createHotWork = async (req: Request, res: Response, next: NextFunct
   } catch (error) {
     next(error);
   }
+  finally { if (conn) conn.release(); }
 };
 
 // ==================== 更新动火作业 ====================
 export const updateHotWork = async (req: Request, res: Response, next: NextFunction) => {
+  let conn: any = null;
   try {
     const { id } = req.params;
     const {
@@ -283,7 +291,7 @@ export const updateHotWork = async (req: Request, res: Response, next: NextFunct
     } = req.body;
 
     const userId = (req as any).user?.userId;
-    const conn = await getConnection();
+    conn = await getConnection();
 
     // 只能修改草稿状态
     const [checkRows] = await conn.execute<RowDataPacket[]>(
@@ -332,14 +340,16 @@ export const updateHotWork = async (req: Request, res: Response, next: NextFunct
   } catch (error) {
     next(error);
   }
+  finally { if (conn) conn.release(); }
 };
 
 // ==================== 提交审批 ====================
 export const submitHotWork = async (req: Request, res: Response, next: NextFunction) => {
+  let conn: any = null;
   try {
     const { id } = req.params;
     const userId = (req as any).user?.userId;
-    const conn = await getConnection();
+    conn = await getConnection();
 
     const [rows] = await conn.execute<RowDataPacket[]>(
       'SELECT status, applicant_id, ticket_no FROM work_permits WHERE id = ?',
@@ -383,17 +393,19 @@ export const submitHotWork = async (req: Request, res: Response, next: NextFunct
   } catch (error) {
     next(error);
   }
+  finally { if (conn) conn.release(); }
 };
 
 // ==================== 审批流（部门/安全/最终批准） ====================
 export const approveHotWork = async (req: Request, res: Response, next: NextFunction) => {
+  let conn: any = null;
   try {
     const { id } = req.params;
     const { action, comment = '' } = req.body; // action: dept / safety / final / reject
     const userId = (req as any).user?.userId;
     const userName = (req as any).user?.username || '';
     const userRole = (req as any).user?.role;
-    const conn = await getConnection();
+    conn = await getConnection();
 
     if (!action || !['dept', 'safety', 'final', 'reject'].includes(action)) {
       return res.status(400).json({ code: 400, msg: '审批动作不正确' });
@@ -478,14 +490,16 @@ export const approveHotWork = async (req: Request, res: Response, next: NextFunc
   } catch (error) {
     next(error);
   }
+  finally { if (conn) conn.release(); }
 };
 
 // ==================== 开始作业 ====================
 export const startWork = async (req: Request, res: Response, next: NextFunction) => {
+  let conn: any = null;
   try {
     const { id } = req.params;
     const userId = (req as any).user?.userId;
-    const conn = await getConnection();
+    conn = await getConnection();
 
     const [rows] = await conn.execute<RowDataPacket[]>(
       'SELECT status FROM work_permits WHERE id = ?',
@@ -522,14 +536,16 @@ export const startWork = async (req: Request, res: Response, next: NextFunction)
   } catch (error) {
     next(error);
   }
+  finally { if (conn) conn.release(); }
 };
 
 // ==================== 完成作业 ====================
 export const finishWork = async (req: Request, res: Response, next: NextFunction) => {
+  let conn: any = null;
   try {
     const { id } = req.params;
     const userId = (req as any).user?.userId;
-    const conn = await getConnection();
+    conn = await getConnection();
 
     const [rows] = await conn.execute<RowDataPacket[]>(
       'SELECT status FROM work_permits WHERE id = ?',
@@ -566,14 +582,16 @@ export const finishWork = async (req: Request, res: Response, next: NextFunction
   } catch (error) {
     next(error);
   }
+  finally { if (conn) conn.release(); }
 };
 
 // ==================== 验收关闭 ====================
 export const closeWork = async (req: Request, res: Response, next: NextFunction) => {
+  let conn: any = null;
   try {
     const { id } = req.params;
     const userId = (req as any).user?.userId;
-    const conn = await getConnection();
+    conn = await getConnection();
 
     const [rows] = await conn.execute<RowDataPacket[]>(
       'SELECT status FROM work_permits WHERE id = ?',
@@ -611,10 +629,12 @@ export const closeWork = async (req: Request, res: Response, next: NextFunction)
   } catch (error) {
     next(error);
   }
+  finally { if (conn) conn.release(); }
 };
 
 // ==================== 气体检测（移动端/PC） ====================
 export const gasCheck = async (req: Request, res: Response, next: NextFunction) => {
+  let conn: any = null;
   try {
     const { id } = req.params;
     const {
@@ -632,7 +652,7 @@ export const gasCheck = async (req: Request, res: Response, next: NextFunction) 
     } = req.body;
 
     const userId = (req as any).user?.userId;
-    const conn = await getConnection();
+    conn = await getConnection();
 
     const [result] = await conn.execute<OkPacket>(
       `INSERT INTO gas_checks
@@ -648,14 +668,16 @@ export const gasCheck = async (req: Request, res: Response, next: NextFunction) 
   } catch (error) {
     next(error);
   }
+  finally { if (conn) conn.release(); }
 };
 
 // ==================== 获取气体检测记录 ====================
 export const getGasChecks = async (req: Request, res: Response, next: NextFunction) => {
+  let conn: any = null;
   try {
     const { id } = req.params;
     const { checkType } = req.query;
-    const conn = await getConnection();
+    conn = await getConnection();
 
     let sql = 'SELECT * FROM gas_checks WHERE ticket_id = ?';
     const params: any[] = [id];
@@ -670,5 +692,140 @@ export const getGasChecks = async (req: Request, res: Response, next: NextFuncti
     res.json({ code: 200, msg: 'success', data: rows });
   } catch (error) {
     next(error);
+  } finally {
+    if (conn) conn.release();
+  }
+};
+
+// ==================== 监护人签到（GB 30871 强制）====================
+export const guardianSignIn = async (req: Request, res: Response, next: NextFunction) => {
+  let conn: any = null;
+  try {
+    const { id } = req.params;
+    const { signImage, location, locationLat, locationLng } = req.body;
+    const userId = (req as any).user?.userId;
+    const userName = (req as any).user?.realName || '';
+    conn = await getConnection();
+
+    // 校验作业票状态和监护人身份
+    const [rows] = await conn.execute<RowDataPacket[]>(
+      `SELECT wp.status, wp.guardian_id, wp.guardian_sign_in_status, wp.ticket_no
+       FROM work_permits wp WHERE wp.id = ?`,
+      [id]
+    );
+    if (!rows.length) return res.status(404).json({ code: 404, msg: '作业票不存在' });
+    const ticket = rows[0] as any;
+
+    // 只有 assigned guardian 才能签到
+    if (Number(ticket.guardian_id) !== Number(userId)) {
+      return res.status(403).json({ code: 403, msg: '只有指定监护人可以签到' });
+    }
+    if (ticket.status !== '5' && ticket.status !== '6') {
+      return res.status(400).json({ code: 400, msg: '当前状态不允许监护人签到（需已批准或作业中）' });
+    }
+    if (ticket.guardian_sign_in_status === 'signed') {
+      return res.status(400).json({ code: 400, msg: '监护人已签到，无需重复签到' });
+    }
+
+    await conn.beginTransaction();
+    try {
+      await conn.execute(
+        `UPDATE work_permits SET
+          guardian_sign_in_status = 'signed',
+          guardian_sign_in_time = NOW(),
+          guardian_sign_in_location = ?,
+          guardian_sign_image = ?,
+          updated_at = NOW()
+         WHERE id = ?`,
+        [location || null, signImage || null, id]
+      );
+
+      // 写入签字记录表
+      await conn.execute(
+        `INSERT INTO signatures (biz_type, biz_id, sign_type, signer_id, signer_name, sign_image, sign_time, ip_address, created_at)
+         VALUES ('hot_work', ?, 'guardian_sign_in', ?, ?, ?, NOW(), ?, NOW())`,
+        [id, userId, userName, signImage || null, req.ip || '']
+      );
+
+      // 更新状态流
+      await conn.execute(
+        `UPDATE hot_work_details SET status_flow = JSON_ARRAY_APPEND(
+          COALESCE(status_flow, JSON_ARRAY()), '$',
+          JSON_OBJECT('status', 'guardian_signed', 'time', NOW(), 'userId', ?, 'remark', ?, 'location', ?)
+        ), updated_at = NOW() WHERE ticket_id = ?`,
+        [userId, `监护人${userName}签到`, location || '', id]
+      );
+
+      await conn.commit();
+
+      await recordTrace({
+        entity_type: 'work_ticket', entity_id: Number(id), entity_no: ticket.ticket_no,
+        action: 'guardian_sign_in', action_label: '监护人签到',
+        operator_id: userId, operator_name: userName,
+        snapshot_after: { guardian_sign_in_status: 'signed', guardian_sign_in_time: new Date() }
+      });
+
+      res.json({ code: 200, msg: '监护人签到成功', data: { signInTime: new Date(), status: 'signed' } });
+    } catch (err) {
+      await conn.rollback();
+      throw err;
+    }
+  } catch (error) {
+    next(error);
+  } finally {
+    if (conn) conn.release();
+  }
+};
+
+// ==================== 监护人确认作业结束 ====================
+export const guardianConfirmEnd = async (req: Request, res: Response, next: NextFunction) => {
+  let conn: any = null;
+  try {
+    const { id } = req.params;
+    const { confirmImage, location } = req.body;
+    const userId = (req as any).user?.userId;
+    const userName = (req as any).user?.realName || '';
+    conn = await getConnection();
+
+    const [rows] = await conn.execute<RowDataPacket[]>(
+      `SELECT wp.status, wp.guardian_id, wp.guardian_sign_in_status, wp.ticket_no
+       FROM work_permits wp WHERE wp.id = ?`,
+      [id]
+    );
+    if (!rows.length) return res.status(404).json({ code: 404, msg: '作业票不存在' });
+    const ticket = rows[0] as any;
+
+    if (Number(ticket.guardian_id) !== Number(userId)) {
+      return res.status(403).json({ code: 403, msg: '只有指定监护人可以确认' });
+    }
+    if (ticket.status !== '6' && ticket.status !== '7') {
+      return res.status(400).json({ code: 400, msg: '当前状态不允许监护人确认' });
+    }
+
+    await conn.execute(
+      `UPDATE work_permits SET
+        guardian_confirm_time = NOW(),
+        updated_at = NOW()
+       WHERE id = ?`,
+      [id]
+    );
+
+    await conn.execute(
+      `INSERT INTO signatures (biz_type, biz_id, sign_type, signer_id, signer_name, sign_image, sign_time, ip_address, created_at)
+       VALUES ('hot_work', ?, 'guardian_confirm_end', ?, ?, ?, NOW(), ?, NOW())`,
+      [id, userId, userName, confirmImage || null, req.ip || '']
+    );
+
+    await recordTrace({
+      entity_type: 'work_ticket', entity_id: Number(id), entity_no: ticket.ticket_no,
+      action: 'guardian_confirm_end', action_label: '监护人确认作业结束',
+      operator_id: userId, operator_name: userName
+    });
+
+    res.json({ code: 200, msg: '监护人确认成功' });
+  } catch (error) {
+    next(error);
+  } finally {
+    if (conn) conn.release();
   }
 };
