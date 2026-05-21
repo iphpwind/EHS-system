@@ -39,11 +39,13 @@ function getConfig(apiPrefix: string): TicketTypeConfig {
 }
 
 // ==================== 列表查询 ====================
+
 export const getList = async (req: Request, res: Response, next: NextFunction) => {
+  let conn: any = null;
   try {
     const cfg = getConfig(req.params.typePrefix);
     const { page = 1, pageSize = 10, status, keyword, startDate, endDate } = req.query;
-    const conn = await getConnection();
+    conn = await getConnection();
 
     let sql = `
       SELECT wp.id, wp.ticket_no, wp.ticket_type, wp.status, wp.project_name, wp.work_location,
@@ -51,7 +53,7 @@ export const getList = async (req: Request, res: Response, next: NextFunction) =
              u.real_name as applicant_name, d.name as dept_name
       FROM work_permits wp
       LEFT JOIN users u ON wp.applicant_id = u.id
-      LEFT JOIN departments d ON d.name = u.department
+      LEFT JOIN departments d ON d.id = u.department_id
       WHERE wp.ticket_type = ?
     `;
     const params: any[] = [cfg.ticketType];
@@ -90,21 +92,25 @@ export const getList = async (req: Request, res: Response, next: NextFunction) =
     res.json({ code: 200, msg: 'success', data: list, total });
   } catch (error) {
     next(error);
+  } finally {
+    if (conn) conn.release();
   }
 };
 
 // ==================== 详情查询 ====================
+
 export const getDetail = async (req: Request, res: Response, next: NextFunction) => {
+  let conn: any = null;
   try {
     const cfg = getConfig(req.params.typePrefix);
     const { id } = req.params;
-    const conn = await getConnection();
+    conn = await getConnection();
 
     const [mainRows] = await conn.execute<RowDataPacket[]>(`
       SELECT wp.*, u.real_name as applicant_name, d.name as dept_name
       FROM work_permits wp
       LEFT JOIN users u ON wp.applicant_id = u.id
-      LEFT JOIN departments d ON d.name = u.department
+      LEFT JOIN departments d ON d.id = u.department_id
       WHERE wp.id = ?
     `, [id]);
 
@@ -130,11 +136,15 @@ export const getDetail = async (req: Request, res: Response, next: NextFunction)
     });
   } catch (error) {
     next(error);
+  } finally {
+    if (conn) conn.release();
   }
 };
 
 // ==================== 创建 ====================
+
 export const createTicket = async (req: Request, res: Response, next: NextFunction) => {
+  let conn: any = null;
   try {
     const cfg = getConfig(req.params.typePrefix);
     const {
@@ -153,7 +163,7 @@ export const createTicket = async (req: Request, res: Response, next: NextFuncti
       });
     }
 
-    const conn = await getConnection();
+    conn = await getConnection();
 
     await conn.beginTransaction();
     try {
@@ -201,11 +211,15 @@ export const createTicket = async (req: Request, res: Response, next: NextFuncti
     }
   } catch (error) {
     next(error);
+  } finally {
+    if (conn) conn.release();
   }
 };
 
 // ==================== 更新 ====================
+
 export const updateTicket = async (req: Request, res: Response, next: NextFunction) => {
+  let conn: any = null;
   try {
     const cfg = getConfig(req.params.typePrefix);
     const { id } = req.params;
@@ -214,7 +228,7 @@ export const updateTicket = async (req: Request, res: Response, next: NextFuncti
       ticketLevel, safetyMeasures, status, ...extData
     } = req.body;
 
-    const conn = await getConnection();
+    conn = await getConnection();
 
     const [checkRows] = await conn.execute<RowDataPacket[]>(
       'SELECT status, applicant_id FROM work_permits WHERE id = ?',
@@ -260,15 +274,19 @@ export const updateTicket = async (req: Request, res: Response, next: NextFuncti
     }
   } catch (error) {
     next(error);
+  } finally {
+    if (conn) conn.release();
   }
 };
 
 // ==================== 删除 ====================
+
 export const deleteTicket = async (req: Request, res: Response, next: NextFunction) => {
+  let conn: any = null;
   try {
     const cfg = getConfig(req.params.typePrefix);
     const { id } = req.params;
-    const conn = await getConnection();
+    conn = await getConnection();
 
     await conn.beginTransaction();
     try {
@@ -282,15 +300,19 @@ export const deleteTicket = async (req: Request, res: Response, next: NextFuncti
     }
   } catch (error) {
     next(error);
+  } finally {
+    if (conn) conn.release();
   }
 };
 
 // ==================== 更新状态（作废/提交/审批等） ====================
+
 export const updateStatus = async (req: Request, res: Response, next: NextFunction) => {
+  let conn: any = null;
   try {
     const { id } = req.params;
     const { status, remark } = req.body;
-    const conn = await getConnection();
+    conn = await getConnection();
 
     await conn.execute(
       'UPDATE work_permits SET status = ?, updated_at = NOW() WHERE id = ?',
@@ -300,14 +322,18 @@ export const updateStatus = async (req: Request, res: Response, next: NextFuncti
     res.json({ code: 200, msg: '状态更新成功', data: { status, statusText: statusTextMap[status] || status } });
   } catch (error) {
     next(error);
+  } finally {
+    if (conn) conn.release();
   }
 };
 
 // ==================== list2（用于前端下拉选择等） ====================
+
 export const getList2 = async (req: Request, res: Response, next: NextFunction) => {
+  let conn: any = null;
   try {
     const cfg = getConfig(req.params.typePrefix);
-    const conn = await getConnection();
+    conn = await getConnection();
     const { keyword, limit = 50 } = req.query;
 
     let sql = `
@@ -329,5 +355,7 @@ export const getList2 = async (req: Request, res: Response, next: NextFunction) 
     res.json({ code: 200, msg: 'success', data: rows });
   } catch (error) {
     next(error);
+  } finally {
+    if (conn) conn.release();
   }
 };

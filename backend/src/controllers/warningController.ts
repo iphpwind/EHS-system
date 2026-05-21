@@ -7,6 +7,7 @@ import sseManager from '../utils/sseManager';
  * SSE 连接端点 - 建立实时预警推送连接
  */
 export const connectSSE = async (req: Request, res: Response) => {
+  let conn: any = null;
   try {
     const userId = (req as any).user?.userId;
     if (!userId) {
@@ -28,7 +29,7 @@ export const connectSSE = async (req: Request, res: Response) => {
     });
 
     // 推送当前用户的未读预警数量
-    const conn = await getConnection();
+    conn = await getConnection();
     const [unreadRows] = await conn.execute<RowDataPacket[]>(
       'SELECT COUNT(*) as count FROM warnings WHERE user_id = ? AND is_read = 0',
       [userId]
@@ -42,6 +43,8 @@ export const connectSSE = async (req: Request, res: Response) => {
     if (!res.headersSent) {
       res.status(500).json({ success: false, message: '服务器错误' });
     }
+  } finally {
+    if (conn) conn.release();
   }
 };
 
@@ -49,11 +52,12 @@ export const connectSSE = async (req: Request, res: Response) => {
  * 获取预警列表（分页）
  */
 export const getWarningList = async (req: Request, res: Response, next: NextFunction) => {
+  let conn: any = null;
   try {
     const userId = (req as any).user?.userId;
     const { page = 1, pageSize = 20, type, isRead, level } = req.query;
     const offset = (Number(page) - 1) * Number(pageSize);
-    const conn = await getConnection();
+    conn = await getConnection();
 
     let where = 'WHERE user_id = ?';
     const params: any[] = [userId];
@@ -96,6 +100,8 @@ export const getWarningList = async (req: Request, res: Response, next: NextFunc
   } catch (error) {
     console.error('获取预警列表错误:', error);
     next(error);
+  } finally {
+    if (conn) conn.release();
   }
 };
 
@@ -103,11 +109,12 @@ export const getWarningList = async (req: Request, res: Response, next: NextFunc
  * 标记预警已读
  */
 export const markAsRead = async (req: Request, res: Response, next: NextFunction) => {
+  let conn: any = null;
   try {
     const userId = (req as any).user?.userId;
     const { id } = req.params;
 
-    const conn = await getConnection();
+    conn = await getConnection();
     const [result] = await conn.execute(
       'UPDATE warnings SET is_read = 1, read_time = NOW() WHERE id = ? AND user_id = ?',
       [id, userId]
@@ -130,6 +137,8 @@ export const markAsRead = async (req: Request, res: Response, next: NextFunction
   } catch (error) {
     console.error('标记已读错误:', error);
     next(error);
+  } finally {
+    if (conn) conn.release();
   }
 };
 
@@ -137,9 +146,10 @@ export const markAsRead = async (req: Request, res: Response, next: NextFunction
  * 全部标记为已读
  */
 export const markAllAsRead = async (req: Request, res: Response, next: NextFunction) => {
+  let conn: any = null;
   try {
     const userId = (req as any).user?.userId;
-    const conn = await getConnection();
+    conn = await getConnection();
 
     await conn.execute(
       'UPDATE warnings SET is_read = 1, read_time = NOW() WHERE user_id = ? AND is_read = 0',
@@ -154,6 +164,8 @@ export const markAllAsRead = async (req: Request, res: Response, next: NextFunct
   } catch (error) {
     console.error('全部标记已读错误:', error);
     next(error);
+  } finally {
+    if (conn) conn.release();
   }
 };
 
@@ -161,9 +173,10 @@ export const markAllAsRead = async (req: Request, res: Response, next: NextFunct
  * 获取未读预警数量
  */
 export const getUnreadCount = async (req: Request, res: Response, next: NextFunction) => {
+  let conn: any = null;
   try {
     const userId = (req as any).user?.userId;
-    const conn = await getConnection();
+    conn = await getConnection();
 
     const [rows] = await conn.execute<RowDataPacket[]>(
       'SELECT COUNT(*) as count FROM warnings WHERE user_id = ? AND is_read = 0',
@@ -175,6 +188,8 @@ export const getUnreadCount = async (req: Request, res: Response, next: NextFunc
   } catch (error) {
     console.error('获取未读数量错误:', error);
     next(error);
+  } finally {
+    if (conn) conn.release();
   }
 };
 
@@ -182,6 +197,7 @@ export const getUnreadCount = async (req: Request, res: Response, next: NextFunc
  * 创建预警（系统自动触发或手动触发）
  */
 export const createWarning = async (req: Request, res: Response, next: NextFunction) => {
+  let conn: any = null;
   try {
     const {
       userId,
@@ -197,7 +213,7 @@ export const createWarning = async (req: Request, res: Response, next: NextFunct
       return res.status(400).json({ success: false, message: '缺少必填参数' });
     }
 
-    const conn = await getConnection();
+    conn = await getConnection();
     const [result] = await conn.execute(
       `INSERT INTO warnings (user_id, warning_type, level, title, content, related_id, related_type, is_read, created_at)
        VALUES (?, ?, ?, ?, ?, ?, ?, 0, NOW())`,
@@ -228,6 +244,8 @@ export const createWarning = async (req: Request, res: Response, next: NextFunct
   } catch (error) {
     console.error('创建预警错误:', error);
     next(error);
+  } finally {
+    if (conn) conn.release();
   }
 };
 
@@ -240,8 +258,9 @@ export const createWarning = async (req: Request, res: Response, next: NextFunct
  * 4. 证书即将过期（30天内）
  */
 export const runWarningCheck = async (req: Request, res: Response, next: NextFunction) => {
+  let conn: any = null;
   try {
-    const conn = await getConnection();
+    conn = await getConnection();
     let createdCount = 0;
 
     // 1. 检查作业票即将到期（3天内）
@@ -263,7 +282,7 @@ export const runWarningCheck = async (req: Request, res: Response, next: NextFun
       if ((existing as any[]).length === 0) {
         await conn.execute(
           `INSERT INTO warnings (user_id, warning_type, level, title, content, related_id, related_type, is_read, created_at)
-           VALUES (?, 'ticket_expiring', 'warning', ?, ?, ?, 'work_permit', 0, NOW())`,
+           VALUES (?, 'ticket_expiring', 'warning', ?, ?, 'work_permit', 0, NOW())`,
           [
             ticket.user_id,
             `作业票即将到期：${ticket.ticket_no}`,
@@ -299,7 +318,7 @@ export const runWarningCheck = async (req: Request, res: Response, next: NextFun
       if ((existing as any[]).length === 0) {
         await conn.execute(
           `INSERT INTO warnings (user_id, warning_type, level, title, content, related_id, related_type, is_read, created_at)
-           VALUES (?, 'hazard_overdue', 'danger', ?, ?, ?, 'hazard', 0, NOW())`,
+           VALUES (?, 'hazard_overdue', 'danger', ?, ?, 'hazard', 0, NOW())`,
           [
             hazard.user_id,
             `隐患整改逾期：${hazard.hazard_description?.substring(0, 50)}`,
@@ -335,7 +354,7 @@ export const runWarningCheck = async (req: Request, res: Response, next: NextFun
       if ((existing as any[]).length === 0) {
         await conn.execute(
           `INSERT INTO warnings (user_id, warning_type, level, title, content, related_id, related_type, is_read, created_at)
-           VALUES (?, 'cert_expiring', 'info', ?, ?, ?, 'certificate', 0, NOW())`,
+           VALUES (?, 'cert_expiring', 'info', ?, ?, 'certificate', 0, NOW())`,
           [
             cert.user_id,
             `证书即将过期：${cert.cert_name}`,
@@ -361,6 +380,8 @@ export const runWarningCheck = async (req: Request, res: Response, next: NextFun
   } catch (error) {
     console.error('运行预警检查错误:', error);
     next(error);
+  } finally {
+    if (conn) conn.release();
   }
 };
 
