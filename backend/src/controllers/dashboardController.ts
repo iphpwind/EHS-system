@@ -1,19 +1,20 @@
 import { Request, Response, NextFunction } from 'express';
 import { getConnection } from '../config/database';
 import { RowDataPacket } from 'mysql2';
-import { getRedisClient } from '../config/redis';
+import { getRedisClient, isRedisAvailable } from '../config/redis';
 
 export const getKPI = async (req: Request, res: Response, next: NextFunction) => {
   let conn: any = null;
   try {
-    // 尝试从 Redis 获取缓存
-    const redis = getRedisClient();
-    const cacheKey = 'dashboard:kpi';
+    // 如果Redis可用，尝试从 Redis 获取缓存
     let cached = null;
-    try {
-      cached = await redis.get(cacheKey);
-    } catch (redisError) {
-      console.error('Redis 获取缓存失败，降级为数据库查询:', redisError);
+    if (isRedisAvailable()) {
+      try {
+        const redis = getRedisClient();
+        cached = await redis.get('dashboard:kpi');
+      } catch (redisError) {
+        console.error('Redis 获取缓存失败，降级为数据库查询:', redisError);
+      }
     }
     if (cached) {
       return res.json({ success: true, data: JSON.parse(cached), cached: true });
@@ -70,11 +71,14 @@ export const getKPI = async (req: Request, res: Response, next: NextFunction) =>
       activeUsers: activeUsers[0]?.count || 0
     };
 
-    // 写入 Redis 缓存（5分钟过期）
-    try {
-      await redis.setex(cacheKey, 300, JSON.stringify(result));
-    } catch (redisError) {
-      console.error('Redis 写入缓存失败:', redisError);
+    // 如果Redis可用，写入 Redis 缓存（5分钟过期）
+    if (isRedisAvailable()) {
+      try {
+        const redis = getRedisClient();
+        await redis.setex('dashboard:kpi', 300, JSON.stringify(result));
+      } catch (redisError) {
+        console.error('Redis 写入缓存失败:', redisError);
+      }
     }
 
     res.json({ success: true, data: result });
@@ -92,14 +96,15 @@ export const getTrend = async (req: Request, res: Response, next: NextFunction) 
   let conn: any = null;
   try {
     const { period = 'year' } = req.query;
-    // 尝试从 Redis 获取缓存
-    const redis = getRedisClient();
-    const cacheKey = `dashboard:trend:${period}`;
+    // 如果Redis可用，尝试从 Redis 获取缓存
     let cached = null;
-    try {
-      cached = await redis.get(cacheKey);
-    } catch (redisError) {
-      console.error('Redis 获取缓存失败，降级为数据库查询:', redisError);
+    if (isRedisAvailable()) {
+      try {
+        const redis = getRedisClient();
+        cached = await redis.get(`dashboard:trend:${period}`);
+      } catch (redisError) {
+        console.error('Redis 获取缓存失败，降级为数据库查询:', redisError);
+      }
     }
     if (cached) {
       return res.json({ success: true, data: JSON.parse(cached), cached: true });
@@ -129,11 +134,14 @@ export const getTrend = async (req: Request, res: Response, next: NextFunction) 
       if (i >= 0 && i < 12) { major[i] = item.major; majorRisk[i] = item.major_risk; general[i] = item.general; }
     });
     const result = { months: monthNames, major, majorRisk, general };
-    // 写入 Redis 缓存（5分钟过期）
-    try {
-      await redis.setex(cacheKey, 300, JSON.stringify(result));
-    } catch (redisError) {
-      console.error('Redis 写入缓存失败:', redisError);
+    // 如果Redis可用，写入 Redis 缓存（5分钟过期）
+    if (isRedisAvailable()) {
+      try {
+        const redis = getRedisClient();
+        await redis.setex(`dashboard:trend:${period}`, 300, JSON.stringify(result));
+      } catch (redisError) {
+        console.error('Redis 写入缓存失败:', redisError);
+      }
     }
     res.json({ success: true, data: result });
   } catch (error) {
@@ -146,14 +154,15 @@ export const getTrend = async (req: Request, res: Response, next: NextFunction) 
 export const getLevelDistribution = async (req: Request, res: Response, next: NextFunction) => {
   let conn: any = null;
   try {
-    // 尝试从 Redis 获取缓存
-    const redis = getRedisClient();
-    const cacheKey = 'dashboard:level_distribution';
+    // 如果Redis可用，尝试从 Redis 获取缓存
     let cached = null;
-    try {
-      cached = await redis.get(cacheKey);
-    } catch (redisError) {
-      console.error('Redis 获取缓存失败，降级为数据库查询:', redisError);
+    if (isRedisAvailable()) {
+      try {
+        const redis = getRedisClient();
+        cached = await redis.get('dashboard:level_distribution');
+      } catch (redisError) {
+        console.error('Redis 获取缓存失败，降级为数据库查询:', redisError);
+      }
     }
     if (cached) {
       return res.json({ success: true, data: JSON.parse(cached), cached: true });
@@ -169,11 +178,14 @@ export const getLevelDistribution = async (req: Request, res: Response, next: Ne
     const result = levels.map((item: any) => ({
       name: levelMap[item.level] || '未知', value: item.count
     }));
-    // 写入 Redis 缓存（5分钟过期）
-    try {
-      await redis.setex(cacheKey, 300, JSON.stringify(result));
-    } catch (redisError) {
-      console.error('Redis 写入缓存失败:', redisError);
+    // 如果Redis可用，写入 Redis 缓存（5分钟过期）
+    if (isRedisAvailable()) {
+      try {
+        const redis = getRedisClient();
+        await redis.setex('dashboard:level_distribution', 300, JSON.stringify(result));
+      } catch (redisError) {
+        console.error('Redis 写入缓存失败:', redisError);
+      }
     }
     res.json({ success: true, data: result });
   } catch (error) { console.error(error); next(error); }
@@ -247,13 +259,13 @@ export const getTrainingRate = async (req: Request, res: Response, next: NextFun
       `SELECT COUNT(*) as total FROM training_courses WHERE is_mandatory = 1 AND status = 1`
     );
     const totalMandatory = mandatoryCourses[0]?.total || 0;
-
+    
     // 活跃用户总数
     const [totalUsers] = await conn.execute<RowDataPacket[]>(
       `SELECT COUNT(*) as total FROM users WHERE status = 1`
     );
     const userCount = totalUsers[0]?.total || 1;
-
+    
     // 已完成全部必修课程的用户数
     let completedCount = 0;
     if (totalMandatory > 0) {
@@ -265,7 +277,7 @@ export const getTrainingRate = async (req: Request, res: Response, next: NextFun
       );
       completedCount = completed[0]?.count || 0;
     }
-
+    
     // 本月完成培训人次
     const [monthlyCompleted] = await conn.execute<RowDataPacket[]>(
       `SELECT COUNT(*) as count FROM learning_progress 
@@ -273,16 +285,16 @@ export const getTrainingRate = async (req: Request, res: Response, next: NextFun
        AND MONTH(completed_at) = MONTH(CURDATE()) 
        AND YEAR(completed_at) = YEAR(CURDATE())`
     );
-
+    
     // 总学习时长(小时)
     const [totalHours] = await conn.execute<RowDataPacket[]>(
       `SELECT COALESCE(SUM(hours), 0) as total FROM learning_hours`
     );
-
+    
     const trainingRate = userCount > 0 
       ? ((completedCount / userCount) * 100).toFixed(1) 
       : '0.0';
-
+    
     res.json({
       success: true,
       data: {
@@ -309,7 +321,7 @@ export const getAreaRiskDistribution = async (req: Request, res: Response, next:
   let conn: any = null;
   try {
     conn = await getConnection();
-
+    
     // 先从隐患表按部门聚合，获取各部门的隐患风险分布
     const [deptRisks] = await conn.execute<RowDataPacket[]>(
       `SELECT 
@@ -326,7 +338,7 @@ export const getAreaRiskDistribution = async (req: Request, res: Response, next:
        GROUP BY u.department
        ORDER BY total_hazards DESC`
     );
-
+    
     // 尝试从 area_archives 获取额外的安全等级信息
     let areaData: any[] = [];
     try {
@@ -338,7 +350,7 @@ export const getAreaRiskDistribution = async (req: Request, res: Response, next:
     } catch (e) {
       // area_archives 表可能不存在，忽略
     }
-
+    
     // 计算风险等级：根据高中风险占比判断
     const riskLevel = (high: number, medium: number, total: number): string => {
       if (total === 0) return 'normal';
@@ -347,7 +359,7 @@ export const getAreaRiskDistribution = async (req: Request, res: Response, next:
       if (ratio > 0.2) return 'warning';
       return 'normal';
     };
-
+    
     const distribution = deptRisks.map((row: any) => ({
       areaName: row.area_name,
       totalHazards: row.total_hazards,
@@ -365,7 +377,7 @@ export const getAreaRiskDistribution = async (req: Request, res: Response, next:
         a.responsible_department === row.area_name || a.name === row.area_name
       )?.area_type || null
     }));
-
+    
     // 作业票按区域的风险数据
     const [ticketAreaRisks] = await conn.execute<RowDataPacket[]>(
       `SELECT 
@@ -379,7 +391,7 @@ export const getAreaRiskDistribution = async (req: Request, res: Response, next:
        GROUP BY u.department
        ORDER BY total_tickets DESC`
     );
-
+    
     // 合并隐患和作业票的汇总风险
     const summary = {
       totalAreas: distribution.length,
@@ -387,7 +399,7 @@ export const getAreaRiskDistribution = async (req: Request, res: Response, next:
       warningAreas: distribution.filter((d: any) => d.riskLevel === 'warning').length,
       normalAreas: distribution.filter((d: any) => d.riskLevel === 'normal').length
     };
-
+    
     res.json({
       success: true,
       data: {
