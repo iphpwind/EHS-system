@@ -201,10 +201,41 @@ export const createTicket = async (req: Request, res: Response, next: NextFuncti
       endTime,
       bindJsaId,
       safetyMeasures,
-      flowConfig
+      flowConfig,
+      fireLevel,      // 动火等级（1=特级 2=一级 3=二级）
+      highLevel,     // 高处等级（1=特级 2=一级 3=二级 4=三级）
+      mediumName    // 受限空间介质
     } = req.body;
 
     const userId = (req as any).user.userId;
+
+    // ✅ GB 30871：自动判断风险等级
+    let riskLevel: string = 'level2'; // 默认二级
+    let videoRequired: number = 0;
+    
+    // 动火作业：根据动火等级判断
+    if (ticketType === 'hotwork') {
+      if (fireLevel === 1) {  // 特级动火
+        riskLevel = 'special';
+        videoRequired = 1;
+      } else if (fireLevel === 2) {  // 一级动火
+        riskLevel = 'level1';
+      }
+    }
+    
+    // 受限空间作业：默认一级风险
+    if (ticketType === 'confined') {
+      riskLevel = 'level1';
+    }
+    
+    // 高处作业：根据高度判断
+    if (ticketType === 'highwork') {
+      if (highLevel === 1 || highLevel === 2) {  // 特级/一级高空
+        riskLevel = 'special';
+      } else if (highLevel === 3) {  // 二级高空
+        riskLevel = 'level1';
+      }
+    }
 
     if (!ticketType || !projectName) {
       return res.status(400).json({
@@ -252,6 +283,12 @@ export const createTicket = async (req: Request, res: Response, next: NextFuncti
     );
 
     const newTicketId = result.insertId;
+
+    // ✅ GB 30871：更新风险等级字段
+    await conn.execute(
+      'UPDATE work_permits SET risk_level = ?, video_required = ?, current_approval_level = 1, approval_flow = ? WHERE id = ?',
+      [riskLevel, videoRequired, JSON.stringify([]), newTicketId]
+    );
 
     // 自动创建子表记录（如果传了子表数据）
     try {
