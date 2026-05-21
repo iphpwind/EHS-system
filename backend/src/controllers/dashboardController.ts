@@ -1,25 +1,13 @@
 import { Request, Response, NextFunction } from 'express';
 import { getConnection } from '../config/database';
 import { RowDataPacket } from 'mysql2';
-import { getRedisClient, isRedisAvailable } from '../config/redis';
+import { cacheMiddleware } from '../middleware/cacheMiddleware';
 
-export const getKPI = async (req: Request, res: Response, next: NextFunction) => {
+export const getKPI = [
+  cacheMiddleware(300),  // 5分钟缓存
+  async (req: Request, res: Response, next: NextFunction) => {
   let conn: any = null;
   try {
-    // 如果Redis可用，尝试从 Redis 获取缓存
-    let cached = null;
-    if (isRedisAvailable()) {
-      try {
-        const redis = getRedisClient();
-        cached = await redis.get('dashboard:kpi');
-      } catch (redisError) {
-        console.error('Redis 获取缓存失败，降级为数据库查询:', redisError);
-      }
-    }
-    if (cached) {
-      return res.json({ success: true, data: JSON.parse(cached), cached: true });
-    }
-
     conn = await getConnection();
     
     // 安全天数（从系统设置读取，默认8353天）
@@ -71,16 +59,6 @@ export const getKPI = async (req: Request, res: Response, next: NextFunction) =>
       activeUsers: activeUsers[0]?.count || 0
     };
 
-    // 如果Redis可用，写入 Redis 缓存（5分钟过期）
-    if (isRedisAvailable()) {
-      try {
-        const redis = getRedisClient();
-        await redis.setex('dashboard:kpi', 300, JSON.stringify(result));
-      } catch (redisError) {
-        console.error('Redis 写入缓存失败:', redisError);
-      }
-    }
-
     res.json({ success: true, data: result });
   } catch (error) {
     console.error('Get KPI error:', error);
@@ -90,25 +68,15 @@ export const getKPI = async (req: Request, res: Response, next: NextFunction) =>
     }});
   }
   finally { if (conn) conn.release(); }
+];
 };
 
-export const getTrend = async (req: Request, res: Response, next: NextFunction) => {
+export const getTrend = [
+  cacheMiddleware(600),  // 10分钟缓存
+  async (req: Request, res: Response, next: NextFunction) => {
   let conn: any = null;
   try {
     const { period = 'year' } = req.query;
-    // 如果Redis可用，尝试从 Redis 获取缓存
-    let cached = null;
-    if (isRedisAvailable()) {
-      try {
-        const redis = getRedisClient();
-        cached = await redis.get(`dashboard:trend:${period}`);
-      } catch (redisError) {
-        console.error('Redis 获取缓存失败，降级为数据库查询:', redisError);
-      }
-    }
-    if (cached) {
-      return res.json({ success: true, data: JSON.parse(cached), cached: true });
-    }
 
     conn = await getConnection();
     let dateCondition = '';
@@ -134,40 +102,19 @@ export const getTrend = async (req: Request, res: Response, next: NextFunction) 
       if (i >= 0 && i < 12) { major[i] = item.major; majorRisk[i] = item.major_risk; general[i] = item.general; }
     });
     const result = { months: monthNames, major, majorRisk, general };
-    // 如果Redis可用，写入 Redis 缓存（5分钟过期）
-    if (isRedisAvailable()) {
-      try {
-        const redis = getRedisClient();
-        await redis.setex(`dashboard:trend:${period}`, 300, JSON.stringify(result));
-      } catch (redisError) {
-        console.error('Redis 写入缓存失败:', redisError);
-      }
-    }
     res.json({ success: true, data: result });
   } catch (error) {
     console.error('Get trend error:', error);
     next(error);
   }
   finally { if (conn) conn.release(); }
-};
+];
 
-export const getLevelDistribution = async (req: Request, res: Response, next: NextFunction) => {
+export const getLevelDistribution = [
+  cacheMiddleware(300),  // 5分钟缓存
+  async (req: Request, res: Response, next: NextFunction) => {
   let conn: any = null;
   try {
-    // 如果Redis可用，尝试从 Redis 获取缓存
-    let cached = null;
-    if (isRedisAvailable()) {
-      try {
-        const redis = getRedisClient();
-        cached = await redis.get('dashboard:level_distribution');
-      } catch (redisError) {
-        console.error('Redis 获取缓存失败，降级为数据库查询:', redisError);
-      }
-    }
-    if (cached) {
-      return res.json({ success: true, data: JSON.parse(cached), cached: true });
-    }
-
     conn = await getConnection();
     const [levels] = await conn.execute<RowDataPacket[]>(
       `SELECT hazard_level as level, COUNT(*) as count FROM hazard_inspection
@@ -178,21 +125,14 @@ export const getLevelDistribution = async (req: Request, res: Response, next: Ne
     const result = levels.map((item: any) => ({
       name: levelMap[item.level] || '未知', value: item.count
     }));
-    // 如果Redis可用，写入 Redis 缓存（5分钟过期）
-    if (isRedisAvailable()) {
-      try {
-        const redis = getRedisClient();
-        await redis.setex('dashboard:level_distribution', 300, JSON.stringify(result));
-      } catch (redisError) {
-        console.error('Redis 写入缓存失败:', redisError);
-      }
-    }
     res.json({ success: true, data: result });
   } catch (error) { console.error(error); next(error); }
   finally { if (conn) conn.release(); }
-};
+];
 
-export const getDepartmentRanking = async (req: Request, res: Response, next: NextFunction) => {
+export const getDepartmentRanking = [
+  cacheMiddleware(180),  // 3分钟缓存
+  async (req: Request, res: Response, next: NextFunction) => {
   let conn: any = null;
   try {
     conn = await getConnection();
@@ -208,9 +148,11 @@ export const getDepartmentRanking = async (req: Request, res: Response, next: Ne
     }});
   } catch (error) { console.error(error); next(error); }
   finally { if (conn) conn.release(); }
-};
+];
 
-export const getPendingTasks = async (req: Request, res: Response, next: NextFunction) => {
+export const getPendingTasks = [
+  cacheMiddleware(180),  // 3分钟缓存
+  async (req: Request, res: Response, next: NextFunction) => {
   let conn: any = null;
   try {
     conn = await getConnection();
@@ -246,10 +188,12 @@ export const getPendingTasks = async (req: Request, res: Response, next: NextFun
     res.json({ success: true, data: { pendingTickets: [], pendingHazards: [], upcomingTickets: [] } });
   }
   finally { if (conn) conn.release(); }
-};
+];
 
 // 培训完成率统计
-export const getTrainingRate = async (req: Request, res: Response, next: NextFunction) => {
+export const getTrainingRate = [
+  cacheMiddleware(300),  // 5分钟缓存
+  async (req: Request, res: Response, next: NextFunction) => {
   let conn: any = null;
   try {
     conn = await getConnection();
@@ -314,10 +258,12 @@ export const getTrainingRate = async (req: Request, res: Response, next: NextFun
     }});
   }
   finally { if (conn) conn.release(); }
-};
+];
 
 // 区域风险分布
-export const getAreaRiskDistribution = async (req: Request, res: Response, next: NextFunction) => {
+export const getAreaRiskDistribution = [
+  cacheMiddleware(300),  // 5分钟缓存
+  async (req: Request, res: Response, next: NextFunction) => {
   let conn: any = null;
   try {
     conn = await getConnection();
@@ -413,4 +359,4 @@ export const getAreaRiskDistribution = async (req: Request, res: Response, next:
     res.json({ success: true, data: { areas: [], ticketAreas: [], summary: { totalAreas: 0, dangerAreas: 0, warningAreas: 0, normalAreas: 0 } } });
   }
   finally { if (conn) conn.release(); }
-};
+];

@@ -1,7 +1,7 @@
 import mysql from 'mysql2/promise'
 import { logger } from '../utils/logger';
 
-// 数据库连接池配置（优化版：适配100-200用户并发）
+// 数据库连接池配置（优化版：防止内存溢出 + 适配实际并发）
 const pool = mysql.createPool({
   host: process.env.DB_HOST || 'localhost',
   port: parseInt(process.env.DB_PORT || '3306'),
@@ -9,10 +9,12 @@ const pool = mysql.createPool({
   password: process.env.DB_PASSWORD || 'root',
   database: process.env.DB_NAME || 'safety_system',
   waitForConnections: true,
-  connectionLimit: 80,        // 原10 → 30（适配中型化工企业并发）
-  queueLimit: 200,            // 原0无线排队 → 100（防止无限排队导致内存溢出）
+  connectionLimit: 35,        // ✅ 从80降到35（防止内存溢出）
+  queueLimit: 100,            // ✅ 从200降到100（防止无限排队）
   enableKeepAlive: true,
-  keepAliveInitialDelay: 0,
+  keepAliveInitialDelay: 10000, // ✅ 从0改为10秒
+  idleTimeout: 60000,          // ✅ 新增：60秒空闲断开
+  connectTimeout: 15000,       // ✅ 新增：15秒连接超时
 } as mysql.PoolOptions);
 
 // 监听连接池事件（使用Winston日志替代console.log）
@@ -26,6 +28,11 @@ pool.on('release', (connection) => {
 
 pool.on('enqueue', () => {
   logger.warn('等待可用数据库连接（连接池繁忙）');
+});
+
+// ✅ 新增：连接池错误监听
+pool.on('error', (err) => {
+  logger.error('数据库连接池错误', { error: err });
 });
 
 // 连接数据库

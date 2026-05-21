@@ -1,0 +1,22 @@
+CREATE TABLE IF NOT EXISTS three_level_education (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  employee_id INT NOT NULL,
+  dept_id INT DEFAULT NULL,
+  education_level VARCHAR(20) NOT NULL,
+  course_id INT DEFAULT NULL,
+  educator_id INT DEFAULT NULL,
+  education_date DATE DEFAULT NULL,
+  duration DECIMAL(5,1) DEFAULT NULL,
+  score DECIMAL(5,1) DEFAULT NULL,
+  status VARCHAR(20) DEFAULT "in_progress",
+  content_summary TEXT,
+  assess_result VARCHAR(20) DEFAULT NULL,
+  assess_comment TEXT,
+  certificate_no VARCHAR(50) DEFAULT NULL,
+  created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+  updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  KEY idx_employee (employee_id),
+  KEY idx_dept (dept_id),
+  KEY idx_level (education_level),
+  KEY idx_status (status)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;

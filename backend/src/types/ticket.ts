@@ -113,3 +113,39 @@ export const APPROVAL_NODES: ApprovalNode[] = [
   { nodeId: 2, nodeName: '安全审批', status: 'safety_approved', allowedRoles: [2, 3] },
   { nodeId: 3, nodeName: '最终批准', status: 'approved', allowedRoles: [1, 2] },
 ];
+
+/** 风险等级类型（GB 30871-2022） */
+export type RiskLevel = 'special' | 'level1' | 'level2';
+
+/** 风险等级中文映射 */
+export const RISK_LEVEL_LABEL: Record<RiskLevel, string> = {
+  'special': '特级',
+  'level1': '一级',
+  'level2': '二级'
+};
+
+/**
+ * 根据风险等级获取审批层级数
+ * - 特级：3级审批（部门→安全总监→分管领导）
+ * - 一级：2级审批（部门→安全总监）
+ * - 二级：1级审批（部门负责人）
+ */
+export const getApprovalLevels = (riskLevel: RiskLevel): number => {
+  if (riskLevel === 'special') return 3;  // 特级：3级审批
+  if (riskLevel === 'level1') return 2;   // 一级：2级审批
+  return 1;                               // 二级：1级审批
+};
+
+/**
+ * 根据审批层级获取审批人角色
+ * - 1=超管 2=安全主管 3=安全员 4=部门负责人 5=员工
+ */
+export const getApproverRole = (approvalLevel: number): number => {
+  // 审批层级：1=部门负责人(role=4), 2=安全总监(role=3), 3=分管领导(role=2)
+  const roleMap: Record<number, number> = {
+    1: 4,  // 第1级：部门负责人
+    2: 3,  // 第2级：安全总监
+    3: 2   // 第3级：分管领导
+  };
+  return roleMap[approvalLevel] || 4;
+};
