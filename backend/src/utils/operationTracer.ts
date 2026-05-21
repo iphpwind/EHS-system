@@ -25,8 +25,9 @@ export interface TraceRecord {
  * @param params 快照参数
  */
 export async function recordTrace(params: TraceRecord): Promise<void> {
+  let conn: any = null;
   try {
-    const conn = await getConnection();
+    conn = await getConnection();
     await conn.execute(
       `INSERT INTO operation_traces 
        (entity_type, entity_id, entity_no, action, action_label, 
@@ -51,6 +52,8 @@ export async function recordTrace(params: TraceRecord): Promise<void> {
   } catch (error) {
     console.error('[TRACE] 操作快照记录失败:', error);
     // 不阻断业务流程
+  } finally {
+    if (conn) conn.release();
   }
 }
 
@@ -89,8 +92,9 @@ function actionLabelMap(action: string): string {
  * 提取当前作业票的状态快照（用于 before/after 对比）
  */
 export async function getWorkPermitSnapshot(ticketId: number): Promise<any> {
+  let conn: any = null;
   try {
-    const conn = await getConnection();
+    conn = await getConnection();
     const [rows] = await conn.execute(
       `SELECT * FROM work_permits WHERE id = ?`,
       [ticketId]
@@ -98,5 +102,7 @@ export async function getWorkPermitSnapshot(ticketId: number): Promise<any> {
     return (rows as any[])[0] || null;
   } catch {
     return null;
+  } finally {
+    if (conn) conn.release();
   }
 }

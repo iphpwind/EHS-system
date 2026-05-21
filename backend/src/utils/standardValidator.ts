@@ -29,10 +29,11 @@ export async function validateStandard(
   ticketType: string,
   ticketData: Record<string, any>
 ): Promise<ValidationResult> {
+  let conn: any = null;
   const result: ValidationResult = { passed: true, total: 0, errors: [], warnings: [] };
 
   try {
-    const conn = await getConnection();
+    conn = await getConnection();
     const [rules] = await conn.execute(
       `SELECT * FROM national_standards WHERE ticket_type = ? AND enabled = 1 ORDER BY sort_order ASC`,
       [ticketType]
@@ -69,6 +70,8 @@ export async function validateStandard(
   } catch (error) {
     console.error('[StandardValidator] 校验异常:', error);
     // 规则引擎故障时不阻断业务
+  } finally {
+    if (conn) conn.release();
   }
 
   return result;

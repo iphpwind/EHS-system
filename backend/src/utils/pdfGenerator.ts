@@ -59,7 +59,7 @@ export async function generateHotWorkPDF(data: HotWorkPDFData): Promise<Uint8Arr
   // 构建签字区域HTML
   const buildSignRow = (label: string, signPath?: string) => {
     if (signPath) {
-      return `<tr><td class="label">${label}</td><td class="sign-cell"><img src="http://localhost:3001/api${signPath}" class="sign-img" /></td></tr>`;
+      return `<tr><td class="label">${label}</td><td class="sign-cell"><img src="${process.env.API_BASE_URL || 'http://192.168.1.19:3001'}/api${signPath}" class="sign-img" /></td></tr>`;
     }
     return `<tr><td class="label">${label}</td><td class="sign-cell"></td></tr>`;
   };

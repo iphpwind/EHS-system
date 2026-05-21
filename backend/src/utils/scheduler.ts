@@ -8,8 +8,9 @@ import { getConnection } from '../config/database';
 
 // ==================== 隐患超期检查（每10分钟） ====================
 async function checkOverdueHazards() {
+  let conn: any = null;
   try {
-    const conn = await getConnection();
+    conn = await getConnection();
     const [rows] = await conn.execute(
       `SELECT COUNT(*) as count FROM hazard_inspection 
        WHERE rectification_deadline < NOW() AND status != 4 AND status <> 'closed'`
@@ -20,13 +21,16 @@ async function checkOverdueHazards() {
     }
   } catch (error) {
     console.error('[SCHEDULER] 隐患超期检查失败:', error);
+  } finally {
+    if (conn) conn.release();
   }
 }
 
 // ==================== 作业票过期检查（每10分钟） ====================
 async function checkExpiredTickets() {
+  let conn: any = null;
   try {
-    const conn = await getConnection();
+    conn = await getConnection();
     // 自动关闭已过期且仍在作业中的作业票
     const [result] = await conn.execute(
       `UPDATE work_permits SET status = '8', updated_at = NOW()
@@ -38,13 +42,16 @@ async function checkExpiredTickets() {
     }
   } catch (error) {
     console.error('[SCHEDULER] 作业票过期检查失败:', error);
+  } finally {
+    if (conn) conn.release();
   }
 }
 
 // ==================== 待办事项统计（每5分钟） ====================
 async function checkPendingTasks() {
+  let conn: any = null;
   try {
-    const conn = await getConnection();
+    conn = await getConnection();
     const [pendingWork] = await conn.execute(
       `SELECT COUNT(*) as count FROM work_permits WHERE status IN ('2','3','4')`
     );
@@ -56,24 +63,30 @@ async function checkPendingTasks() {
     console.log(`[SCHEDULER] 📋 待审批: ${w} 张作业票, 未闭环: ${h} 条隐患`);
   } catch (error) {
     console.error('[SCHEDULER] 待办统计失败:', error);
+  } finally {
+    if (conn) conn.release();
   }
 }
 
 // ==================== 数据库连接检查（每30分钟） ====================
 async function checkDBHealth() {
+  let conn: any = null;
   try {
-    const conn = await getConnection();
+    conn = await getConnection();
     await conn.execute('SELECT 1');
     console.log('[SCHEDULER] ✅ 数据库连接正常');
   } catch (error) {
     console.error('[SCHEDULER] ❌ 数据库连接异常:', error);
+  } finally {
+    if (conn) conn.release();
   }
 }
 
 // ==================== 证书过期预警扫描（每天上午9:00） ====================
 async function scanCertificateExpiry() {
+  let conn: any = null;
   try {
-    const conn = await getConnection();
+    conn = await getConnection();
 
     // 确保 notifications 表存在
     await conn.execute(`
@@ -127,7 +140,7 @@ async function scanCertificateExpiry() {
       else level = 'notice';
 
       const title = '证书即将过期提醒';
-      const content = `您的证书【${cert.cert_type_name || cert.cert_name}】（编号：${cert.cert_no}）将于 ${cert.expire_date} 到期，剩余 ${cert.days_remaining} 天，请及时续期。`;
+      const content = `您的证书【${cert.cert_type_name || cert.cert_name}】（编号：${cert.cert_no}）将于 ${cert.expire_date} 到期，请及时续期。`;
 
       // 去重：已有相同 user_id+type 未读通知则跳过
       const [existing] = await conn.execute(
@@ -147,6 +160,8 @@ async function scanCertificateExpiry() {
     console.log(`[SCHEDULER] 📬 证书过期通知已生成：${inserted} 条`);
   } catch (error) {
     console.error('[SCHEDULER] 证书过期扫描失败:', error);
+  } finally {
+    if (conn) conn.release();
   }
 }
 
@@ -183,10 +198,10 @@ export function startAllJobs() {
   cron.schedule('*/30 * * * *', checkDBHealth);
 
   // 每天上午9:00：证书过期预警扫描
-  cron.schedule('0 9 * * *', scanCertificateExpiry);
+  cron.schedule('0 9 * * *', scanCertificateExpiry, { timezone: 'Asia/Shanghai' });
 
   // 每天凌晨2:00：TNA 自动任务分配
-  cron.schedule('0 2 * * *', autoAssignTnaTasks);
+  cron.schedule('0 2 * * *', autoAssignTnaTasks, { timezone: 'Asia/Shanghai' });
 
   // 启动时立即执行一次
   checkOverdueHazards();

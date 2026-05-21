@@ -42,8 +42,9 @@ export interface CanWorkResult {
  * 要求：至少有一条通过(is_passed=1)的培训记录，且证书未过期
  */
 export async function checkCanWork(userId: number, workType?: string): Promise<CanWorkResult> {
+  let conn: any = null;
   try {
-    const conn = await getConnection();
+    conn = await getConnection();
     const [rows] = await conn.execute(
       `SELECT tr.is_passed, tr.exam_score, tr.certificate_valid_until,
               tr.created_at AS training_date, tp.title AS plan_title
@@ -94,6 +95,8 @@ export async function checkCanWork(userId: number, workType?: string): Promise<C
       reason: '培训校验服务异常，临时放行（已记录）',
       certificateValid: true
     };
+  } finally {
+    if (conn) conn.release();
   }
 }
 
