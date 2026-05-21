@@ -421,10 +421,13 @@ export const constantRoutes = [
         children: [
             { path: 'plan', component: () => import('@/views/training/PlanList.vue'), name: 'TrainingPlan', meta: { title: '培训计划' } },
             { path: 'course', component: () => import('@/views/training/CourseList.vue'), name: 'TrainingCourse', meta: { title: '课程管理' } },
+            { path: 'course/study', component: () => import('@/views/training/CourseStudy.vue'), name: 'CourseStudy', meta: { title: '课程学习' }, hidden: true },
             { path: 'exam/:id(\\d+)', component: () => import('@/views/training/ExamRoom.vue'), name: 'TrainingExam', meta: { title: '在线考试' }, hidden: true },
             { path: 'my', component: () => import('@/views/training/MyTraining.vue'), name: 'MyTraining', meta: { title: '我的学习' } },
             { path: 'certificate', component: () => import('@/views/training/CertificateList.vue'), name: 'TrainingCertificate', meta: { title: '证书管理' } },
-            { path: 'statistics', component: () => import('@/views/training/Statistics.vue'), name: 'TrainingStatistics', meta: { title: '培训统计' } }
+            { path: 'statistics', component: () => import('@/views/training/Statistics.vue'), name: 'TrainingStatistics', meta: { title: '培训统计' } },
+            { path: 'stats-dashboard', component: () => import('@/views/training/TrainingStatsDashboard.vue'), name: 'TrainingStatsDashboard', meta: { title: '统计看板' } },
+            { path: 'three-level', component: () => import('@/views/training/ThreeLevelEducation.vue'), name: 'ThreeLevelEducation', meta: { title: '三级安全教育' } }
         ]
     },
     // 作业许可管理（GB 30871-2022）
@@ -500,10 +503,22 @@ export const constantRoutes = [
                 meta: { title: '风险分级管控' }
             },
             {
+                path: 'risk-dashboard',
+                component: () => import('@/views/risk/RiskDashboard.vue'),
+                name: 'RiskDashboard',
+                meta: { title: '风险可视化大屏', icon: 'chart' }
+            },
+            {
                 path: 'hazards',
                 component: () => import('@/views/safework/investigate'),
                 name: 'HazardInvestigation',
                 meta: { title: '隐患排查治理' }
+            },
+            {
+                path: 'hazard-closed-loop',
+                component: () => import('@/views/risk/HazardClosedLoop.vue'),
+                name: 'HazardClosedLoop',
+                meta: { title: '隐患闭环管理', icon: 'loop' }
             },
             {
                 path: 'statistics',
@@ -554,6 +569,18 @@ export const constantRoutes = [
                 component: () => import('@/views/safework/yingjiguanli/index.vue'),
                 name: 'EmergencyManage',
                 meta: { title: '应急管理' }
+            },
+            {
+                path: 'emergency/supplies',
+                component: () => import('@/views/emergency/SuppliesManagement.vue'),
+                name: 'EmergencySupplies',
+                meta: { title: '应急物资' }
+            },
+            {
+                path: 'patrol',
+                component: () => import('@/views/patrol/PatrolManagement.vue'),
+                name: 'PatrolManage',
+                meta: { title: '电子巡检' }
             }
         ]
     },
@@ -632,6 +659,20 @@ export const constantRoutes = [
                 component: () => import('@/views/safework/WorkTicketList.vue'),
                 name: 'WorkTicketList',
                 meta: { title: '作业票列表' }
+            }
+        ]
+    },
+    // 培训统计页面（P2-3 Statistics.vue）
+    {
+        path: '/training/statistics',
+        component: Layout,
+        hidden: true,
+        children: [
+            {
+                path: 'index',
+                component: () => import('@/views/training/Statistics.vue'),
+                name: 'TrainingStatistics',
+                meta: { title: '培训统计' }
             }
         ]
     }

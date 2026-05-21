@@ -8,7 +8,7 @@ import 'element-plus/dist/index.css'
 import zhCn from 'element-plus/es/locale/lang/zh-cn' // 中文语言
 import '@/assets/styles/index.scss' // global css
 import App from './App'
-import store from './store'
+import pinia from './store'
 import router from './router'
 import directive from './directive' // directive
 // 注册指令
@@ -83,7 +83,7 @@ app.component('ImagePreview', ImagePreview)
 app.component('RightToolbar', RightToolbar)
 
 app.use(router)
-app.use(store)
+app.use(pinia)
 app.use(plugins)
 app.use(print)
 app.use(elementIcons)
