@@ -8,11 +8,13 @@ interface ConfigItem extends RowDataPacket {
 }
 
 export const getConfig = asyncHandler(async (req: Request, res: Response) => {
+  let conn;
   // 禁止浏览器缓存配置信息
   res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
   res.setHeader('Pragma', 'no-cache');
   res.setHeader('Expires', '0');
-  const conn = await getConnection();
+  try {
+  conn = await getConnection();
   const key = req.params.key;
   if (key && key !== 'undefined') {
     const [rows] = await conn.execute<ConfigItem[]>('SELECT * FROM system_settings WHERE `key` = ?', [key]);
@@ -21,10 +23,13 @@ export const getConfig = asyncHandler(async (req: Request, res: Response) => {
     const [rows] = await conn.execute<ConfigItem[]>('SELECT * FROM system_settings ORDER BY `key`');
     res.json({ success: true, data: rows });
   }
+  } finally { if (conn) conn.release(); }
 });
 
 export const updateConfig = asyncHandler(async (req: Request, res: Response) => {
-  const conn = await getConnection();
+  let conn;
+  try {
+  conn = await getConnection();
   const key = req.params.key;
   const { value } = req.body;
   if (!key) return res.status(400).json({ success: false, message: '配置键名必填' });
@@ -34,6 +39,7 @@ export const updateConfig = asyncHandler(async (req: Request, res: Response) => 
     [key, value || '', userId]
   );
   res.json({ success: true, message: '配置更新成功' });
+  } finally { if (conn) conn.release(); }
 });
 
 /**
@@ -42,12 +48,14 @@ export const updateConfig = asyncHandler(async (req: Request, res: Response) => 
  * Body: { entries: [{ key: '...', value: '...' }, ...] }
  */
 export const batchUpdateConfig = asyncHandler(async (req: Request, res: Response) => {
+  let conn;
   const { entries } = req.body;
   if (!Array.isArray(entries) || entries.length === 0) {
     return res.status(400).json({ success: false, message: '配置项列表不能为空' });
   }
   const userId = (req as any).user?.userId || 0;
-  const conn = await getConnection();
+  try {
+  conn = await getConnection();
   await conn.beginTransaction();
   try {
     for (const entry of entries) {
@@ -64,4 +72,5 @@ export const batchUpdateConfig = asyncHandler(async (req: Request, res: Response
     console.error('批量配置保存失败:', error);
     res.status(500).json({ success: false, message: '配置保存失败，已回滚' });
   }
+  } finally { if (conn) conn.release(); }
 });

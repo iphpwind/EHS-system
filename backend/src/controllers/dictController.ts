@@ -7,7 +7,9 @@ import { asyncHandler } from '../utils/errors';
  * 获取字典类型列表
  */
 export const getDictTypeList = asyncHandler(async (req: Request, res: Response) => {
-  const conn = await getConnection();
+  let conn;
+  try {
+  conn = await getConnection();
   const { page = 1, pageSize = 10, keyword } = req.query;
   const offset = (Number(page) - 1) * Number(pageSize);
   const params: any[] = [];
@@ -34,13 +36,16 @@ export const getDictTypeList = asyncHandler(async (req: Request, res: Response) 
     data: rows,
     total: countResult[0].total
   });
+  } finally { if (conn) conn.release(); }
 });
 
 /**
  * 获取字典类型详情
  */
 export const getDictTypeById = asyncHandler(async (req: Request, res: Response) => {
-  const conn = await getConnection();
+  let conn;
+  try {
+  conn = await getConnection();
   const [rows] = await conn.execute<RowDataPacket[]>(
     'SELECT * FROM sys_dict_type WHERE id = ?',
     [req.params.id]
@@ -49,31 +54,37 @@ export const getDictTypeById = asyncHandler(async (req: Request, res: Response) 
     return res.status(404).json({ code: 404, msg: '字典类型不存在' });
   }
   res.json({ code: 200, msg: 'success', data: rows[0] });
+  } finally { if (conn) conn.release(); }
 });
 
 /**
  * 创建字典类型
  */
 export const createDictType = asyncHandler(async (req: Request, res: Response) => {
+  let conn;
   const { dictName, dictCode, remark, status = 1 } = req.body;
   if (!dictName || !dictCode) {
     return res.status(400).json({ code: 400, msg: '字典名称和编码不能为空' });
   }
-  const conn = await getConnection();
+  try {
+  conn = await getConnection();
   const [result] = await conn.execute<ResultSetHeader>(
     'INSERT INTO sys_dict_type (dict_name, dict_code, remark, status) VALUES (?, ?, ?, ?)',
     [dictName, dictCode, remark || '', status]
   );
   res.json({ code: 200, msg: '创建成功', data: { id: result.insertId } });
+  } finally { if (conn) conn.release(); }
 });
 
 /**
  * 更新字典类型
  */
 export const updateDictType = asyncHandler(async (req: Request, res: Response) => {
+  let conn;
   const { id } = req.params;
   const { dictName, dictCode, remark, status } = req.body;
-  const conn = await getConnection();
+  try {
+  conn = await getConnection();
   const fields: string[] = [];
   const params: any[] = [];
 
@@ -88,36 +99,45 @@ export const updateDictType = asyncHandler(async (req: Request, res: Response) =
   params.push(id);
   await conn.execute(`UPDATE sys_dict_type SET ${fields.join(', ')}, updated_at = NOW() WHERE id = ?`, params);
   res.json({ code: 200, msg: '更新成功' });
+  } finally { if (conn) conn.release(); }
 });
 
 /**
  * 删除字典类型
  */
 export const deleteDictType = asyncHandler(async (req: Request, res: Response) => {
-  const conn = await getConnection();
+  let conn;
+  try {
+  conn = await getConnection();
   await conn.execute('DELETE FROM sys_dict_data WHERE dict_code = (SELECT dict_code FROM sys_dict_type WHERE id = ?)', [req.params.id]);
   await conn.execute('DELETE FROM sys_dict_type WHERE id = ?', [req.params.id]);
   res.json({ code: 200, msg: '删除成功' });
+  } finally { if (conn) conn.release(); }
 });
 
 /**
  * 获取字典数据列表（按类型编码）
  */
 export const getDictDataByType = asyncHandler(async (req: Request, res: Response) => {
-  const conn = await getConnection();
+  let conn;
+  try {
+  conn = await getConnection();
   const { dictType } = req.params;
   const [rows] = await conn.execute<RowDataPacket[]>(
     'SELECT * FROM sys_dict_data WHERE dict_code = ? AND status = 1 ORDER BY dict_sort ASC',
     [dictType]
   );
   res.json({ code: 200, msg: 'success', data: rows });
+  } finally { if (conn) conn.release(); }
 });
 
 /**
  * 获取字典数据列表（分页）
  */
 export const getDictDataList = asyncHandler(async (req: Request, res: Response) => {
-  const conn = await getConnection();
+  let conn;
+  try {
+  conn = await getConnection();
   const { page = 1, pageSize = 10, dictCode, keyword } = req.query;
   const offset = (Number(page) - 1) * Number(pageSize);
   const where: string[] = [];
@@ -150,31 +170,37 @@ export const getDictDataList = asyncHandler(async (req: Request, res: Response) 
     data: rows,
     total: countResult[0].total
   });
+  } finally { if (conn) conn.release(); }
 });
 
 /**
  * 创建字典数据
  */
 export const createDictData = asyncHandler(async (req: Request, res: Response) => {
+  let conn;
   const { dictCode, dictLabel, dictValue, dictSort = 0, cssClass = '', remark = '', status = 1 } = req.body;
   if (!dictCode || !dictLabel || !dictValue) {
     return res.status(400).json({ code: 400, msg: '字典编码、标签和值不能为空' });
   }
-  const conn = await getConnection();
+  try {
+  conn = await getConnection();
   const [result] = await conn.execute<ResultSetHeader>(
     'INSERT INTO sys_dict_data (dict_code, dict_label, dict_value, dict_sort, css_class, remark, status) VALUES (?, ?, ?, ?, ?, ?, ?)',
     [dictCode, dictLabel, dictValue, dictSort, cssClass, remark, status]
   );
   res.json({ code: 200, msg: '创建成功', data: { id: result.insertId } });
+  } finally { if (conn) conn.release(); }
 });
 
 /**
  * 更新字典数据
  */
 export const updateDictData = asyncHandler(async (req: Request, res: Response) => {
+  let conn;
   const { id } = req.params;
   const { dictCode, dictLabel, dictValue, dictSort, cssClass, remark, status } = req.body;
-  const conn = await getConnection();
+  try {
+  conn = await getConnection();
   const fields: string[] = [];
   const params: any[] = [];
 
@@ -192,13 +218,17 @@ export const updateDictData = asyncHandler(async (req: Request, res: Response) =
   params.push(id);
   await conn.execute(`UPDATE sys_dict_data SET ${fields.join(', ')}, updated_at = NOW() WHERE id = ?`, params);
   res.json({ code: 200, msg: '更新成功' });
+  } finally { if (conn) conn.release(); }
 });
 
 /**
  * 删除字典数据
  */
 export const deleteDictData = asyncHandler(async (req: Request, res: Response) => {
-  const conn = await getConnection();
+  let conn;
+  try {
+  conn = await getConnection();
   await conn.execute('DELETE FROM sys_dict_data WHERE id = ?', [req.params.id]);
   res.json({ code: 200, msg: '删除成功' });
+  } finally { if (conn) conn.release(); }
 });
