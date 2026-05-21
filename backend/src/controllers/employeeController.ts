@@ -9,7 +9,9 @@ interface Employee extends RowDataPacket {
 }
 
 export const getEmployees = asyncHandler(async (req: Request, res: Response) => {
-  const conn = await getConnection();
+  let conn;
+  try {
+  conn = await getConnection();
   const pageSize = Number(req.query.pageSize) || 20;
   const { page = 1, limit, department, keyword, status: filterStatus } = req.query;
   const finalLimit = pageSize || Number(limit) || 20;
@@ -24,19 +26,25 @@ export const getEmployees = asyncHandler(async (req: Request, res: Response) => 
   const [rows] = await conn.execute<Employee[]>(`SELECT id,username,real_name as name,department,position,phone,email,created_at FROM users ${where} ORDER BY id LIMIT ? OFFSET ?`, [...params, finalLimit, offset]);
   const [c] = await conn.execute<RowDataPacket[]>('SELECT COUNT(*) as total FROM users ' + where, params);
   res.json({ success: true, data: { list: rows, pagination: { total: c[0].total, page: Number(page), pageSize: finalLimit } } });
+  } finally { if (conn) conn.release(); }
 });
 
 export const getEmployeeById = asyncHandler(async (req: Request, res: Response) => {
-  const conn = await getConnection();
+  let conn;
+  try {
+  conn = await getConnection();
   const [rows] = await conn.execute<Employee[]>('SELECT id,username,real_name as name,department,position,phone,email FROM users WHERE id=? AND status=1', [req.params.id]);
   if (rows.length === 0) return res.status(404).json({ success: false, message: '员工不存在' });
   res.json({ success: true, data: rows[0] });
+  } finally { if (conn) conn.release(); }
 });
 
 export const createEmployee = asyncHandler(async (req: Request, res: Response) => {
+  let conn;
   const { username, name, password, department, position, phone, email } = req.body;
   if (!username || !name || !password) return res.status(400).json({ success: false, message: '用户名、姓名、密码必填' });
-  const conn = await getConnection();
+  try {
+  conn = await getConnection();
   const bcrypt = require('bcrypt');
   const hash = await bcrypt.hash(password, 10);
   const [result] = await conn.execute<ResultSetHeader>(
@@ -44,11 +52,14 @@ export const createEmployee = asyncHandler(async (req: Request, res: Response) =
     [username, name, hash, department || null, position || null, phone || null, email || null]
   );
   res.json({ success: true, data: { id: result.insertId }, message: '员工创建成功' });
+  } finally { if (conn) conn.release(); }
 });
 
 export const updateEmployee = asyncHandler(async (req: Request, res: Response) => {
+  let conn;
   const { name, department, position, phone, email, password } = req.body;
-  const conn = await getConnection();
+  try {
+  conn = await getConnection();
   if (password) {
     const bcrypt = require('bcrypt'); const hash = await bcrypt.hash(password, 10);
     await conn.execute('UPDATE users SET real_name=?,department=?,position=?,phone=?,email=?,password=? WHERE id=? AND role>=4', [name, department || null, position || null, phone || null, email || null, hash, req.params.id]);
@@ -56,10 +67,14 @@ export const updateEmployee = asyncHandler(async (req: Request, res: Response) =
     await conn.execute('UPDATE users SET real_name=?,department=?,position=?,phone=?,email=? WHERE id=? AND role>=4', [name, department || null, position || null, phone || null, email || null, req.params.id]);
   }
   res.json({ success: true, message: '员工更新成功' });
+  } finally { if (conn) conn.release(); }
 });
 
 export const deleteEmployee = asyncHandler(async (req: Request, res: Response) => {
-  const conn = await getConnection();
+  let conn;
+  try {
+  conn = await getConnection();
   await conn.execute('UPDATE users SET status=0 WHERE id=? AND role>=4', [req.params.id]);
   res.json({ success: true, message: '员工已删除' });
+  } finally { if (conn) conn.release(); }
 });
