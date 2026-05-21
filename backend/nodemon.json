@@ -2,10 +2,6 @@
   "watch": ["src"],
   "ext": "ts,json",
   "ignore": ["src/**/*.spec.ts", "src/**/*.test.ts"],
-  "exec": "ts-node --transpile-only src/app.ts",
-  "env": {
-    "NODE_ENV": "development"
-  },
-  "restartable": "rs",
-  "verbose": true
+  "exec": "ts-node --max-old-space-size=2048 src/app.ts",
+  "nodeArgs": ["--max-old-space-size=2048"]
 }

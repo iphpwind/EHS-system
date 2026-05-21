@@ -64,3 +64,22 @@ frontend/
 # Build artifacts
 *.tsbuildinfo
 *.map
+
+# Temporary fix scripts
+*-unfixed.py
+fix-*.py
+batch-*.py
+batch-*.js
+check-*.py
+test-*.js
+
+# Temporary app variants
+app-minimal.ts
+app_minimal.ts
+
+# Backup files
+*.backup
+.backup/
+
+# Misc
+nul

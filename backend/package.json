@@ -20,7 +20,7 @@
     "morgan": "^1.10.0",
     "mysql2": "^3.9.0",
     "node-cron": "^4.2.1",
-    "puppeteer-core": "^24.43.0",
+    "puppeteer-core": "^24.4.3.0",
     "qrcode": "^1.5.4",
     "svg-captcha": "^1.4.0",
     "winston": "^3.19.0"
