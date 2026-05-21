@@ -12,9 +12,10 @@ import { calculateCompliance } from '../services/complianceService';
  * GET /api/compliance/scores?period=month
  */
 export const getComplianceScores = async (req: Request, res: Response, next: NextFunction) => {
+  let conn: any = null;
   try {
     const { period = 'month' } = req.query;
-    const conn = await getConnection();
+    conn = await getConnection();
     const [rows] = await conn.execute<RowDataPacket[]>(
       `SELECT * FROM compliance_scores
        WHERE period = ? AND user_id IS NULL
@@ -25,6 +26,7 @@ export const getComplianceScores = async (req: Request, res: Response, next: Nex
   } catch (error) {
     next(error);
   }
+  finally { if (conn) conn.release(); }
 };
 
 /**

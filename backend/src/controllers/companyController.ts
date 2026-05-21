@@ -9,13 +9,18 @@ interface CompanyInfo extends RowDataPacket {
 }
 
 export const getCompanyInfo = asyncHandler(async (req: Request, res: Response) => {
-  const conn = await getConnection();
+  let conn;
+  try {
+  conn = await getConnection();
   const [rows] = await conn.execute<CompanyInfo[]>('SELECT * FROM enterprise_info LIMIT 1');
   res.json({ success: true, data: rows[0] || null });
+  } finally { if (conn) conn.release(); }
 });
 
 export const updateCompanyInfo = asyncHandler(async (req: Request, res: Response) => {
-  const conn = await getConnection();
+  let conn;
+  try {
+  conn = await getConnection();
   const [rows] = await conn.execute<CompanyInfo[]>('SELECT id FROM enterprise_info LIMIT 1');
   const { name, code, address, legal_person, contact_phone, email, website, established_date, business_scope, logo_url } = req.body;
   if (rows.length > 0) {
@@ -30,4 +35,5 @@ export const updateCompanyInfo = asyncHandler(async (req: Request, res: Response
     );
   }
   res.json({ success: true, message: '企业信息更新成功' });
+  } finally { if (conn) conn.release(); }
 });
