@@ -14,7 +14,7 @@ import cron from 'node-cron';
 import { getConnection } from '../config/database';
 import { logger } from '../utils/logger';
 
-/** SSe 推送客户端集合（由外部注入） */
+/** SSE 推送客户端集合（由外部注入） */
 const sseClients: Set<{ send: (data: any) => void }> = new Set();
 
 /**
@@ -59,8 +59,9 @@ function broadcastSSE(data: any): void {
 async function scanCertificateExpiry(): Promise<void> {
   logger.info('[CertificateScheduler] 开始证书过期扫描...');
 
+  let conn: any = null;
   try {
-    const conn = await getConnection();
+    conn = await getConnection();
 
     // 确保 notifications 表存在
     await conn.execute(`
@@ -173,6 +174,8 @@ async function scanCertificateExpiry(): Promise<void> {
 
   } catch (error) {
     logger.error('[CertificateScheduler] 证书过期扫描失败:', { error });
+  } finally {
+    if (conn) conn.release();
   }
 }
 
@@ -188,8 +191,9 @@ export async function checkOperatorCertificate(
   userId: number,
   ticketType?: string
 ): Promise<{ valid: boolean; message: string; certInfo?: any }> {
+  let conn: any = null;
   try {
-    const conn = await getConnection();
+    conn = await getConnection();
 
     // 查询用户的有效证书
     const [rows] = await conn.execute(`
@@ -234,6 +238,8 @@ export async function checkOperatorCertificate(
       valid: true,
       message: '证书校验服务异常，临时放行（已记录）',
     };
+  } finally {
+    if (conn) conn.release();
   }
 }
 

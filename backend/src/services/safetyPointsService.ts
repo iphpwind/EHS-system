@@ -20,8 +20,9 @@ export async function awardPoints(
   relatedEntity: string = '',
   relatedId: number | null = null
 ): Promise<{ pointsChange: number; balance: number; message: string }> {
+  let conn: any = null;
   try {
-    const conn = await getConnection();
+    conn = await getConnection();
 
     // 查询规则
     const [rules] = await conn.execute(
@@ -69,6 +70,8 @@ export async function awardPoints(
   } catch (error) {
     console.error('[SafetyPointsService] 积分操作失败:', error);
     return { pointsChange: 0, balance: 0, message: '积分操作异常' };
+  } finally {
+    if (conn) conn.release();
   }
 }
 
@@ -76,8 +79,9 @@ export async function awardPoints(
  * 获取用户积分信息
  */
 export async function getUserPoints(userId: number) {
+  let conn: any = null;
   try {
-    const conn = await getConnection();
+    conn = await getConnection();
     const [balance] = await conn.execute(
       'SELECT COALESCE(SUM(points_change), 0) as balance FROM safety_points WHERE user_id = ?',
       [userId]
@@ -93,6 +97,8 @@ export async function getUserPoints(userId: number) {
   } catch (error) {
     console.error('[SafetyPointsService] 查询失败:', error);
     return { balance: 0, records: [] };
+  } finally {
+    if (conn) conn.release();
   }
 }
 
@@ -100,8 +106,9 @@ export async function getUserPoints(userId: number) {
  * 获取积分排行榜
  */
 export async function getPointsRanking(limit: number = 20) {
+  let conn: any = null;
   try {
-    const conn = await getConnection();
+    conn = await getConnection();
     const [rows] = await conn.execute(
       `SELECT user_id, user_name, COALESCE(SUM(points_change), 0) as total_points
        FROM safety_points
@@ -114,5 +121,7 @@ export async function getPointsRanking(limit: number = 20) {
   } catch (error) {
     console.error('[SafetyPointsService] 排行榜查询失败:', error);
     return [];
+  } finally {
+    if (conn) conn.release();
   }
 }

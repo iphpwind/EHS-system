@@ -24,10 +24,12 @@ export async function calculateCompliance(
   userId: number | null = null,
   period: string = 'month'
 ): Promise<ComplianceScore[]> {
-  const conn = await getConnection();
+  let conn: any = null;
   const scores: ComplianceScore[] = [];
 
   try {
+    conn = await getConnection();
+
     // 计算周期范围
     const { startDate, endDate } = getPeriodRange(period);
     const deptFilter = userId ? ' AND wp.applicant_id = ?' : '';
@@ -105,6 +107,8 @@ export async function calculateCompliance(
 
   } catch (error) {
     console.error('[ComplianceService] 计算失败:', error);
+  } finally {
+    if (conn) conn.release();
   }
 
   return scores;

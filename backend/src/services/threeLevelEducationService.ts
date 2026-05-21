@@ -59,10 +59,11 @@ export async function autoAssignThreeLevelEducation(
   departmentId?: number,
   projectId?: number
 ): Promise<{ assigned: boolean; recordId?: number; plans?: number[] }> {
-  const conn = await getConnection();
-  await conn.beginTransaction();
-
+  let conn: any = null;
   try {
+    conn = await getConnection();
+    await conn.beginTransaction();
+
     // 1. 确保人员记录存在
     const [existing] = await conn.execute(
       `SELECT id FROM three_level_education_records WHERE user_id = ?`,
@@ -115,9 +116,11 @@ export async function autoAssignThreeLevelEducation(
     return { assigned: true, recordId, plans: planIds };
 
   } catch (error) {
-    await conn.rollback();
+    if (conn) await conn.rollback();
     logger.error('[ThreeLevelEdu] 分配三级安全教育失败', { error, userId });
     throw error;
+  } finally {
+    if (conn) conn.release();
   }
 }
 
@@ -131,8 +134,9 @@ export async function recordThreeLevelProgress(
   creditHours: number,
   learningMinutes: number
 ): Promise<void> {
+  let conn: any = null;
   try {
-    const conn = await getConnection();
+    conn = await getConnection();
 
     // 1. 确保人员记录存在
     const [existing] = await conn.execute(
@@ -174,7 +178,7 @@ export async function recordThreeLevelProgress(
        WHERE user_id = ? AND plan_id IN (
          SELECT id FROM training_plans WHERE id = (SELECT plan_id FROM training_records WHERE user_id = ? LIMIT 1)
        )`,
-      [learningMinutes, creditHours, userId]
+      [learningMinutes, creditHours, userId, userId]
     );
 
     // 4. 检查是否全部完成
@@ -184,6 +188,9 @@ export async function recordThreeLevelProgress(
 
   } catch (error) {
     logger.error('[ThreeLevelEdu] 记录三级教育学时失败', { error, userId, courseId });
+    throw error;
+  } finally {
+    if (conn) conn.release();
   }
 }
 
@@ -191,8 +198,9 @@ export async function recordThreeLevelProgress(
  * 判断课程所属的三级教育级别
  */
 async function getCourseLevel(courseId: number): Promise<'factory' | 'workshop' | 'team' | null> {
+  let conn: any = null;
   try {
-    const conn = await getConnection();
+    conn = await getConnection();
 
     // 1. 从 course_categories 判断
     const [cats] = await conn.execute(
@@ -221,6 +229,8 @@ async function getCourseLevel(courseId: number): Promise<'factory' | 'workshop' 
   } catch (error) {
     logger.error('[ThreeLevelEdu] 判断课程级别失败', { error, courseId });
     return null;
+  } finally {
+    if (conn) conn.release();
   }
 }
 
@@ -234,8 +244,9 @@ export async function checkThreeLevelCompletion(userId: number): Promise<{
   team: number;
   total: number;
 }> {
+  let conn: any = null;
   try {
-    const conn = await getConnection();
+    conn = await getConnection();
     const [rows] = await conn.execute(
       `SELECT 
         factory_hours, workshop_hours, team_hours, total_hours, status
@@ -274,6 +285,8 @@ export async function checkThreeLevelCompletion(userId: number): Promise<{
   } catch (error) {
     logger.error('[ThreeLevelEdu] 检查三级教育完成状态失败', { error, userId });
     return { completed: false, factory: 0, workshop: 0, team: 0, total: 0 };
+  } finally {
+    if (conn) conn.release();
   }
 }
 
@@ -281,14 +294,22 @@ export async function checkThreeLevelCompletion(userId: number): Promise<{
  * 获取三级教育模板列表
  */
 export async function getThreeLevelTemplates(): Promise<any[]> {
-  const conn = await getConnection();
-  const [rows] = await conn.execute(
-    `SELECT * FROM three_level_templates ORDER BY sort_order ASC`
-  );
-  return (rows as any[]).map((r: any) => ({
-    ...r,
-    levelText: r.level === 'factory' ? '厂级（一级）' : r.level === 'workshop' ? '车间级（二级）' : '班组级（三级）',
-  }));
+  let conn: any = null;
+  try {
+    conn = await getConnection();
+    const [rows] = await conn.execute(
+      `SELECT * FROM three_level_templates ORDER BY sort_order ASC`
+    );
+    return (rows as any[]).map((r: any) => ({
+      ...r,
+      levelText: r.level === 'factory' ? '厂级（一级）' : r.level === 'workshop' ? '车间级（二级）' : '班组级（三级）',
+    }));
+  } catch (error) {
+    logger.error('[ThreeLevelEdu] 获取模板列表失败', { error });
+    throw error;
+  } finally {
+    if (conn) conn.release();
+  }
 }
 
 /**
@@ -299,36 +320,44 @@ export async function getAnnualCreditReport(
   departmentId?: number,
   minRequiredHours: number = 20
 ): Promise<any[]> {
-  const conn = await getConnection();
+  let conn: any = null;
+  try {
+    conn = await getConnection();
 
-  let sql = `
-    SELECT 
-      u.id as userId,
-      u.real_name as userName,
-      u.department as deptName,
-      d.name as deptName2,
-      COALESCE(SUM(tr.credit_hours), 0) as totalHours,
-      COALESCE(SUM(tr.learning_minutes), 0) as totalMinutes,
-      COUNT(DISTINCT tr.plan_id) as planCount,
-      MAX(tr.updated_at) as lastLearnDate,
-      CASE WHEN COALESCE(SUM(tr.credit_hours), 0) >= ${minRequiredHours} THEN '达标' ELSE '未达标' END as status
-    FROM users u
-    LEFT JOIN departments d ON d.name = u.department
-    LEFT JOIN training_records tr ON u.id = tr.user_id 
-      AND YEAR(COALESCE(tr.updated_at, tr.created_at)) = ?
-    WHERE u.status = 'active' OR u.status = 1
-  `;
-  const params: any[] = [year];
+    let sql = `
+      SELECT 
+        u.id as userId,
+        u.real_name as userName,
+        u.department as deptName,
+        d.name as deptName2,
+        COALESCE(SUM(tr.credit_hours), 0) as totalHours,
+        COALESCE(SUM(tr.learning_minutes), 0) as totalMinutes,
+        COUNT(DISTINCT tr.plan_id) as planCount,
+        MAX(tr.updated_at) as lastLearnDate,
+        CASE WHEN COALESCE(SUM(tr.credit_hours), 0) >= ${minRequiredHours} THEN '达标' ELSE '未达标' END as status
+      FROM users u
+      LEFT JOIN departments d ON d.name = u.department
+      LEFT JOIN training_records tr ON u.id = tr.user_id 
+        AND YEAR(COALESCE(tr.updated_at, tr.created_at)) = ?
+      WHERE u.status = 'active' OR u.status = 1
+    `;
+    const params: any[] = [year];
 
-  if (departmentId) {
-    sql += ' AND u.department = (SELECT name FROM departments WHERE id = ?)';
-    params.push(departmentId);
+    if (departmentId) {
+      sql += ' AND u.department = (SELECT name FROM departments WHERE id = ?)';
+      params.push(departmentId);
+    }
+
+    sql += ' GROUP BY u.id, u.real_name, u.department, d.name ORDER BY totalHours DESC';
+
+    const [rows] = await conn.execute(sql, params);
+    return rows as any[];
+  } catch (error) {
+    logger.error('[ThreeLevelEdu] 年度学时统计失败', { error, year, departmentId });
+    throw error;
+  } finally {
+    if (conn) conn.release();
   }
-
-  sql += ' GROUP BY u.id, u.real_name, u.department, d.name ORDER BY totalHours DESC';
-
-  const [rows] = await conn.execute(sql, params);
-  return rows as any[];
 }
 
 export default {
