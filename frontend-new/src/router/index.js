@@ -485,6 +485,12 @@ export const constantRoutes = [
                 component: () => import('@/views/safework/WorkTicketDetail.vue'),
                 name: 'WorkPermitDetail',
                 meta: { title: '作业票详情', hidden: true }
+            },
+            {
+                path: 'approval/:id',
+                component: () => import('@/views/safework/approval/ApprovalPage.vue'),
+                name: 'WorkPermitApproval',
+                meta: { title: '作业票审批', hidden: true }
             }
         ]
     },

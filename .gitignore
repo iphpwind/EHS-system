@@ -81,6 +81,38 @@ app_minimal.ts
 *.backup
 .backup/
 
-# Misc
-nul
-backups/
+# 与网站运行无关的文件（文档、日志、备份、脚本等）
+# 文档文件（保留README.md）
+API_ANALYSIS_REPORT.md
+EHS_REQUIREMENT_GAP_ANALYSIS.md
+PROJECT_KNOWLEDGE.md
+QUICKSTART.md
+UPGRADE_PLAN.md
+UPGRADE_PLAN_v2.md
+使用说明.md
+待删除文件清单.md
+执行总结_20260429.md
+执行总结_20260510.md
+网站介绍.md
+
+# 日志文件
+*.log
+logs/
+
+# 数据库备份文件（只排除根目录的，保留backend/src/schema/）
+/backup_*.sql
+/menu_training.sql
+
+# 脚本文件
+*.ps1
+*.sh
+*.bat
+!backend/src/schema/launch_edge_debug.bat
+
+# 临时文件
+*.tmp
+*.temp
+temp/
+tmp/
+
+
