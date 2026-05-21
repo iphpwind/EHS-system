@@ -11,9 +11,10 @@ import { RowDataPacket } from 'mysql2';
  * GET /api/operations/trace/:ticketId
  */
 export const getTraceByTicket = async (req: Request, res: Response, next: NextFunction) => {
+  let conn: any = null;
   try {
     const { ticketId } = req.params;
-    const conn = await getConnection();
+    conn = await getConnection();
     const [rows] = await conn.execute<RowDataPacket[]>(
       `SELECT * FROM operation_traces WHERE entity_type = 'work_ticket' AND entity_id = ? ORDER BY created_at ASC`,
       [ticketId]
@@ -21,6 +22,8 @@ export const getTraceByTicket = async (req: Request, res: Response, next: NextFu
     res.json({ code: 200, msg: 'success', data: rows });
   } catch (error) {
     next(error);
+  } finally {
+    if (conn) conn.release();
   }
 };
 
@@ -29,10 +32,11 @@ export const getTraceByTicket = async (req: Request, res: Response, next: NextFu
  * GET /api/operations/trace/user/:userId
  */
 export const getTraceByUser = async (req: Request, res: Response, next: NextFunction) => {
+  let conn: any = null;
   try {
     const { userId } = req.params;
     const { page = 1, pageSize = 20 } = req.query;
-    const conn = await getConnection();
+    conn = await getConnection();
 
     const [countRows] = await conn.execute<RowDataPacket[]>(
       'SELECT COUNT(*) as total FROM operation_traces WHERE operator_id = ?',
@@ -48,6 +52,8 @@ export const getTraceByUser = async (req: Request, res: Response, next: NextFunc
     res.json({ code: 200, msg: 'success', data: rows, total });
   } catch (error) {
     next(error);
+  } finally {
+    if (conn) conn.release();
   }
 };
 
@@ -56,9 +62,10 @@ export const getTraceByUser = async (req: Request, res: Response, next: NextFunc
  * GET /api/operations/trace?limit=50
  */
 export const getRecentTraces = async (req: Request, res: Response, next: NextFunction) => {
+  let conn: any = null;
   try {
     const { entityType, limit = 50 } = req.query;
-    const conn = await getConnection();
+    conn = await getConnection();
     let sql = 'SELECT * FROM operation_traces';
     const params: any[] = [];
 
@@ -74,5 +81,7 @@ export const getRecentTraces = async (req: Request, res: Response, next: NextFun
     res.json({ code: 200, msg: 'success', data: rows });
   } catch (error) {
     next(error);
+  } finally {
+    if (conn) conn.release();
   }
 };

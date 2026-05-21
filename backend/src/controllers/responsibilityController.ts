@@ -30,8 +30,10 @@ import {
 
 // ============ 责任制文档列表 ============
 export const getResponsibilityList = asyncHandler(async (req: Request, res: Response) => {
+  let conn;
   const { page = 1, pageSize = 10, status, keyword } = req.query;
-  const conn = await getConnection();
+  try {
+  conn = await getConnection();
 
   let sql = `SELECT r.*, u.real_name as creator_name 
              FROM responsibilities r 
@@ -54,6 +56,7 @@ export const getResponsibilityList = asyncHandler(async (req: Request, res: Resp
   const [rows] = await conn.execute(sql, params);
 
   res.json({ code: 200, msg: 'success', data: rows, total: Number(total) });
+  } finally { if (conn) conn.release(); }
 });
 
 // ============ 责任制文档详情 ============

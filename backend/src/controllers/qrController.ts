@@ -9,6 +9,7 @@ import QRCode from 'qrcode';
  * Body: { ticketId: number }
  */
 export const generateQR = async (req: Request, res: Response, next: NextFunction) => {
+  let conn: any = null;
   try {
     const { ticketId } = req.body;
 
@@ -16,7 +17,7 @@ export const generateQR = async (req: Request, res: Response, next: NextFunction
       return res.status(400).json({ success: false, message: '作业票ID不能为空' });
     }
 
-    const conn = await getConnection();
+    conn = await getConnection();
     const [tickets] = await conn.execute<RowDataPacket[]>(
       'SELECT id, ticket_no FROM work_permits WHERE id = ?',
       [ticketId]
@@ -50,6 +51,8 @@ export const generateQR = async (req: Request, res: Response, next: NextFunction
   } catch (error) {
     console.error('Generate QR code error:', error);
     next(error);
+  } finally {
+    if (conn) conn.release();
   }
 };
 
@@ -59,6 +62,7 @@ export const generateQR = async (req: Request, res: Response, next: NextFunction
  * Body: { code: string }
  */
 export const verifyQR = async (req: Request, res: Response, next: NextFunction) => {
+  let conn: any = null;
   try {
     const { code } = req.body;
 
@@ -66,7 +70,7 @@ export const verifyQR = async (req: Request, res: Response, next: NextFunction) 
       return res.status(400).json({ success: false, message: '请提供二维码编号' });
     }
 
-    const conn = await getConnection();
+    conn = await getConnection();
     const [tickets] = await conn.execute<RowDataPacket[]>(
       `SELECT wp.*, u.real_name as applicant_name
        FROM work_permits wp
@@ -107,5 +111,7 @@ export const verifyQR = async (req: Request, res: Response, next: NextFunction) 
   } catch (error) {
     console.error('Verify QR code error:', error);
     next(error);
+  } finally {
+    if (conn) conn.release();
   }
 };

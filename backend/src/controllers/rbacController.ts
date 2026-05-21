@@ -5,9 +5,10 @@ import { RowDataPacket, OkPacket } from 'mysql2';
 // ==================== 角色管理 ====================
 
 export const getRoles = async (req: Request, res: Response, next: NextFunction) => {
+  let conn: any = null;
   try {
     const { page = 1, pageSize = 10, keyword } = req.query;
-    const conn = await getConnection();
+    conn = await getConnection();
 
     let sql = 'SELECT id, name, code, data_scope, status, remark, created_at FROM roles_v2 WHERE 1=1';
     const params: any[] = [];
@@ -24,27 +25,33 @@ export const getRoles = async (req: Request, res: Response, next: NextFunction) 
     params.push(Number(pageSize), (Number(page) - 1) * Number(pageSize));
 
     const [rows] = await conn.execute<RowDataPacket[]>(sql, params);
-
+    
     res.json({ code: 200, msg: 'success', data: rows, total });
   } catch (error) {
     next(error);
+  } finally {
+    if (conn) conn.release();
   }
 };
 
 export const getRoleOptions = async (req: Request, res: Response, next: NextFunction) => {
+  let conn: any = null;
   try {
-    const conn = await getConnection();
+    conn = await getConnection();
     const [rows] = await conn.execute<RowDataPacket[]>('SELECT id, name FROM roles_v2 WHERE status = 1');
     res.json({ code: 200, msg: 'success', data: rows });
   } catch (error) {
     next(error);
+  } finally {
+    if (conn) conn.release();
   }
 };
 
 export const createRole = async (req: Request, res: Response, next: NextFunction) => {
+  let conn: any = null;
   try {
     const { name, code, dataScope = 1, status = 1, remark = '' } = req.body;
-    const conn = await getConnection();
+    conn = await getConnection();
     const [result] = await conn.execute<OkPacket>(
       'INSERT INTO roles_v2 (name, code, data_scope, status, remark) VALUES (?, ?, ?, ?, ?)',
       [name, code, dataScope, status, remark]
@@ -52,14 +59,17 @@ export const createRole = async (req: Request, res: Response, next: NextFunction
     res.json({ code: 200, msg: 'success', data: { id: result.insertId } });
   } catch (error) {
     next(error);
+  } finally {
+    if (conn) conn.release();
   }
 };
 
 export const updateRole = async (req: Request, res: Response, next: NextFunction) => {
+  let conn: any = null;
   try {
     const { id } = req.params;
     const { name, code, dataScope, status, remark } = req.body;
-    const conn = await getConnection();
+    conn = await getConnection();
     await conn.execute(
       'UPDATE roles_v2 SET name=?, code=?, data_scope=?, status=?, remark=? WHERE id=?',
       [name, code, dataScope, status, remark, id]
@@ -67,42 +77,53 @@ export const updateRole = async (req: Request, res: Response, next: NextFunction
     res.json({ code: 200, msg: 'success' });
   } catch (error) {
     next(error);
+  } finally {
+    if (conn) conn.release();
   }
 };
 
 export const deleteRole = async (req: Request, res: Response, next: NextFunction) => {
+  let conn: any = null;
   try {
     const { id } = req.params;
-    const conn = await getConnection();
+    conn = await getConnection();
     await conn.execute('DELETE FROM roles_v2 WHERE id=?', [id]);
     await conn.execute('DELETE FROM user_roles WHERE role_id=?', [id]);
     await conn.execute('DELETE FROM role_menus WHERE role_id=?', [id]);
     res.json({ code: 200, msg: 'success' });
   } catch (error) {
     next(error);
+  } finally {
+    if (conn) conn.release();
   }
 };
 
 // ==================== 菜单管理 ====================
 
 export const getMenus = async (req: Request, res: Response, next: NextFunction) => {
+  let conn: any = null;
   try {
-    const conn = await getConnection();
+    conn = await getConnection();
     const [rows] = await conn.execute<RowDataPacket[]>('SELECT * FROM menus ORDER BY parent_id ASC, sort_order ASC');
     res.json({ code: 200, msg: 'success', data: rows });
   } catch (error) {
     next(error);
+  } finally {
+    if (conn) conn.release();
   }
 };
 
 export const getMenuTree = async (req: Request, res: Response, next: NextFunction) => {
+  let conn: any = null;
   try {
-    const conn = await getConnection();
+    conn = await getConnection();
     const [rows] = await conn.execute<RowDataPacket[]>('SELECT id, name as label, parent_id as parentId FROM menus WHERE status=1 ORDER BY sort_order ASC');
     const tree = buildTree(rows as any[], 0);
     res.json({ code: 200, msg: 'success', data: tree });
   } catch (error) {
     next(error);
+  } finally {
+    if (conn) conn.release();
   }
 };
 
@@ -117,9 +138,10 @@ function buildTree(items: any[], parentId: number): any[] {
 }
 
 export const createMenu = async (req: Request, res: Response, next: NextFunction) => {
+  let conn: any = null;
   try {
     const { name, title, path, component, permission, icon, parentId, menuType, sortOrder } = req.body;
-    const conn = await getConnection();
+    conn = await getConnection();
     const [result] = await conn.execute<OkPacket>(
       'INSERT INTO menus (name, title, path, component, permission, icon, parent_id, menu_type, sort_order) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)',
       [name, title, path, component, permission, icon, parentId || 0, menuType, sortOrder || 0]
@@ -127,14 +149,17 @@ export const createMenu = async (req: Request, res: Response, next: NextFunction
     res.json({ code: 200, msg: 'success', data: { id: result.insertId } });
   } catch (error) {
     next(error);
+  } finally {
+    if (conn) conn.release();
   }
 };
 
 export const updateMenu = async (req: Request, res: Response, next: NextFunction) => {
+  let conn: any = null;
   try {
     const { id } = req.params;
     const { name, title, path, component, permission, icon, parentId, menuType, sortOrder, status } = req.body;
-    const conn = await getConnection();
+    conn = await getConnection();
     await conn.execute(
       'UPDATE menus SET name=?, title=?, path=?, component=?, permission=?, icon=?, parent_id=?, menu_type=?, sort_order=?, status=? WHERE id=?',
       [name, title, path, component, permission, icon, parentId, menuType, sortOrder, status, id]
@@ -142,27 +167,33 @@ export const updateMenu = async (req: Request, res: Response, next: NextFunction
     res.json({ code: 200, msg: 'success' });
   } catch (error) {
     next(error);
+  } finally {
+    if (conn) conn.release();
   }
 };
 
 export const deleteMenu = async (req: Request, res: Response, next: NextFunction) => {
+  let conn: any = null;
   try {
     const { id } = req.params;
-    const conn = await getConnection();
+    conn = await getConnection();
     await conn.execute('DELETE FROM menus WHERE id=?', [id]);
     await conn.execute('DELETE FROM role_menus WHERE menu_id=?', [id]);
     res.json({ code: 200, msg: 'success' });
   } catch (error) {
     next(error);
+  } finally {
+    if (conn) conn.release();
   }
 };
 
 // ==================== 用户角色 ====================
 
 export const getUserRoles = async (req: Request, res: Response, next: NextFunction) => {
+  let conn: any = null;
   try {
     const { userId } = req.params;
-    const conn = await getConnection();
+    conn = await getConnection();
     const [rows] = await conn.execute<RowDataPacket[]>(
       'SELECT r.id, r.name, r.code FROM roles_v2 r INNER JOIN user_roles ur ON r.id = ur.role_id WHERE ur.user_id = ?',
       [userId]
@@ -170,14 +201,17 @@ export const getUserRoles = async (req: Request, res: Response, next: NextFuncti
     res.json({ code: 200, msg: 'success', data: rows });
   } catch (error) {
     next(error);
+  } finally {
+    if (conn) conn.release();
   }
 };
 
 export const assignUserRoles = async (req: Request, res: Response, next: NextFunction) => {
+  let conn: any = null;
   try {
     const { userId } = req.params;
     const { roleIds } = req.body;
-    const conn = await getConnection();
+    conn = await getConnection();
     await conn.execute('DELETE FROM user_roles WHERE user_id = ?', [userId]);
     if (roleIds && roleIds.length > 0) {
       const placeholders = roleIds.map(() => '(?, ?)').join(',');
@@ -187,15 +221,18 @@ export const assignUserRoles = async (req: Request, res: Response, next: NextFun
     res.json({ code: 200, msg: 'success' });
   } catch (error) {
     next(error);
+  } finally {
+    if (conn) conn.release();
   }
 };
 
 // ==================== 角色菜单 ====================
 
 export const getRoleMenus = async (req: Request, res: Response, next: NextFunction) => {
+  let conn: any = null;
   try {
     const { roleId } = req.params;
-    const conn = await getConnection();
+    conn = await getConnection();
     const [rows] = await conn.execute<RowDataPacket[]>(
       'SELECT menu_id FROM role_menus WHERE role_id = ?',
       [roleId]
@@ -203,14 +240,17 @@ export const getRoleMenus = async (req: Request, res: Response, next: NextFuncti
     res.json({ code: 200, msg: 'success', data: rows.map((r: any) => r.menu_id) });
   } catch (error) {
     next(error);
+  } finally {
+    if (conn) conn.release();
   }
 };
 
 export const assignRoleMenus = async (req: Request, res: Response, next: NextFunction) => {
+  let conn: any = null;
   try {
     const { roleId } = req.params;
     const { menuIds } = req.body;
-    const conn = await getConnection();
+    conn = await getConnection();
     await conn.execute('DELETE FROM role_menus WHERE role_id = ?', [roleId]);
     if (menuIds && menuIds.length > 0) {
       const placeholders = menuIds.map(() => '(?, ?)').join(',');
@@ -220,15 +260,18 @@ export const assignRoleMenus = async (req: Request, res: Response, next: NextFun
     res.json({ code: 200, msg: 'success' });
   } catch (error) {
     next(error);
+  } finally {
+    if (conn) conn.release();
   }
 };
 
 // ==================== 核心：获取当前用户权限 ====================
 
 export const getCurrentUserPermissions = async (req: Request, res: Response, next: NextFunction) => {
+  let conn: any = null;
   try {
     const userId = (req as any).user?.userId;
-    const conn = await getConnection();
+    conn = await getConnection();
 
     // 1. 查询用户角色
     const [userRoles] = await conn.execute<RowDataPacket[]>(
@@ -278,6 +321,8 @@ export const getCurrentUserPermissions = async (req: Request, res: Response, nex
     });
   } catch (error) {
     next(error);
+  } finally {
+    if (conn) conn.release();
   }
 };
 

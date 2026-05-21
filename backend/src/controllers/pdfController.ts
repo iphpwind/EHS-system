@@ -8,16 +8,17 @@ import { generateHotWorkPDF } from '../utils/pdfGenerator';
  * GET /api/pdf/hot-work/:id
  */
 export const exportHotWorkPDF = async (req: Request, res: Response, next: NextFunction) => {
+  let conn: any = null;
   try {
     const { id } = req.params;
-    const conn = await getConnection();
+    conn = await getConnection();
 
     // 1. 查询主表
     const [mainRows] = await conn.execute<RowDataPacket[]>(`
-      SELECT wp.*, u.real_name as applicant_name, d.name as dept_name
+      SELECT wp.*, u.real_name as applicant_name, u.department_id as applicant_dept_id, d.name as dept_name
       FROM work_permits wp
       LEFT JOIN users u ON wp.applicant_id = u.id
-      LEFT JOIN departments d ON d.name = u.department
+      LEFT JOIN departments d ON d.id = u.department_id  -- ✅ INT 外键
       WHERE wp.id = ?
     `, [id]);
 
@@ -82,5 +83,7 @@ export const exportHotWorkPDF = async (req: Request, res: Response, next: NextFu
     res.send(pdfBuffer);
   } catch (error) {
     next(error);
+  } finally {
+    if (conn) conn.release();
   }
 };

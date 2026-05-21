@@ -8,9 +8,10 @@ import { getConnection } from '../config/database';
  * 参数：startDate, endDate, department, level
  */
 export const hazardReport = async (req: Request, res: Response, next: NextFunction) => {
+  let conn: any = null;
   try {
     const { startDate, endDate, department, level } = req.query;
-    const conn = await getConnection();
+    conn = await getConnection();
 
     let where = 'WHERE 1=1';
     const params: any[] = [];
@@ -98,6 +99,8 @@ export const hazardReport = async (req: Request, res: Response, next: NextFuncti
   } catch (error) {
     console.error('隐患报表错误:', error);
     next(error);
+  } finally {
+    if (conn) conn.release();
   }
 };
 
@@ -106,9 +109,10 @@ export const hazardReport = async (req: Request, res: Response, next: NextFuncti
  * GET /api/reports/work-permits
  */
 export const workPermitReport = async (req: Request, res: Response, next: NextFunction) => {
+  let conn: any = null;
   try {
     const { startDate, endDate, ticketType, status } = req.query;
-    const conn = await getConnection();
+    conn = await getConnection();
 
     let where = 'WHERE 1=1';
     const params: any[] = [];
@@ -159,7 +163,7 @@ export const workPermitReport = async (req: Request, res: Response, next: NextFu
 
     // 平均审批时间
     const [avgTime] = await conn.execute<RowDataPacket[]>(
-      `SELECT AVG(TIMESTAMPDIFF(HOUR, created_at, start_time)) as avg_hours 
+      `SELECT AVG(TIMESTAMPDIFF(approve_time, created_at)) as avg_hours 
        FROM work_permits ${where} AND status IN ('approved', 'executing', 'completed')`,
       params
     );
@@ -168,7 +172,7 @@ export const workPermitReport = async (req: Request, res: Response, next: NextFu
       success: true,
       data: {
         typeStats: (typeStats as any[]).map((item: any) => ({
-          type: item.ticket_type,
+          ticketType: item.ticket_type,
           count: item.count
         })),
         statusStats: (statusStats as any[]).map((item: any) => ({
@@ -182,6 +186,8 @@ export const workPermitReport = async (req: Request, res: Response, next: NextFu
   } catch (error) {
     console.error('作业票报表错误:', error);
     next(error);
+  } finally {
+    if (conn) conn.release();
   }
 };
 
@@ -190,9 +196,10 @@ export const workPermitReport = async (req: Request, res: Response, next: NextFu
  * GET /api/reports/training
  */
 export const trainingReport = async (req: Request, res: Response, next: NextFunction) => {
+  let conn: any = null;
   try {
     const { startDate, endDate } = req.query;
-    const conn = await getConnection();
+    conn = await getConnection();
 
     let where = 'WHERE 1=1';
     const params: any[] = [];
@@ -203,7 +210,7 @@ export const trainingReport = async (req: Request, res: Response, next: NextFunc
     }
     if (endDate) {
       where += ' AND training_date <= ?';
-      params.push(endDate);
+      params.push(endDate + ' 23:59:59');
     }
 
     // 培训场次统计
@@ -221,7 +228,7 @@ export const trainingReport = async (req: Request, res: Response, next: NextFunc
               SUM(IF(is_passed=1,1,0)) as passed_count
        FROM training_records tr
        LEFT JOIN training_sessions ts ON tr.session_id = ts.id
-       ${where.replace(/training_date/g, 'ts.training_date')}`,
+       ${where.replace('training_date', 'ts.training_date')}`,
       params
     );
 
@@ -245,6 +252,8 @@ export const trainingReport = async (req: Request, res: Response, next: NextFunc
   } catch (error) {
     console.error('培训报表错误:', error);
     next(error);
+  } finally {
+    if (conn) conn.release();
   }
 };
 
@@ -254,9 +263,10 @@ export const trainingReport = async (req: Request, res: Response, next: NextFunc
  * 根据当前用户权限和部门，返回个性化的风险提示
  */
 export const riskTips = async (req: Request, res: Response, next: NextFunction) => {
+  let conn: any = null;
   try {
     const userId = (req as any).user?.userId;
-    const conn = await getConnection();
+    conn = await getConnection();
 
     // 获取用户信息
     const [users] = await conn.execute<RowDataPacket[]>(
@@ -304,8 +314,8 @@ export const riskTips = async (req: Request, res: Response, next: NextFunction) 
 
     // 3. 检查证书即将过期
     const [expiringCerts] = await conn.execute<RowDataPacket[]>(
-      `SELECT cert_name, expiry_date FROM certificates 
-       WHERE user_id = ? AND expiry_date BETWEEN NOW() AND DATE_ADD(NOW(), INTERVAL 30 DAY)
+      `SELECT cert_name, expire_date FROM certificates 
+       WHERE user_id = ? AND expire_date BETWEEN NOW() AND DATE_ADD(NOW(), INTERVAL 30 DAY)
        AND status = 1`,
       [userId]
     );
@@ -346,6 +356,8 @@ export const riskTips = async (req: Request, res: Response, next: NextFunction) 
   } catch (error) {
     console.error('风险提示错误:', error);
     next(error);
+  } finally {
+    if (conn) conn.release();
   }
 };
 
@@ -354,12 +366,14 @@ export const riskTips = async (req: Request, res: Response, next: NextFunction) 
  * GET /api/reports/dashboard-full
  */
 export const fullDashboard = async (req: Request, res: Response, next: NextFunction) => {
+  let conn: any = null;
   try {
-    const conn = await getConnection();
+    conn = await getConnection();
 
     // 安全生产天数
     const [settings] = await conn.execute<RowDataPacket[]>(
-      'SELECT `value` FROM system_settings WHERE `key` = ?', ['safety_days']
+      'SELECT `value` FROM system_settings WHERE `key` = ?',
+      ['safety_days']
     );
     const safetyDays = (settings && settings.length > 0) ? parseInt((settings as any[])[0].value) || 8353 : 8353;
 
@@ -409,5 +423,7 @@ export const fullDashboard = async (req: Request, res: Response, next: NextFunct
   } catch (error) {
     console.error('综合Dashboard错误:', error);
     next(error);
+  } finally {
+    if (conn) conn.release();
   }
 };

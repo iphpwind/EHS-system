@@ -10,7 +10,9 @@ interface SystemLog extends RowDataPacket {
 }
 
 export const getLogs = asyncHandler(async (req: Request, res: Response) => {
-  const conn = await getConnection();
+  let conn;
+  try {
+  conn = await getConnection();
   const { page = 1, limit = 20, pageSize, module, username } = req.query;
   const pageNum = Number(page);
   const limitNum = Number(pageSize || limit);
@@ -30,10 +32,14 @@ export const getLogs = asyncHandler(async (req: Request, res: Response) => {
       pagination: { page: pageNum, pageSize: limitNum, total: c[0].total }
     }
   });
+  } finally { if (conn) conn.release(); }
 });
 
 export const deleteLog = asyncHandler(async (req: Request, res: Response) => {
-  const conn = await getConnection();
+  let conn;
+  try {
+  conn = await getConnection();
   await conn.execute('DELETE FROM system_logs WHERE id = ?', [req.params.id]);
   res.json({ success: true, message: '日志已删除' });
+  } finally { if (conn) conn.release(); }
 });

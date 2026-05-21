@@ -27,7 +27,9 @@ interface JsaLibrary extends RowDataPacket {
 }
 
 export const getJsaAnalysisList = asyncHandler(async (req: Request, res: Response) => {
-  const conn = await getConnection();
+  let conn;
+  try {
+  conn = await getConnection();
   const { page = 1, limit = 20, work_type, status } = req.query;
   const offset = (Number(page) - 1) * Number(limit);
   let where = 'WHERE 1=1';
@@ -42,21 +44,27 @@ export const getJsaAnalysisList = asyncHandler(async (req: Request, res: Respons
     `SELECT COUNT(*) as total FROM jsa_analysis ${where}`, params
   );
   res.json({ success: true, data: { list: rows, total: countRows[0].total, page: Number(page), limit: Number(limit) } });
+  } finally { if (conn) conn.release(); }
 });
 
 export const getJsaAnalysisById = asyncHandler(async (req: Request, res: Response) => {
-  const conn = await getConnection();
+  let conn;
+  try {
+  conn = await getConnection();
   const [rows] = await conn.execute<JsaAnalysis[]>('SELECT * FROM jsa_analysis WHERE id = ?', [req.params.id]);
   if (rows.length === 0) return res.status(404).json({ success: false, message: 'JSA分析记录不存在' });
   const [items] = await conn.execute<RowDataPacket[]>('SELECT * FROM jsa_record_items WHERE jsa_id = ? ORDER BY step_no', [req.params.id]);
   res.json({ success: true, data: { ...rows[0], items } });
+  } finally { if (conn) conn.release(); }
 });
 
 export const createJsaAnalysis = asyncHandler(async (req: Request, res: Response) => {
+  let conn;
   const userId = (req as any).user?.userId;
   const { title, work_type, hazard_source, hazard_control, items } = req.body;
   if (!title || !work_type) return res.status(400).json({ success: false, message: '标题和作业类型必填' });
-  const conn = await getConnection();
+  try {
+  conn = await getConnection();
   await conn.beginTransaction();
   try {
     const jsaNo = 'JSA' + Date.now();
@@ -80,26 +88,37 @@ export const createJsaAnalysis = asyncHandler(async (req: Request, res: Response
     await conn.rollback();
     throw e;
   }
+  } finally { if (conn) conn.release(); }
 });
 
 export const updateJsaAnalysis = asyncHandler(async (req: Request, res: Response) => {
+  let conn;
   const { title, work_type, hazard_source, hazard_control, status } = req.body;
-  const conn = await getConnection();
+  try {
+  conn = await getConnection();
   await conn.execute(
     'UPDATE jsa_analysis SET title=?, work_type=?, hazard_source=?, hazard_control=?, status=? WHERE id=?',
     [title, work_type, hazard_source || null, hazard_control || null, status ?? 1, req.params.id]
   );
   res.json({ success: true, message: 'JSA分析更新成功' });
+  } finally { if (conn) conn.release(); }
 });
 
 export const deleteJsaAnalysis = asyncHandler(async (req: Request, res: Response) => {
-  const conn = await getConnection();
+  let conn;
+  try {
+  conn = await getConnection();
   await conn.execute('DELETE FROM jsa_record_items WHERE jsa_id = ?', [req.params.id]);
   await conn.execute('DELETE FROM jsa_analysis WHERE id = ?', [req.params.id]);
   res.json({ success: true, message: 'JSA分析删除成功' });
+  } finally { if (conn) conn.release(); }
 });
 
 export const approveJsaAnalysis = asyncHandler(async (req: Request, res: Response) => {
-  await (await getConnection()).execute('UPDATE jsa_analysis SET status=2 WHERE id=?', [req.params.id]);
-  res.json({ success: true, message: 'JSA分析已批准' });
+  let conn: any = null;
+  try {
+    conn = await getConnection();
+    await conn.execute('UPDATE jsa_analysis SET status=2 WHERE id=?', [req.params.id]);
+    res.json({ success: true, message: 'JSA分析已批准' });
+  } finally { if (conn) conn.release(); }
 });

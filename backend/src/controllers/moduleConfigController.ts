@@ -44,13 +44,14 @@ export const updateModuleStatus = async (req: Request, res: Response) => {
  * 批量更新模块状态
  */
 export const batchUpdateModules = async (req: Request, res: Response) => {
+  let conn: any = null;
   try {
     const { modules } = req.body;
     if (!Array.isArray(modules)) {
       return res.status(400).json({ code: 400, msg: 'modules必须是数组', data: null });
     }
 
-    const conn = await getConnection();
+    conn = await getConnection();
     try {
       await conn.beginTransaction();
       for (const mod of modules) {
@@ -65,7 +66,7 @@ export const batchUpdateModules = async (req: Request, res: Response) => {
       await conn.rollback();
       throw err;
     } finally {
-      conn.release();
+      if (conn) conn.release();
     }
   } catch (error) {
     console.error('Batch update modules error:', error);

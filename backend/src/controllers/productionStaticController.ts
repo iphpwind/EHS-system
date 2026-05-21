@@ -4,9 +4,11 @@ import { getConnection } from '../config/database';
 import { asyncHandler } from '../utils/errors';
 
 export const getProductionStaticList = asyncHandler(async (req: Request, res: Response) => {
+  let conn;
   const { page = 1, pageSize = 20, keyword, archiveType, status } = req.query;
   const offset = (Number(page) - 1) * Number(pageSize);
-  const conn = await getConnection();
+  try {
+  conn = await getConnection();
   let where = 'WHERE 1=1';
   const params: any[] = [];
   if (keyword) { where += ' AND (name LIKE ? OR archive_no LIKE ? OR code LIKE ?)'; params.push(`%${keyword}%`, `%${keyword}%`, `%${keyword}%`); }
@@ -16,19 +18,25 @@ export const getProductionStaticList = asyncHandler(async (req: Request, res: Re
   const total = countRows[0]?.total || 0;
   const [rows] = await conn.execute<RowDataPacket[]>(`SELECT * FROM production_static_archives ${where} ORDER BY created_at DESC LIMIT ? OFFSET ?`, [...params, Number(pageSize), offset]);
   res.json({ success: true, data: { list: rows, pagination: { page: Number(page), pageSize: Number(pageSize), total } } });
+  } finally { if (conn) conn.release(); }
 });
 
 export const getProductionStaticById = asyncHandler(async (req: Request, res: Response) => {
-  const conn = await getConnection();
+  let conn;
+  try {
+  conn = await getConnection();
   const [rows] = await conn.execute<RowDataPacket[]>('SELECT * FROM production_static_archives WHERE id = ?', [req.params.id]);
   if (!rows || rows.length === 0) return res.status(404).json({ success: false, message: '档案不存在' });
   res.json({ success: true, data: rows[0] });
+  } finally { if (conn) conn.release(); }
 });
 
 export const createProductionStatic = asyncHandler(async (req: Request, res: Response) => {
+  let conn;
   const { name, archiveType, code, specification, material, manufacturer, installDate, commissionDate, designLife, location, department, responsiblePerson, maintenanceCycle, remark } = req.body;
   if (!name) return res.status(400).json({ success: false, message: '档案名称不能为空' });
-  const conn = await getConnection();
+  try {
+  conn = await getConnection();
   const archiveNo = `PS${Date.now()}`;
   const [result] = await conn.execute<ResultSetHeader>(
     `INSERT INTO production_static_archives (archive_no, name, archive_type, code, specification, material, manufacturer, install_date, commission_date, design_life, location, department, responsible_person, maintenance_cycle, remark, created_at, updated_at)
@@ -36,12 +44,15 @@ export const createProductionStatic = asyncHandler(async (req: Request, res: Res
     [archiveNo, name, archiveType || '', code || '', specification || '', material || '', manufacturer || '', installDate || null, commissionDate || null, designLife || 0, location || '', department || '', responsiblePerson || '', maintenanceCycle || 0, remark || '']
   );
   res.status(201).json({ success: true, message: '档案创建成功', data: { id: result.insertId, archiveNo } });
+  } finally { if (conn) conn.release(); }
 });
 
 export const updateProductionStatic = asyncHandler(async (req: Request, res: Response) => {
+  let conn;
   const { id } = req.params;
   const { name, archiveType, code, specification, material, manufacturer, installDate, commissionDate, designLife, location, department, responsiblePerson, lastMaintenanceDate, nextMaintenanceDate, maintenanceCycle, status, remark } = req.body;
-  const conn = await getConnection();
+  try {
+  conn = await getConnection();
   const [existing] = await conn.execute<RowDataPacket[]>('SELECT id FROM production_static_archives WHERE id = ?', [id]);
   if (!existing || existing.length === 0) return res.status(404).json({ success: false, message: '档案不存在' });
   await conn.execute(
@@ -49,12 +60,16 @@ export const updateProductionStatic = asyncHandler(async (req: Request, res: Res
     [name, archiveType || '', code || '', specification || '', material || '', manufacturer || '', installDate || null, commissionDate || null, designLife || 0, location || '', department || '', responsiblePerson || '', lastMaintenanceDate || null, nextMaintenanceDate || null, maintenanceCycle || 0, status ?? 1, remark || '', id]
   );
   res.json({ success: true, message: '档案更新成功' });
+  } finally { if (conn) conn.release(); }
 });
 
 export const deleteProductionStatic = asyncHandler(async (req: Request, res: Response) => {
-  const conn = await getConnection();
+  let conn;
+  try {
+  conn = await getConnection();
   const [existing] = await conn.execute<RowDataPacket[]>('SELECT id FROM production_static_archives WHERE id = ?', [req.params.id]);
   if (!existing || existing.length === 0) return res.status(404).json({ success: false, message: '档案不存在' });
   await conn.execute('DELETE FROM production_static_archives WHERE id = ?', [req.params.id]);
   res.json({ success: true, message: '档案已删除' });
+  } finally { if (conn) conn.release(); }
 });

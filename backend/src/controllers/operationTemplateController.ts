@@ -6,9 +6,10 @@ import { RowDataPacket, OkPacket } from 'mysql2';
 
 /** 查询作业证模板列表 */
 export const list = async (req: Request, res: Response, next: NextFunction) => {
+  let conn: any = null;
   try {
     const { pageNum = 1, pageSize = 10, operationType, templateName, status } = req.query as any;
-    const conn = await getConnection();
+    conn = await getConnection();
 
     let sql = 'SELECT * FROM operation_templates WHERE 1=1';
     const params: any[] = [];
@@ -24,25 +25,27 @@ export const list = async (req: Request, res: Response, next: NextFunction) => {
     const [rows] = await conn.execute<RowDataPacket[]>(sql, params);
 
     res.json({ code: 200, msg: 'success', rows, total });
-  } catch (error) { next(error); }
+  } catch (error) { next(error); } finally { if (conn) conn.release(); }
 };
 
 /** 查询模板详情 */
 export const getById = async (req: Request, res: Response, next: NextFunction) => {
+  let conn: any = null;
   try {
     const { id } = req.params;
-    const conn = await getConnection();
+    conn = await getConnection();
     const [rows] = await conn.execute<RowDataPacket[]>('SELECT * FROM operation_templates WHERE id = ?', [Number(id)]);
     if (!rows.length) return res.status(404).json({ code: 404, msg: '模板不存在' });
     res.json({ code: 200, msg: 'success', data: rows[0] });
-  } catch (error) { next(error); }
+  } catch (error) { next(error); } finally { if (conn) conn.release(); }
 };
 
 /** 新增模板 */
 export const create = async (req: Request, res: Response, next: NextFunction) => {
+  let conn: any = null;
   try {
     const { operationType, templateName, safetyDisclosureUserIds, approvalProcessJson, checkDicJson, status = 1 } = req.body;
-    const conn = await getConnection();
+    conn = await getConnection();
     const [result] = await conn.execute<OkPacket>(
       `INSERT INTO operation_templates (operation_type, template_name, safety_disclosure_user_ids, approval_process_json, check_dic_json, status)
        VALUES (?, ?, ?, ?, ?, ?)`,
@@ -51,15 +54,16 @@ export const create = async (req: Request, res: Response, next: NextFunction) =>
        checkDicJson ? JSON.stringify(checkDicJson) : null, status]
     );
     res.status(201).json({ code: 200, msg: 'success', data: { id: result.insertId } });
-  } catch (error) { next(error); }
+  } catch (error) { next(error); } finally { if (conn) conn.release(); }
 };
 
 /** 修改模板 */
 export const update = async (req: Request, res: Response, next: NextFunction) => {
+  let conn: any = null;
   try {
     const { id } = req.params;
     const { operationType, templateName, safetyDisclosureUserIds, approvalProcessJson, checkDicJson, status } = req.body;
-    const conn = await getConnection();
+    conn = await getConnection();
     const [rows] = await conn.execute<RowDataPacket[]>('SELECT id FROM operation_templates WHERE id = ?', [Number(id)]);
     if (!rows.length) return res.status(404).json({ code: 404, msg: '模板不存在' });
     await conn.execute(
@@ -69,26 +73,28 @@ export const update = async (req: Request, res: Response, next: NextFunction) =>
        checkDicJson ? JSON.stringify(checkDicJson) : null, status ?? 1, Number(id)]
     );
     res.json({ code: 200, msg: 'success' });
-  } catch (error) { next(error); }
+  } catch (error) { next(error); } finally { if (conn) conn.release(); }
 };
 
 /** 删除模板 */
 export const remove = async (req: Request, res: Response, next: NextFunction) => {
+  let conn: any = null;
   try {
     const { id } = req.params;
-    const conn = await getConnection();
+    conn = await getConnection();
     const [rows] = await conn.execute<RowDataPacket[]>('SELECT id FROM operation_templates WHERE id = ?', [Number(id)]);
     if (!rows.length) return res.status(404).json({ code: 404, msg: '模板不存在' });
     await conn.execute('DELETE FROM operation_templates WHERE id = ?', [Number(id)]);
     res.json({ code: 200, msg: 'success' });
-  } catch (error) { next(error); }
+  } catch (error) { next(error); } finally { if (conn) conn.release(); }
 };
 
 /** 配置模板（审批流程+检查字典） */
 export const configure = async (req: Request, res: Response, next: NextFunction) => {
+  let conn: any = null;
   try {
     const { id, approvalProcessList, checkDicList } = req.body;
-    const conn = await getConnection();
+    conn = await getConnection();
     const [rows] = await conn.execute<RowDataPacket[]>('SELECT id FROM operation_templates WHERE id = ?', [Number(id)]);
     if (!rows.length) return res.status(404).json({ code: 404, msg: '模板不存在' });
     await conn.execute(
@@ -97,5 +103,5 @@ export const configure = async (req: Request, res: Response, next: NextFunction)
        checkDicList ? JSON.stringify(checkDicList) : null, Number(id)]
     );
     res.json({ code: 200, msg: '配置成功' });
-  } catch (error) { next(error); }
+  } catch (error) { next(error); } finally { if (conn) conn.release(); }
 };
