@@ -1,6 +1,7 @@
 import express, { Express, Request, Response, NextFunction } from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
+import compression from 'compression';
 import morgan from 'morgan';
 import dotenv from 'dotenv';
 import path from 'path';
@@ -217,6 +218,15 @@ app.use(cors({
   allowedHeaders: ['Content-Type', 'Authorization']
 }));
 
+// ✅ 新增：启用gzip压缩
+app.use(compression({
+  filter: (req, res) => {
+    // 压缩所有响应
+    return true;
+  },
+  threshold: 1024,  // 大于1KB的响应才压缩
+}));
+
 app.use(helmet({
   contentSecurityPolicy: {
     directives: {
@@ -236,6 +246,18 @@ const generalLimiter = rateLimit({
     success: false,
     message: '请求过于频繁，请15分钟后再试'
   }
+});
+
+// ✅ 新增：Dashboard专属限流
+const dashboardLimiter = rateLimit({
+  windowMs: 60 * 1000,  // 1分钟
+  max: 60,                   // 最多60次请求（每秒1次）
+  message: {
+    success: false,
+    message: 'Dashboard请求过于频繁，请稍后再试'
+  },
+  standardHeaders: true,
+  legacyHeaders: false,
 });
 
 // 认证接口限流（防暴力破解，兼顾正常使用）
@@ -390,7 +412,7 @@ app.get('/api/safework/taskHazards/list', async (req: Request, res: Response) =>
 // 受保护的路由
 app.use('/api/users', userRoutes);
 app.use('/api/tickets', ticketRoutes);
-app.use('/api/dashboard', dashboardRoutes);
+app.use('/api/dashboard', dashboardLimiter, dashboardRoutes);
 // RuoYi兼容路由
 app.use('/api/system', systemRoutes);
 app.use('/api/system', menuRoutes);
