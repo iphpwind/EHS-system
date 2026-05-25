@@ -105,8 +105,13 @@
       <right-toolbar v-model:showSearch="showSearch" :columns="columns" @queryTable="getList"></right-toolbar>
     </el-row>
 
+    <!-- 骨架屏加载状态 -->
+    <div v-if="loading" class="skeleton-container">
+      <el-skeleton :rows="8" animated style="padding: 20px;" />
+    </div>
+
     <!-- 表格数据 -->
-    <el-table height="calc(100vh - 300px)" v-loading="loading" :data="roleList" @selection-change="handleSelectionChange">
+    <el-table v-else height="calc(100vh - 300px)" :data="roleList" @selection-change="handleSelectionChange">
       <template #empty>
         <el-empty description="暂无角色数据" />
       </template>
