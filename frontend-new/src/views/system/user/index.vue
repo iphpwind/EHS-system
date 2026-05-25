@@ -48,8 +48,43 @@
           <el-form-item>
             <el-button type="primary" icon="Search" @click="handleQuery">搜索</el-button>
             <el-button icon="Refresh" @click="resetQuery">重置</el-button>
+            <el-button @click="showAdvancedSearch = !showAdvancedSearch">
+              {{ showAdvancedSearch ? '收起' : '高级搜索' }}
+            </el-button>
           </el-form-item>
         </el-form>
+        <div v-if="showAdvancedSearch" style="margin-bottom: 15px;">
+          <el-form :model="queryParams" ref="advancedSearchRef" :inline="true" label-width="70px">
+            <el-form-item label="手机号" prop="phonenumber">
+              <el-input
+                  v-model="queryParams.phonenumber"
+                  placeholder="请输入手机号"
+                  clearable
+                  style="width: 200px"
+                  @keyup.enter="handleQuery"
+              />
+            </el-form-item>
+            <el-form-item label="邮箱" prop="email">
+              <el-input
+                  v-model="queryParams.email"
+                  placeholder="请输入邮箱"
+                  clearable
+                  style="width: 200px"
+                  @keyup.enter="handleQuery"
+              />
+            </el-form-item>
+            <el-form-item label="创建时间" style="width: 308px">
+              <el-date-picker
+                  v-model="dateRange"
+                  value-format="YYYY-MM-DD"
+                  type="daterange"
+                  range-separator="-"
+                  start-placeholder="开始日期"
+                  end-placeholder="结束日期"
+              ></el-date-picker>
+            </el-form-item>
+          </el-form>
+        </div>
 
         <el-row :gutter="10" class="mb8">
           <el-col :span="1.5">
@@ -127,11 +162,11 @@
                            :show-overflow-tooltip="true"/>
           <!-- <el-table-column label="用户昵称" align="center" key="nickName" prop="nickName" v-if="columns[2].visible"
                            :show-overflow-tooltip="true"/> -->
-          <el-table-column label="姓名" align="center" key="staffName" prop="staffName"/>
+          <el-table-column label="姓名" align="center" key="staffName" prop="staffName" v-if="columns[7].visible"/>
           <el-table-column label="部门" align="center" key="deptName" prop="dept.deptName" v-if="columns[3].visible"
                            :show-overflow-tooltip="true"/>
-          <!-- <el-table-column label="手机号码" align="center" key="phonenumber" prop="phonenumber" v-if="columns[4].visible"
-                           width="120"/> -->
+          <el-table-column label="手机号码" align="center" key="phonenumber" prop="phonenumber" v-if="columns[4].visible"
+                           width="120"/>
           <el-table-column label="状态" align="center" key="status" v-if="columns[5].visible">
             <template #default="scope">
               <el-switch
@@ -398,6 +433,7 @@ const userList = ref([]);
 const open = ref(false);
 const loading = ref(true);
 const showSearch = ref(true);
+const showAdvancedSearch = ref(false);
 const flag = ref(true);
 const ids = ref([]);
 const single = ref(true);
@@ -438,13 +474,14 @@ const staff = reactive({
 });
 // 列显隐信息
 const columns = ref([
-  {key: 0, label: `用户编号`, visible: true},
+  {key: 0, label: `用户编号`, visible: false},
   {key: 1, label: `账号`, visible: true},
   {key: 2, label: `用户姓名`, visible: true},
   {key: 3, label: `部门`, visible: true},
-  {key: 4, label: `手机号码`, visible: true},
+  {key: 4, label: `手机号码`, visible: false},
   {key: 5, label: `状态`, visible: true},
-  {key: 6, label: `创建时间`, visible: true}
+  {key: 6, label: `创建时间`, visible: false},
+  {key: 7, label: `姓名`, visible: true},
 ]);
 
 const data = reactive({
@@ -456,7 +493,8 @@ const data = reactive({
     phonenumber: undefined,
     status: undefined,
     deptId: undefined,
-    nickName:undefined
+    nickName: undefined,
+    email: undefined,
   },
   queryParam1s: {
     pageNum: 1,
