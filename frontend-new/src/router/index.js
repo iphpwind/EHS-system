@@ -490,7 +490,7 @@ export const constantRoutes = [
             {
                 path: 'index/:siteId(\\d+)',
                 component: () => import('@/views/unitmanage/site/plan'),
-                name: 'Plan',
+                name: 'UnitInspectionPlan',
                 meta: {title: '单元巡检计划', activeMenu: '/unitmanage/site'}
             }
         ]
@@ -570,7 +570,7 @@ export const constantRoutes = [
             {
                 path: 'index/:id(\\d+)',
                 component: () => import('@/views/equipment/spotCheck/detail'),
-                name: 'Plan',
+                name: 'EquipmentSpotCheckPlan',
                 meta: {title: '设备点检记录单', activeMenu: '/equipment/spotCheckMonth'}
             }
         ]
