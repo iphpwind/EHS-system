@@ -32,19 +32,31 @@
 
       <pagination v-show="total > 0" :total="total" v-model:page="query.page" @pagination="getList" />
     </el-card>
+
+    <!-- 课程管理对话框（集成视频上传功能） -->
+    <course-dialog
+      v-model:visible="dialogVisible"
+      :course="currentCourse"
+      @success="onDialogSuccess"
+    />
   </div>
 </template>
 
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
-import { ElMessage } from 'element-plus'
+import { ElMessage, ElMessageBox } from 'element-plus'
 import { getCourses, deleteCourse } from '@/api/training'
-import type { QueryParams } from './types'
+import type { QueryParams, Course } from './types'
+import CourseDialog from './CourseDialog.vue'
 
 const tableData = ref([])
 const loading = ref(false)
 const total = ref(0)
 const query = ref<QueryParams>({ page: 1, limit: 10, keyword: '' })
+
+// 控制对话框
+const dialogVisible = ref(false)
+const currentCourse = ref<Course>({})
 
 const getList = async () => {
   loading.value = true
@@ -61,26 +73,37 @@ const getList = async () => {
 }
 
 const handleAdd = () => {
-  ElMessage.info('新增课程功能待实现')
+  currentCourse.value = {}
+  dialogVisible.value = true
 }
 
-const handleEdit = (row: any) => {
-  ElMessage.info('编辑课程功能待实现')
+const handleEdit = (row: Course) => {
+  currentCourse.value = { ...row }
+  dialogVisible.value = true
 }
 
-const handlePreview = (row: any) => {
-  ElMessage.info('预览课程功能待实现')
+const handlePreview = (row: Course) => {
+  // 跳转到课程学习页面
+  window.open(`/training/study?courseId=${row.id}`, '_blank')
 }
 
 const handleDelete = async (id: number) => {
   try {
+    await ElMessageBox.confirm('确定删除此课程吗？', '提示', { type: 'warning' })
     await deleteCourse(id)
     ElMessage.success('删除成功')
     getList()
-  } catch (error) {
-    console.error('删除失败:', error)
-    ElMessage.error('删除失败')
+  } catch (error: any) {
+    if (error !== 'cancel') {
+      console.error('删除失败:', error)
+      ElMessage.error(error.message || '删除失败')
+    }
   }
+}
+
+const onDialogSuccess = () => {
+  dialogVisible.value = false
+  getList()
 }
 
 onMounted(getList)
