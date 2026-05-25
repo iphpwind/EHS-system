@@ -339,6 +339,26 @@
         <el-form-item label="整改负责人">
           <el-input v-model="formData.rectification_responsible" placeholder="请输入整改负责人" />
         </el-form-item>
+        <!-- Phase 3.1: 隐患排查模块增强 - 图片上传（5MB限制 + 水印） -->
+        <el-form-item label="隐患图片">
+          <el-upload
+            v-model:file-list="beforeImages"
+            action="/api/hazard-v2/upload-images"
+            list-type="picture-card"
+            :limit="5"
+            :on-exceed="handleExceed"
+            :before-upload="beforeImageUpload"
+            :on-success="handleBeforeUploadSuccess"
+            :on-remove="handleBeforeRemove"
+          >
+            <el-icon><Plus /></el-icon>
+            <template #tip>
+              <div class="el-upload__tip">
+                只能上传图片文件，且不超过 5MB，最多 5 张（已添加水印，GB 30871-2022 合规）
+              </div>
+            </template>
+          </el-upload>
+        </el-form-item>
       </el-form>
       <template #footer>
         <el-button @click="formVisible = false">取消</el-button>
@@ -378,6 +398,26 @@
             :rows="3"
             placeholder="请描述整改结果"
           />
+        </el-form-item>
+        <!-- Phase 3.1: 隐患排查模块增强 - 整改后图片上传（5MB限制 + 水印） -->
+        <el-form-item label="整改后图片" v-if="rectifyType === 'complete'">
+          <el-upload
+            v-model:file-list="afterImages"
+            action="/api/hazard-v2/upload-images"
+            list-type="picture-card"
+            :limit="5"
+            :on-exceed="handleExceed"
+            :before-upload="beforeImageUpload"
+            :on-success="handleAfterUploadSuccess"
+            :on-remove="handleAfterRemove"
+          >
+            <el-icon><Plus /></el-icon>
+            <template #tip>
+              <div class="el-upload__tip">
+                只能上传图片文件，且不超过 5MB，最多 5 张（已添加水印，GB 30871-2022 合规）
+              </div>
+            </template>
+          </el-upload>
         </el-form-item>
         <el-form-item label="验收结论" v-if="rectifyType === 'accept'">
           <el-radio-group v-model="rectifyData.verification_result">
@@ -755,6 +795,98 @@ const handleDelete = async (row: any) => {
     if (error !== 'cancel') {
       console.error('删除失败:', error);
     }
+  }
+};
+
+// ============ Phase 3.1: 隐患排查模块增强 - 图片上传功能 ============
+
+// 图片上传相关
+const beforeImages = ref<any[]>([]);
+const afterImages = ref<any[]>([]);
+
+// 上传前的校验（5MB 限制）
+const beforeImageUpload = (file: any) => {
+  const isImage = file.type.startsWith('image/');
+  if (!isImage) {
+    ElMessage.error('只能上传图片文件！');
+    return false;
+  }
+  
+  const isLt5M = file.size / 1024 / 1024 < 5;
+  if (!isLt5M) {
+    ElMessage.error('上传图片大小不能超过 5MB！');
+    return false;
+  }
+  
+  return true;
+};
+
+// 处理上传超出限制
+const handleExceed = (files: any) => {
+  ElMessage.warning(`最多上传 5 个文件，本次选择了 ${files.length} 个文件`);
+};
+
+// 整改前图片上传成功
+const handleBeforeUploadSuccess = (response: any, file: any) => {
+  if (response.code === 200) {
+    beforeImages.value.push(...response.data.files);
+    ElMessage.success('整改前图片上传成功（已添加水印，GB 30871-2022 合规）');
+  } else {
+    ElMessage.error(response.msg || '上传失败');
+  }
+};
+
+// 整改后图片上传成功
+const handleAfterUploadSuccess = (response: any, file: any) => {
+  if (response.code === 200) {
+    afterImages.value.push(...response.data.files);
+    ElMessage.success('整改后图片上传成功（已添加水印，GB 30871-2022 合规）');
+  } else {
+    ElMessage.error(response.msg || '上传失败');
+  }
+};
+
+// 移除整改前图片
+const handleBeforeRemove = (file: any) => {
+  const index = beforeImages.value.indexOf(file.response?.data?.files?.[0] || file.url);
+  if (index > -1) {
+    beforeImages.value.splice(index, 1);
+  }
+};
+
+// 移除整改后图片
+const handleAfterRemove = (file: any) => {
+  const index = afterImages.value.indexOf(file.response?.data?.files?.[0] || file.url);
+  if (index > -1) {
+    afterImages.value.splice(index, 1);
+  }
+};
+
+// 提交表单时，将图片路径保存到 formData
+const handleSubmit = async () => {
+  if (!formRef.value) return;
+  
+  try {
+    await formRef.value.validate(async (valid: boolean) => {
+      if (valid) {
+        // 将图片路径保存到 formData
+        formData.photos_before = JSON.stringify(beforeImages.value);
+        formData.photos_after = JSON.stringify(afterImages.value);
+        
+        const res: any = isEdit.value
+          ? await updateHazard(formData.id!, formData)
+          : await createHazard(formData);
+          
+        if (res.code === 200) {
+          ElMessage.success(isEdit.value ? '更新成功' : '新增成功');
+          formVisible.value = false;
+          loadHazardList();
+          loadStats();
+        }
+      }
+    });
+  } catch (error) {
+    console.error('保存隐患失败:', error);
   }
 };
 

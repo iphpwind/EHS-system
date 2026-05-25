@@ -21,6 +21,7 @@
     "@easydarwin/easyplayer": "^5.0.3",
     "@easydarwin/easywasmplayer": "^4.0.13",
     "@element-plus/icons-vue": "0.2.6",
+    "@vue-flow/core": "^1.48.2",
     "axios": "^1.7.0",
     "crypto-js": "^4.2.0",
     "dayjs": "^1.11.10",

@@ -25,6 +25,7 @@
     "node-windows": "^1.0.0-beta.8",
     "puppeteer-core": "^24.4.0",
     "qrcode": "^1.5.4",
+    "sharp": "^0.34.5",
     "svg-captcha": "^1.4.0",
     "winston": "^3.19.0"
   },

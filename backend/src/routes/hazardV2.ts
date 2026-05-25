@@ -14,8 +14,17 @@ import {
   getHazardStats,
   getOverdueHazards
 } from '../controllers/hazardV2Controller';
+import { uploadHazardImages, processUploadedImages, formatUploadResponse } from '../middleware/uploadMiddleware';
 
 const router = Router();
+
+// 隐患图片上传（Phase 3.1 增强：5MB限制 + 水印）
+router.post('/upload-images',
+  authenticateToken,
+  uploadHazardImages.array('images', 5), // 最多5个文件，每个5MB
+  processUploadedImages,
+  formatUploadResponse
+);
 
 // 隐患列表
 router.get('/', authenticateToken, getHazardList);

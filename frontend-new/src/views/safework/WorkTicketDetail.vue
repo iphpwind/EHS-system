@@ -57,6 +57,16 @@
       />
     </el-card>
 
+    <!-- 审批流程可视化（Phase 3.2 增强） -->
+    <el-card class="mt-4" shadow="never">
+      <template #header><span>审批流程可视化</span></template>
+      <ApprovalFlowViewer
+        :nodes="approvalFlowNodes"
+        :current-step="activeStep"
+        title="作业票审批流程"
+      />
+    </el-card>
+
     <!-- 流程状态 -->
     <el-card class="mt-4" shadow="never">
       <template #header><span>流程状态</span></template>
