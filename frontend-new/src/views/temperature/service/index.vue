@@ -101,6 +101,7 @@
 import { tempList, tempDesc } from "@/api/temperature/tempuser"
 import { getWendudata } from "@/api/temperature/temperature"
     import html2canvas from "html2canvas";
+    import { useUserStore } from '@/store/modules/user'
 
     export default {
         name: "service",
@@ -135,8 +136,12 @@ import { getWendudata } from "@/api/temperature/temperature"
             }
         },
 
+        setup() {
+            const userStore = useUserStore()
+            return { userStore }
+        },
         created() {
-            this.teName = this.$store.state.user.user.secondDeptName
+            this.teName = this.userStore.user.secondDeptName
           // console.log(this.$store.state.user)
             // this.getList();
             // this.chaifen('220903')

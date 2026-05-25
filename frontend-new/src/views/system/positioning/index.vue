@@ -161,10 +161,14 @@ import {websocketCommand} from "@/utils/websocket";
 import {timeLine, key, getMapConfig} from '@/api/system/positioning'
 import {toRaw} from '@vue/reactivity'
 import jquery from 'jquery'
+import { useAppStore } from '@/store/modules/app'
 
 
-export default {
   name: "index",
+  setup() {
+    const appStore = useAppStore()
+    return { appStore }
+  },
   data() {
     return {
       wsObj: null,
@@ -208,7 +212,7 @@ export default {
   // },
 
   mounted() {
-    this.$store.dispatch('app/topHide', false)
+    this.appStore.topHide(false)
     jquery('#cesiumContainer').html('')
     let that = this
     getMapConfig().then(res => {

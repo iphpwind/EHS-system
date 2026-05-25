@@ -617,6 +617,7 @@ import FocusCloud from '@/components/FocusCloud';
 import {computed} from "vue";
 import {push, stop} from "@/api/video"
 import WasmPlayer from '@easydarwin/easywasmplayer'
+import { useSettingsStore } from '@/store/modules/settings'
 
 export default {
   name: "daping",
@@ -808,9 +809,13 @@ export default {
     }
   },
 
+  setup() {
+    const settingsStore = useSettingsStore()
+    return { settingsStore }
+  },
   computed: {
     siteName() {
-      return this.$store.state.settings.siteName || '安全生产管理平台'
+      return this.settingsStore.siteName || '安全生产管理平台'
     }
   },
 
