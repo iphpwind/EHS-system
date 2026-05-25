@@ -107,6 +107,9 @@
 
     <!-- 表格数据 -->
     <el-table height="calc(100vh - 300px)" v-loading="loading" :data="roleList" @selection-change="handleSelectionChange">
+      <template #empty>
+        <el-empty description="暂无角色数据" />
+      </template>
       <el-table-column type="selection" width="55" align="center"/>
       <el-table-column label="角色名称" prop="roleName" :show-overflow-tooltip="true" width="150" v-if="columns[0].visible"/>
       <el-table-column label="权限字符" prop="roleKey" :show-overflow-tooltip="true" width="150" v-if="columns[1].visible"/>
