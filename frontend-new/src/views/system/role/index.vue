@@ -102,16 +102,16 @@
         >导出
         </el-button>
       </el-col>
-      <right-toolbar v-model:showSearch="showSearch" @queryTable="getList"></right-toolbar>
+      <right-toolbar v-model:showSearch="showSearch" :columns="columns" @queryTable="getList"></right-toolbar>
     </el-row>
 
     <!-- 表格数据 -->
     <el-table height="calc(100vh - 300px)" v-loading="loading" :data="roleList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center"/>
-      <el-table-column label="角色名称" prop="roleName" :show-overflow-tooltip="true" width="150"/>
-      <el-table-column label="权限字符" prop="roleKey" :show-overflow-tooltip="true" width="150"/>
-      <el-table-column label="显示顺序" prop="roleSort" width="100"/>
-      <el-table-column label="状态" align="center" width="100">
+      <el-table-column label="角色名称" prop="roleName" :show-overflow-tooltip="true" width="150" v-if="columns[0].visible"/>
+      <el-table-column label="权限字符" prop="roleKey" :show-overflow-tooltip="true" width="150" v-if="columns[1].visible"/>
+      <el-table-column label="显示顺序" prop="roleSort" width="100" v-if="columns[2].visible"/>
+      <el-table-column label="状态" align="center" width="100" v-if="columns[3].visible">
         <template #default="scope">
           <el-switch
               v-model="scope.row.status"
@@ -121,7 +121,7 @@
           ></el-switch>
         </template>
       </el-table-column>
-      <el-table-column label="创建时间" align="center" prop="createTime">
+      <el-table-column label="创建时间" align="center" prop="createTime" v-if="columns[4].visible">
         <template #default="scope">
           <span>{{ parseTime(scope.row.createTime) }}</span>
         </template>
@@ -250,6 +250,15 @@ const roleWizardRef = ref(null);
 const copyDialogRef = ref(null);
 const showAdvancedSearch = ref(false);
 const loading = ref(true);
+
+// 列设置配置
+const columns = ref([
+  { key: 0, label: `角色名称`, visible: true },
+  { key: 1, label: `权限字符`, visible: true },
+  { key: 2, label: `显示顺序`, visible: true },
+  { key: 3, label: `状态`, visible: true },
+  { key: 4, label: `创建时间`, visible: false },
+]);
 const showSearch = ref(true);
 const ids = ref([]);
 const single = ref(true);
