@@ -186,3 +186,23 @@ export function getApprovalRecords(ticketType: string, id: number | string) {
     method: 'get'
   })
 }
+
+// ============ 监护人签到（GB 30871-2022 强制） ============
+
+/** 监护人签到 */
+export function guardianSignIn(ticketType: string, id: number | string, data: { signImage?: string; location?: string }) {
+  return request({
+    url: `/${ticketType}-work/${id}/guardian-sign-in`,
+    method: 'post',
+    data
+  })
+}
+
+/** 监护人确认作业结束 */
+export function guardianConfirmEnd(ticketType: string, id: number | string, data: { confirmImage?: string; location?: string }) {
+  return request({
+    url: `/${ticketType}-work/${id}/guardian-confirm`,
+    method: 'post',
+    data
+  })
+}

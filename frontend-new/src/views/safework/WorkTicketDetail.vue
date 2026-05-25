@@ -38,6 +38,13 @@
           {{ detail.work_content || detail.operationContent || detail.workContent }}
         </el-descriptions-item>
         <el-descriptions-item v-if="detail.remark" label="备注" :span="3">{{ detail.remark }}</el-descriptions-item>
+        <!-- 监护人签到状态（GB 30871-2022 强制） -->
+        <el-descriptions-item v-if="detail.guardian_id" label="监护人" :span="3">
+          <span>{{ detail.guardian_name || '未指定' }}</span>
+          <el-tag v-if="detail.guardian_sign_in_status === 'signed'" type="success" size="small" class="ml-2">已签到</el-tag>
+          <el-tag v-else type="warning" size="small" class="ml-2">未签到</el-tag>
+          <span v-if="detail.guardian_sign_in_time" class="ml-2 text-gray-400">{{ parseTime(detail.guardian_sign_in_time) }}</span>
+        </el-descriptions-item>
       </el-descriptions>
     </el-card>
 
@@ -73,6 +80,9 @@
         <el-button type="warning" v-if="canFinish" @click="doAction('finish')">完成作业</el-button>
         <el-button type="danger" v-if="canClose" @click="doAction('close')">验收关闭</el-button>
         <el-button v-if="canReject" @click="doApprove('reject')">驳回</el-button>
+        <!-- 监护人签到（GB 30871-2022 强制） -->
+        <el-button type="primary" v-if="canGuardianSignIn" @click="openGuardianSignIn" icon="Check">监护人签到</el-button>
+        <el-button type="success" v-if="canGuardianConfirmEnd" @click="openGuardianConfirmEnd" icon="Finished">监护人确认结束</el-button>
       </div>
     </el-card>
 
@@ -254,6 +264,60 @@
         <el-button type="primary" @click="submitSign">确认签字</el-button>
       </div>
     </el-dialog>
+
+    <!-- 监护人签到弹窗（GB 30871-2022 强制） -->
+    <el-dialog title="监护人签到" v-model="guardianSignInOpen" width="500px" append-to-body>
+      <el-form :model="guardianSignInForm" label-width="100px">
+        <el-form-item label="签到位置">
+          <el-input v-model="guardianSignInForm.location" placeholder="请输入当前位置（如：装置区A-101）" />
+        </el-form-item>
+        <el-form-item label="签名">
+          <div class="sign-canvas-wrap" style="margin-bottom: 8px;">
+            <canvas ref="guardianSignCanvas" class="sign-canvas" style="height: 150px;"
+              @mousedown="startGuardianDraw" @mousemove="drawingGuardian" @mouseup="endGuardianDraw" @mouseleave="endGuardianDraw">
+            </canvas>
+          </div>
+          <div class="flex gap-2">
+            <el-button size="small" @click="clearGuardianSign">清空签名</el-button>
+            <el-button size="small" type="primary" @click="saveGuardianSign">保存签名</el-button>
+          </div>
+        </el-form-item>
+        <el-form-item label="签名预览" v-if="guardianSignInForm.signImage">
+          <img :src="guardianSignInForm.signImage" style="max-width: 200px; border: 1px solid #eee; border-radius: 4px;" />
+        </el-form-item>
+      </el-form>
+      <template #footer>
+        <el-button @click="guardianSignInOpen = false">取 消</el-button>
+        <el-button type="primary" @click="submitGuardianSignIn">确认签到</el-button>
+      </template>
+    </el-dialog>
+
+    <!-- 监护人确认作业结束弹窗 -->
+    <el-dialog title="监护人确认作业结束" v-model="guardianConfirmEndOpen" width="500px" append-to-body>
+      <el-form :model="guardianConfirmEndForm" label-width="100px">
+        <el-form-item label="确认位置">
+          <el-input v-model="guardianConfirmEndForm.location" placeholder="请输入当前位置（如：装置区A-101）" />
+        </el-form-item>
+        <el-form-item label="确认签名">
+          <div class="sign-canvas-wrap" style="margin-bottom: 8px;">
+            <canvas ref="guardianConfirmCanvas" class="sign-canvas" style="height: 150px;"
+              @mousedown="startGuardianConfirmDraw" @mousemove="drawingGuardianConfirm" @mouseup="endGuardianConfirmDraw" @mouseleave="endGuardianConfirmDraw">
+            </canvas>
+          </div>
+          <div class="flex gap-2">
+            <el-button size="small" @click="clearGuardianConfirmSign">清空签名</el-button>
+            <el-button size="small" type="primary" @click="saveGuardianConfirmSign">保存签名</el-button>
+          </div>
+        </el-form-item>
+        <el-form-item label="签名预览" v-if="guardianConfirmEndForm.confirmImage">
+          <img :src="guardianConfirmEndForm.confirmImage" style="max-width: 200px; border: 1px solid #eee; border-radius: 4px;" />
+        </el-form-item>
+      </el-form>
+      <template #footer>
+        <el-button @click="guardianConfirmEndOpen = false">取 消</el-button>
+        <el-button type="primary" @click="submitGuardianConfirmEnd">确认结束</el-button>
+      </template>
+    </el-dialog>
   </div>
 </template>
 
@@ -310,6 +374,19 @@ const canClose = computed(() => [7, '7', 'completed'].includes(detail.value.stat
 const canReject = computed(() => {
   const s = String(detail.value.status || detail.value.main_status || '')
   return ['2', '3', '4', '5'].includes(s)
+})
+
+// ============ 监护人签到（GB 30871-2022 强制） ============
+const canGuardianSignIn = computed(() => {
+  const s = String(detail.value.status || detail.value.main_status || '')
+  // 已批准(5) 或 作业中(6) 可以签到
+  return ['5', '6'].includes(s) && detail.value.guardian_sign_in_status !== 'signed'
+})
+
+const canGuardianConfirmEnd = computed(() => {
+  const s = String(detail.value.status || detail.value.main_status || '')
+  // 作业中(6) 或 待验收(7) 可以确认结束
+  return ['6', '7'].includes(s)
 })
 
 // ============ 工具方法 ============
@@ -424,6 +501,32 @@ const gasForm = reactive({
   checkType: 'before', oxygenPercent: 20.9, flammablePercent: 0,
   toxicPpm: 0, toxicType: '', checkLocation: '', checkResult: 1, remark: ''
 })
+
+// ============ 监护人签到（GB 30871-2022 强制） ============
+const guardianSignInOpen = ref(false)
+const guardianConfirmEndOpen = ref(false)
+
+const guardianSignInForm = reactive({
+  signImage: '',
+  location: ''
+})
+
+const guardianConfirmEndForm = reactive({
+  confirmImage: '',
+  location: ''
+})
+
+// 监护人签到 Canvas
+const guardianSignCanvas = ref<HTMLCanvasElement | null>(null)
+let guardianCtx: CanvasRenderingContext2D | null = null
+let guardianDrawingFlag = false
+let guardianLastX = 0, guardianLastY = 0
+
+// 监护人确认结束 Canvas
+const guardianConfirmCanvas = ref<HTMLCanvasElement | null>(null)
+let guardianConfirmCtx: CanvasRenderingContext2D | null = null
+let guardianConfirmDrawingFlag = false
+let guardianConfirmLastX = 0, guardianConfirmLastY = 0
 
 const submitGas = async () => {
   try {
@@ -544,6 +647,155 @@ const submitSign = () => {
   }).catch((e: any) => {
     console.error('签字保存失败', e)
   })
+}
+
+// ============ 监护人签到（GB 30871-2022 强制） ============
+const openGuardianSignIn = () => {
+  guardianSignInOpen.value = true
+  guardianSignInForm.signImage = ''
+  guardianSignInForm.location = ''
+  setTimeout(initGuardianCanvas, 200)
+}
+
+const openGuardianConfirmEnd = () => {
+  guardianConfirmEndOpen.value = true
+  guardianConfirmEndForm.confirmImage = ''
+  guardianConfirmEndForm.location = ''
+  setTimeout(initGuardianConfirmCanvas, 200)
+}
+
+const submitGuardianSignIn = async () => {
+  try {
+    const api = await import('@/api/safework')
+    await api.guardianSignIn(ticketType.value, ticketId, {
+      signImage: guardianSignInForm.signImage || undefined,
+      location: guardianSignInForm.location || undefined
+    })
+    proxy.$modal.msgSuccess('监护人签到成功（GB 30871-2022 合规）')
+    guardianSignInOpen.value = false
+    load() // 重新加载详情
+  } catch (e: any) {
+    console.error('监护人签到失败', e)
+    proxy.$modal.msgError(e.message || '监护人签到失败')
+  }
+}
+
+const submitGuardianConfirmEnd = async () => {
+  try {
+    const api = await import('@/api/safework')
+    await api.guardianConfirmEnd(ticketType.value, ticketId, {
+      confirmImage: guardianConfirmEndForm.confirmImage || undefined,
+      location: guardianConfirmEndForm.location || undefined
+    })
+    proxy.$modal.msgSuccess('监护人确认作业结束成功')
+    guardianConfirmEndOpen.value = false
+    load() // 重新加载详情
+  } catch (e: any) {
+    console.error('监护人确认结束失败', e)
+    proxy.$modal.msgError(e.message || '监护人确认结束失败')
+  }
+}
+
+// ============ 监护人签到 Canvas ============
+const initGuardianCanvas = () => {
+  const c = guardianSignCanvas.value
+  if (!c) return
+  c.width = c.offsetWidth
+  c.height = c.offsetHeight
+  guardianCtx = c.getContext('2d')
+  if (guardianCtx) {
+    guardianCtx.strokeStyle = '#000'
+    guardianCtx.lineWidth = 2
+    guardianCtx.lineCap = 'round'
+  }
+}
+
+const getGuardianCanvasPos = (clientX: number, clientY: number) => {
+  const rect = guardianSignCanvas.value!.getBoundingClientRect()
+  return { x: clientX - rect.left, y: clientY - rect.top }
+}
+
+const startGuardianDraw = (e: MouseEvent) => {
+  guardianDrawingFlag = true
+  const p = getGuardianCanvasPos(e.clientX, e.clientY)
+  guardianLastX = p.x; guardianLastY = p.y
+}
+
+const drawingGuardian = (e: MouseEvent) => {
+  if (!guardianDrawingFlag || !guardianCtx) return
+  const p = getGuardianCanvasPos(e.clientX, e.clientY)
+  guardianCtx.beginPath()
+  guardianCtx.moveTo(guardianLastX, guardianLastY)
+  guardianCtx.lineTo(p.x, p.y)
+  guardianCtx.stroke()
+  guardianLastX = p.x; guardianLastY = p.y
+}
+
+const endGuardianDraw = () => { guardianDrawingFlag = false }
+
+const clearGuardianSign = () => {
+  if (guardianCtx && guardianSignCanvas.value) {
+    guardianCtx.clearRect(0, 0, guardianSignCanvas.value.width, guardianSignCanvas.value.height)
+    guardianSignInForm.signImage = ''
+  }
+}
+
+const saveGuardianSign = () => {
+  if (!guardianSignCanvas.value) return
+  const base64 = guardianSignCanvas.value.toDataURL('image/png')
+  guardianSignInForm.signImage = base64
+  proxy.$modal.msgSuccess('签名已保存')
+}
+
+// ============ 监护人确认结束 Canvas ============
+const initGuardianConfirmCanvas = () => {
+  const c = guardianConfirmCanvas.value
+  if (!c) return
+  c.width = c.offsetWidth
+  c.height = c.offsetHeight
+  guardianConfirmCtx = c.getContext('2d')
+  if (guardianConfirmCtx) {
+    guardianConfirmCtx.strokeStyle = '#000'
+    guardianConfirmCtx.lineWidth = 2
+    guardianConfirmCtx.lineCap = 'round'
+  }
+}
+
+const getGuardianConfirmCanvasPos = (clientX: number, clientY: number) => {
+  const rect = guardianConfirmCanvas.value!.getBoundingClientRect()
+  return { x: clientX - rect.left, y: clientY - rect.top }
+}
+
+const startGuardianConfirmDraw = (e: MouseEvent) => {
+  guardianConfirmDrawingFlag = true
+  const p = getGuardianConfirmCanvasPos(e.clientX, e.clientY)
+  guardianConfirmLastX = p.x; guardianConfirmLastY = p.y
+}
+
+const drawingGuardianConfirm = (e: MouseEvent) => {
+  if (!guardianConfirmDrawingFlag || !guardianConfirmCtx) return
+  const p = getGuardianConfirmCanvasPos(e.clientX, e.clientY)
+  guardianConfirmCtx.beginPath()
+  guardianConfirmCtx.moveTo(guardianConfirmLastX, guardianConfirmLastY)
+  guardianConfirmCtx.lineTo(p.x, p.y)
+  guardianConfirmCtx.stroke()
+  guardianConfirmLastX = p.x; guardianConfirmLastY = p.y
+}
+
+const endGuardianConfirmDraw = () => { guardianConfirmDrawingFlag = false }
+
+const clearGuardianConfirmSign = () => {
+  if (guardianConfirmCtx && guardianConfirmCanvas.value) {
+    guardianConfirmCtx.clearRect(0, 0, guardianConfirmCanvas.value.width, guardianConfirmCanvas.value.height)
+    guardianConfirmEndForm.confirmImage = ''
+  }
+}
+
+const saveGuardianConfirmSign = () => {
+  if (!guardianConfirmCanvas.value) return
+  const base64 = guardianConfirmCanvas.value.toDataURL('image/png')
+  guardianConfirmEndForm.confirmImage = base64
+  proxy.$modal.msgSuccess('确认签名已保存')
 }
 
 // ============ PDF导出 ============

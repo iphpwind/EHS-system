@@ -163,12 +163,8 @@ import {toRaw} from '@vue/reactivity'
 import jquery from 'jquery'
 import { useAppStore } from '@/store/modules/app'
 
-
+export default {
   name: "index",
-  setup() {
-    const appStore = useAppStore()
-    return { appStore }
-  },
   data() {
     return {
       wsObj: null,
