@@ -34,6 +34,7 @@
           />
         </el-select>
       </el-form-item>
+      <div v-if="showAdvancedSearch">
       <el-form-item label="创建时间" style="width: 308px">
         <el-date-picker
             v-model="dateRange"
@@ -44,9 +45,29 @@
             end-placeholder="结束日期"
         ></el-date-picker>
       </el-form-item>
+      <el-form-item label="创建人" prop="createBy">
+        <el-input
+            v-model="queryParams.createBy"
+            placeholder="请输入创建人"
+            clearable
+            style="width: 240px"
+        />
+      </el-form-item>
+      <el-form-item label="备注" prop="remark">
+        <el-input
+            v-model="queryParams.remark"
+            placeholder="请输入备注关键词"
+            clearable
+            style="width: 240px"
+        />
+      </el-form-item>
+      </div>
       <el-form-item>
         <el-button type="primary" icon="Search" @click="handleQuery">搜索</el-button>
         <el-button icon="Refresh" @click="resetQuery">重置</el-button>
+        <el-button @click="showAdvancedSearch = !showAdvancedSearch">
+          {{ showAdvancedSearch ? '收起' : '高级搜索' }}
+        </el-button>
       </el-form-item>
     </el-form>
     <el-row :gutter="10" class="mb8 toolbar">
@@ -227,6 +248,7 @@ const userStore = useUserStore();
 const roleList = ref([]);
 const roleWizardRef = ref(null);
 const copyDialogRef = ref(null);
+const showAdvancedSearch = ref(false);
 const loading = ref(true);
 const showSearch = ref(true);
 const ids = ref([]);
@@ -266,7 +288,9 @@ const data = reactive({
     pageSize: 10,
     roleName: undefined,
     roleKey: undefined,
-    status: undefined
+    status: undefined,
+    createBy: undefined,
+    remark: undefined
   },
   rules: {
     roleName: [{ required: true, message: "角色名称不能为空", trigger: "blur" }],
