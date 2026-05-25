@@ -17,48 +17,8 @@
 				<el-col :span="6">
 					<div class="left">
 						<div class="mainbox leftbox0">
-							<div class="tianqitit">
-								<el-row>
-									<el-col :span="8">
-										<img src="@/assets/images/scyf/yingji-tianqiico.png"/>
-										<span>烟台市</span>
-									</el-col>
-									<el-col :span="16">
-										<h4>23°C—32°C<span>多云</span></h4>
-									</el-col>
-								</el-row>
-							</div>
-							<div class="tianqidata">
-								<el-row :gutter="10">
-									<el-col :span="8">
-										<div class="item item1">
-											<img src="@/assets/images/scyf/yingji-tianqi1.png"/>
-											<div class="tianqidatart">
-												<div>空气指数</div>
-												<div>优31</div>
-											</div>
-										</div>
-									</el-col>
-									<el-col :span="8">
-										<div class="item item2">
-											<img src="@/assets/images/scyf/yingji-tianqi2.png"/>
-											<div class="tianqidatart">
-												<div>湿度</div>
-												<div>70%</div>
-											</div>
-										</div>
-									</el-col>
-									<el-col :span="8">
-										<div class="item item3">
-											<img src="@/assets/images/scyf/yingji-tianqi3.png"/>
-											<div class="tianqidatart">
-												<div>风速</div>
-												<div>5km/h</div>
-											</div>
-										</div>
-									</el-col>
-								</el-row>
-							</div>
+							<div class="tit">天气信息</div>
+							<WeatherWidget />
 						</div>
 						<div class="mainbox leftbox1">
 							<div class="tit">应急预案类型占比 </div>
@@ -155,7 +115,7 @@
 				</el-col>
 				<el-col :span="18">
 					<div class="mid">
-						<div id="cesiumContainer"></div>
+						<EmergencyMap />
 						<div class="jiankongtanchu">
 						  <el-dialog
 						      width="1000px"
@@ -475,6 +435,8 @@ import {getInner, listInner} from "@/api/safework/communicate";
 import {listSupplies} from "@/api/safework/supplies";
 import {objectMerge} from "@/utils";
 import {listType} from "@/api/safework/suppliestype";
+import WeatherWidget from "@/components/WeatherWidget.vue";
+import EmergencyMap from "@/components/EmergencyMap.vue";
 
 export default {
   name: "双重预防",

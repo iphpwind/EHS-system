@@ -80,6 +80,8 @@ import moduleConfigRoutes from './routes/moduleConfig';
 import dictRoutes from './routes/dict';
 // 预警路由
 import warningRoutes from './routes/warning';
+// 天气API路由 (Phase 4 体验优化)
+import weatherRoutes from './routes/weather';
 // 报表路由
 import reportRoutes from './routes/report';
 // 跨模块集成路由 (P3)
@@ -465,6 +467,8 @@ app.use('/api/patrol', patrolRoutes);
 app.use('/api/enclosed', enclosedRoutes);
 // 视频IOT路由
 app.use('/api/iot-video', iotVideoRoutes);
+// 天气API路由 (Phase 4 体验优化)
+app.use('/api/weather', weatherRoutes);
 // 模块配置路由
 app.use('/api/module-config', moduleConfigRoutes);
 // 基础档案扩展路由

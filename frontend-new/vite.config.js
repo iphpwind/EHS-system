@@ -33,9 +33,17 @@ export default defineConfig(({ mode, command }) => {
           manualChunks: {
             'element-plus': ['element-plus'],
             'echarts': ['echarts'],
+            'xlsx': ['xlsx'],
+            'qrcode': ['qrcode'],
+            'vue': ['vue', 'vue-router', 'vuex'],
+            'utils': ['axios', 'dayjs', 'lodash']
           }
         }
-      }
+      },
+      // 开启 gzip 压缩
+      reportCompressedSize: true,
+      // 禁用 source map 以减小包体积
+      sourcemap: false
     }
   }
 })
