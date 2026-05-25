@@ -84,6 +84,8 @@ import warningRoutes from './routes/warning';
 import reportRoutes from './routes/report';
 // 跨模块集成路由 (P3)
 import integrationRoutes from './routes/integration';
+// Phase 3.3: 培训教育模块增强 - 视频上传云存储 + 考试防作弊
+import trainingVideoRoutes from './routes/trainingVideo';
 import { scopeMiddleware } from './middleware/scopeMiddleware';
 // 7类特殊作业票路由
 import highWorkRoutes from './routes/highWork';
@@ -97,6 +99,8 @@ import electricWorkRoutes from './routes/electricWork';
 import operationTemplateRoutes from './routes/operationTemplate';
 // 培训统计路由
 import trainingStatsRoutes from './routes/trainingStats';
+// Phase 3.3: 培训教育模块增强 - 视频上传云存储 + 考试防作弊
+import trainingVideoRoutes from './routes/trainingVideo';
 
 // 导入中间件
 import { authenticateToken } from './middleware/authMiddleware';
@@ -518,6 +522,8 @@ app.use('/api/compliance', complianceRoutes);
 app.use('/api/safety-points', safetyPointsRoutes);
 // 跨模块集成路由 (P3)
 app.use('/api/integration', integrationRoutes);
+// Phase 3.3: 培训教育模块增强 - 视频上传云存储 + 考试防作弊
+app.use('/api/training-video', trainingVideoRoutes);
 
 // 静态文件服务（签字图片、上传文件）
 app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
