@@ -41,6 +41,14 @@ function click() {
   }
 };
 
+// Ctrl+K / Cmd+K 快捷键唤起搜索
+function handleKeydown(e) {
+  if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
+    e.preventDefault()
+    click()
+  }
+}
+
 function close() {
   headerSearchSelectRef.value && headerSearchSelectRef.value.blur()
   options.value = []
@@ -129,6 +137,11 @@ function querySearch(query) {
 
 onMounted(() => {
   searchPool.value = generateRoutes(routes.value);
+  document.addEventListener('keydown', handleKeydown)
+})
+
+onUnmounted(() => {
+  document.removeEventListener('keydown', handleKeydown)
 })
 
 watchEffect(() => {
