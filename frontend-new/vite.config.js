@@ -29,7 +29,6 @@ export default defineConfig(({ mode, command }) => {
       // 解决 Node.js heap out of memory 问题
       chunkSizeWarningLimit: 2000,
       rollupOptions: {
-        external: ['jquery'],
         output: {
           manualChunks: {
             'element-plus': ['element-plus'],
