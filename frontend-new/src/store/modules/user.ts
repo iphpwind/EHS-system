@@ -95,6 +95,6 @@ export const useUserStore = defineStore('user', () => {
 }, {
   persist: {
     key: 'ehs-user',
-    paths: ['token', 'roles', 'permissions']
+    paths: ['token']
   }
 })

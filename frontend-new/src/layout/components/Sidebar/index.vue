@@ -1,7 +1,7 @@
 <template>
   <div :class="{ 'has-logo': showLogo }"
        :style="{ backgroundColor: sideTheme === 'theme-dark' ? variables.menuBackground : variables.menuLightBackground }">
-    <logo v-if="showLogo" :collapse="isCollapse"/>
+    <logo v-if="showLogo" :collapse="isCollapse" />
     <el-scrollbar :class="sideTheme" wrap-class="scrollbar-wrapper">
       <el-menu
           :default-active="activeMenu"
@@ -28,15 +28,20 @@
 import Logo from './Logo'
 import SidebarItem from './SidebarItem'
 import variables from '@/assets/styles/variables.module.scss'
+import { usePermissionStore } from '@/store/modules/permission'
+import { useSettingsStore } from '@/store/modules/settings'
+import { useAppStore } from '@/store/modules/app'
 
 const route = useRoute();
-const store = useStore();
+const permissionStore = usePermissionStore()
+const settingsStore = useSettingsStore()
+const appStore = useAppStore()
 
-const sidebarRouters = computed(() => store.getters.sidebarRouters);
-const showLogo = computed(() => store.state.settings.sidebarLogo);
-const sideTheme = computed(() => store.state.settings.sideTheme);
-const theme = computed(() => store.state.settings.theme);
-const isCollapse = computed(() => !store.state.app.sidebar.opened);
+const sidebarRouters = computed(() => permissionStore.sidebarRouters);
+const showLogo = computed(() => settingsStore.sidebarLogo);
+const sideTheme = computed(() => settingsStore.sideTheme);
+const theme = computed(() => settingsStore.theme);
+const isCollapse = computed(() => !appStore.sidebar.opened);
 
 const activeMenu = computed(() => {
   const {meta, path} = route;
@@ -45,8 +50,7 @@ const activeMenu = computed(() => {
     return meta.activeMenu;
   }
   return path;
-})
-
+});
 </script>
 
 <style lang="scss">

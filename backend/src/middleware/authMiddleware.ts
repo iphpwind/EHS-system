@@ -1,7 +1,5 @@
 import { Request, Response, NextFunction } from 'express';
 import jwt from 'jsonwebtoken';
-import dotenv from 'dotenv';
-import path from 'path';
 
 // 扩展 Request 类型（供控制器使用）
 export interface AuthRequest extends Request {
@@ -22,18 +20,16 @@ export interface AuthRequest extends Request {
   };
 }
 
-// 确保在模块初始化前加载 .env（早于 app.ts 的 dotenv.config()）
-dotenv.config({ path: path.join(__dirname, '..', '..', '.env') });
 
-// 启动时检查 JWT_SECRET 是否配置
-if (!process.env.JWT_SECRET) {
-  console.error('❌ 环境变量 JWT_SECRET 未配置！');
-  console.error('请在 .env 文件中设置强密码作为 JWT_SECRET');
-  console.error(`当前查找路径: ${path.join(__dirname, '..', '..', '.env')}`);
-  process.exit(1);
+
+// 懒读取 JWT_SECRET（避免 dotenv 加载顺序问题）
+function getJwtSecret(): string {
+  const secret = process.env.JWT_SECRET;
+  if (!secret) {
+    throw new Error('JWT_SECRET 未配置，请在 .env 文件中设置');
+  }
+  return secret;
 }
-
-const JWT_SECRET = process.env.JWT_SECRET;
 
 /**
  * 认证中间件 - 验证JWT Token
@@ -53,7 +49,7 @@ export const authenticateToken = async (req: Request, res: Response, next: NextF
     }
 
     // 验证token
-    jwt.verify(token, JWT_SECRET, (err: any, decoded: any) => {
+    jwt.verify(token, getJwtSecret(), (err: any, decoded: any) => {
       if (err) {
         if (err.name === 'TokenExpiredError') {
           return res.status(401).json({
@@ -182,7 +178,7 @@ export const optionalAuth = (req: Request, res: Response, next: NextFunction) =>
     return next();
   }
 
-  jwt.verify(token, JWT_SECRET, (err: any, decoded: any) => {
+  jwt.verify(token, getJwtSecret(), (err: any, decoded: any) => {
     if (err) {
       // Token无效，但不阻止请求
       return next();

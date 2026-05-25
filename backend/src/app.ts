@@ -87,7 +87,7 @@ import integrationRoutes from './routes/integration';
 import { scopeMiddleware } from './middleware/scopeMiddleware';
 // 7类特殊作业票路由
 import highWorkRoutes from './routes/highWork';
-import confinedSpaceRoutes from './routes/confinedSpace';
+// import confinedSpaceRoutes from './routes/confinedSpace';
 import hoistingWorkRoutes from './routes/hoistingWork';
 import earthWorkRoutes from './routes/earthWork';
 import brokenWorkRoutes from './routes/brokenWork';
@@ -95,6 +95,8 @@ import blindWorkRoutes from './routes/blindWork';
 import electricWorkRoutes from './routes/electricWork';
 // 作业模板路由
 import operationTemplateRoutes from './routes/operationTemplate';
+// 培训统计路由
+import trainingStatsRoutes from './routes/trainingStats';
 
 // 导入中间件
 import { authenticateToken } from './middleware/authMiddleware';
@@ -103,7 +105,6 @@ import { errorHandler } from './utils/errors';
 import { getConnection } from './config/database';
 import { deduplicateMiddleware } from './middleware/deduplicateMiddleware';
 import { startAllJobs } from './utils/scheduler';
-import { initRedis } from './utils/cache';
 import systemMonitorRoutes from './routes/systemMonitor';
 // Phase2 新增路由
 import operationTraceRoutes from './routes/operationTrace';
@@ -121,6 +122,10 @@ import inspectionPlanRoutes from './routes/inspectionPlan';
 import hazardV2Routes from './routes/hazardV2';
 // 风险分级管控可视化V2路由（P2-2）
 import riskV2Routes from './routes/riskV2';
+// 作业票业务控制器
+import {
+  getList, getDetail, createTicket, updateTicket, deleteTicket, updateStatus, getList2
+} from './controllers/workTicketBizController';
 
 // Winston 日志系统
 import { logger } from './utils/logger';
@@ -235,14 +240,16 @@ app.use(helmet({
   }
 }));
 
-// API 限流中间件
+// API 限流中间件（放宽限制，适配H5移动端并发请求）
 const generalLimiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15分钟
-  max: 100, // 每个IP最多100次请求
+  windowMs: 1 * 60 * 1000,   // 1分钟
+  max: 200,                    // 每个IP每分钟最多200次请求
   message: {
     success: false,
-    message: '请求过于频繁，请15分钟后再试'
-  }
+    message: '请求过于频繁，请1分钟后再试'
+  },
+  standardHeaders: true,
+  legacyHeaders: false,
 });
 
 // ✅ 新增：Dashboard专属限流
@@ -353,9 +360,6 @@ app.use('/api/system/dict', dictRoutes);
 
 // ===== RuoYi 兼容 API 端点（已分离到 routes/system.ts 和 routes/menu.ts） =====
 
-import {
-  getList, getDetail, createTicket, updateTicket, deleteTicket, updateStatus, getList2
-} from './controllers/workTicketBizController';
 
 // 7类特殊作业票通用路由
 const ticketPrefixes = [
@@ -435,7 +439,6 @@ app.use('/api/training-records', trainingRecordsRoutes);
 // 教育培训V2路由（课程/题库/试卷/考试/证书）
 app.use('/api/training-v2', trainingV2Routes);
 // 培训统计V2路由（P2-3）
-import trainingStatsRoutes from './routes/trainingStats';
 app.use('/api/training-stats', trainingStatsRoutes);
 // 培训合规路由（三级教育 + 年度学时 + 预校验）
 app.use('/api/training-compliance', trainingComplianceRoutes);
@@ -482,8 +485,6 @@ app.use('/api/changes', changeRoutes);
 app.use('/api/responsibility', responsibilityRoutes);
 // 作业票类型子表路由
 app.use('/api/ticket-types', ticketTypeRoutes);
-// 隐患管理路由
-app.use('/api/hazards', hazardRoutes);
 // 隐患闭环管理V2路由（P2-1）
 app.use('/api/hazards-v2', hazardV2Routes);
 
@@ -684,14 +685,6 @@ const startServer = (): Promise<void> => {
         const { connectDB } = require('./config/database');
         await connectDB();
 
-        // 初始化 Redis 连接（缓存模块）
-        try {
-          await initRedis();
-          logger.info('✅ Redis 初始化成功');
-        } catch (error: any) {
-          logger.warn('⚠️ Redis 初始化失败，缓存已禁用', { error: error.message });
-        }
-
         // 启动定时任务引擎（隐患检查、作业票过期、证书扫描等）
         try {
           startAllJobs();
@@ -739,6 +732,7 @@ const startServer = (): Promise<void> => {
 };
 
 startServer().catch((error: any) => {
+  console.error('❌ 服务启动失败:', error);
   logger.error('❌ 服务启动失败:', error);
   process.exit(1);
 });

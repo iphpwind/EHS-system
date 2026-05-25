@@ -1,16 +1,13 @@
 <template>
   <div class="report" v-loading="loading">
     <div class="reportbox">
-      <div class="tit">企业安全包保责任人履职情况</div>
+      <div class="tit">{{ deptName }}安全包保责任人排查情况</div>
       <table>
         <tr class="tablelayout">
           <td></td><td></td><td></td><td></td><td></td>
+          <td></td><td></td><td></td><td></td>
+          <td></td><td></td><td></td><td></td>
           <td></td><td></td><td></td><td></td><td></td>
-          <td></td><td></td><td></td><td></td><td></td>
-          <td></td><td></td><td></td><td></td><td></td>
-        </tr>
-        <tr>
-          <td colspan="13" align="center">{{ deptName }}安全包保责任人排查情况</td>
         </tr>
         <tr>
           <td rowspan="2">序号</td>
@@ -52,44 +49,33 @@
   </div>
 </template>
 
-<script>
+<script setup>
+import { ref, onMounted } from 'vue'
+import { useUserStore } from '@/store/modules/user'
 import { listByObject } from "@/api/safework/task";
-export default {
-  name: "",
-  data() {
-    return {
-      title: '',
-      attAddress:[],
-      Camerashow: false,
-      form:{
-      },
-      taskList:[],
-      deptName:''
-    }
-  },
 
-  created() {
-    const store = useStore();
-    const getters = computed(() => store.getters);
-    this.deptName = store.getters.user.dept.deptName;
-    this.getList();
-  },
+const loading = ref(false);
+const title = ref('');
+const attAddress = ref([]);
+const Camerashow = ref(false);
+const form = ref({});
+const taskList = ref([]);
+const deptName = ref('');
 
-  mounted: function () {
-  },
+const userStore = useUserStore()
 
-  methods: {
-    /** 查询隐患排查任务列表 */
-    getList() {
-      listByObject().then(response => {
-        this.taskList = response.rows;
-      });
-    }
-  },
+onMounted(() => {
+  deptName.value = userStore.user?.dept?.deptName || '';
+  getList();
+})
 
+/** 查询隐患排查任务列表 */
+function getList() {
+  listByObject().then(response => {
+    taskList.value = response.rows;
+  });
 }
 </script>
-
 
 <style scoped lang="scss">
 .report{
@@ -115,7 +101,7 @@ export default {
   max-width: 950px;
   border-collapse: collapse;
   td{
-    border: 1px solid #aaa;padding: 5px 10px;
+    border:1px solid #aaa;padding: 5px 10px;
     line-height: 2;font-size: 14px;
   }
   .noborder-lf{
@@ -155,7 +141,3 @@ export default {
   }
 }
 </style>
-
-
-
-

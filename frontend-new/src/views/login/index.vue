@@ -1,9 +1,11 @@
 <script setup>
 import { Sunny, Moon } from '@element-plus/icons-vue';
 import { ElMessage } from 'element-plus';
-import store from '@/store';
+import { useSettingsStore } from '@/store/modules/settings';
 import PwdLogin from './components/PwdLogin.vue';
 import RegisterForm from './components/RegisterForm.vue';
+
+const settingsStore = useSettingsStore();
 
 const router = useRouter();
 
@@ -28,8 +30,8 @@ onUnmounted(() => {
 });
 
 // 站点名称
-const siteName = computed(() => store.state.settings.siteName || '安全生产管理系统');
-const siteLogo = computed(() => store.state.settings.siteLogo || '');
+const siteName = computed(() => settingsStore.siteName || '安全生产管理系统');
+const siteLogo = computed(() => settingsStore.siteLogo || '');
 
 // 切换主题
 function toggleTheme() {

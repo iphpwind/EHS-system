@@ -59,6 +59,7 @@ export const constantRoutes = [
         component: () => import('@/views/error/401'),
         hidden: true
     },
+    // ==================== 首页（仪表盘）=====================
     {
         path: '',
         component: Layout,
@@ -72,6 +73,209 @@ export const constantRoutes = [
             }
         ]
     },
+    // ==================== 1. 双重预防机制（最重要，置顶） ====================
+    {
+        path: '/risk-control',
+        component: Layout,
+        redirect: '/risk-control/points',
+        name: 'RiskControl',
+        meta: { title: '双重预防机制', icon: 'shield' },
+        children: [
+            {
+                path: 'points',
+                component: () => import('@/views/system/shuangchongyf/index.vue'),
+                name: 'RiskPoints',
+                meta: { title: '风险分级管控' }
+            },
+            {
+                path: 'risk-dashboard',
+                component: () => import('@/views/risk/RiskDashboard.vue'),
+                name: 'RiskDashboard',
+                meta: { title: '风险可视化大屏', icon: 'chart' }
+            },
+            {
+                path: 'hazards',
+                component: () => import('@/views/safework/investigate'),
+                name: 'HazardInvestigation',
+                meta: { title: '隐患排查治理' }
+            },
+            {
+                path: 'hazard-closed-loop',
+                component: () => import('@/views/risk/HazardClosedLoop.vue'),
+                name: 'HazardClosedLoop',
+                meta: { title: '隐患闭环管理', icon: 'loop' }
+            },
+            {
+                path: 'statistics',
+                component: () => import('@/views/system/statisticanalysis/index.vue'),
+                name: 'RiskStatistics',
+                meta: { title: '统计分析' }
+            }
+        ]
+    },
+    // ==================== 2. 作业许可管理（高频操作） ====================
+    {
+        path: '/work-permit',
+        component: Layout,
+        redirect: '/work-permit/list',
+        name: 'WorkPermit',
+        meta: { title: '作业许可管理', icon: 'lock' },
+        children: [
+            {
+                path: 'list',
+                component: () => import('@/views/safework/WorkTicketList.vue'),
+                name: 'WorkPermitList',
+                meta: { title: '作业票列表' }
+            },
+            {
+                path: 'apply',
+                component: () => import('@/views/safework/apply/index.vue'),
+                name: 'WorkPermitApply',
+                meta: { title: '作业票申请' }
+            },
+            {
+                path: 'hot-work',
+                component: () => import('@/views/safework/apply/HotWorkApply.vue'),
+                name: 'HotWork',
+                meta: { title: '动火作业' }
+            },
+            {
+                path: 'confined-space',
+                component: () => import('@/views/safework/apply/ConfinedSpaceApply.vue'),
+                name: 'ConfinedSpace',
+                meta: { title: '受限空间' }
+            },
+            {
+                path: 'detail/:id',
+                component: () => import('@/views/safework/WorkTicketDetail.vue'),
+                name: 'WorkPermitDetail',
+                meta: { title: '作业票详情', hidden: true }
+            },
+            {
+                path: 'approval/:id',
+                component: () => import('@/views/safework/approval/ApprovalPage.vue'),
+                name: 'WorkPermitApproval',
+                meta: { title: '作业票审批', hidden: true }
+            }
+        ]
+    },
+    // ==================== 3. 培训教育（中国人特别重视） ====================
+    {
+        path: '/training',
+        component: Layout,
+        redirect: '/training/plan',
+        name: 'Training',
+        meta: { title: '培训教育', icon: 'education' },
+        children: [
+            { path: 'plan', component: () => import('@/views/training/PlanList.vue'), name: 'TrainingPlan', meta: { title: '培训计划' } },
+            { path: 'course', component: () => import('@/views/training/CourseList.vue'), name: 'TrainingCourse', meta: { title: '课程管理' } },
+            { path: 'course/study', component: () => import('@/views/training/CourseStudy.vue'), name: 'CourseStudy', meta: { title: '课程学习' }, hidden: true },
+            { path: 'exam/:id(\\d+)', component: () => import('@/views/training/ExamRoom.vue'), name: 'TrainingExam', meta: { title: '在线考试' }, hidden: true },
+            { path: 'my', component: () => import('@/views/training/MyTraining.vue'), name: 'MyTraining', meta: { title: '我的学习' } },
+            { path: 'certificate', component: () => import('@/views/training/CertificateList.vue'), name: 'TrainingCertificate', meta: { title: '证书管理' } },
+            { path: 'statistics', component: () => import('@/views/training/Statistics.vue'), name: 'TrainingStatistics', meta: { title: '培训统计' } },
+            { path: 'stats-dashboard', component: () => import('@/views/training/TrainingStatsDashboard.vue'), name: 'TrainingStatsDashboard', meta: { title: '统计看板' } },
+            { path: 'three-level', component: () => import('@/views/training/ThreeLevelEducation.vue'), name: 'ThreeLevelEducation', meta: { title: '三级安全教育' } }
+        ]
+    },
+    // ==================== 其他模块 ====================
+    // 气体监测
+    {
+        path: '/gas-monitor',
+        component: Layout,
+        redirect: '/gas-monitor/index',
+        name: 'GasMonitor',
+        meta: { title: '气体监测', icon: 'monitor' },
+        children: [
+            {
+                path: 'index',
+                component: () => import('@/views/gasMonitor/index.vue'),
+                name: 'GasMonitorIndex',
+                meta: { title: '实时监测' }
+            }
+        ]
+    },
+    // 综合管理
+    {
+        path: '/comprehensive',
+        component: Layout,
+        redirect: '/comprehensive/equipment',
+        name: 'Comprehensive',
+        meta: { title: '综合管理', icon: 'folder' },
+        children: [
+            {
+                path: 'equipment',
+                component: () => import('@/views/unitmanage/device'),
+                name: 'EquipmentManage',
+                meta: { title: '设备管理' }
+            },
+            {
+                path: 'document',
+                component: () => import('@/views/system/safeproduction/index.vue'),
+                name: 'DocumentManage',
+                meta: { title: '文档管理' }
+            },
+            {
+                path: 'emergency',
+                component: () => import('@/views/safework/yingjiguanli/index.vue'),
+                name: 'EmergencyManage',
+                meta: { title: '应急管理' }
+            },
+            {
+                path: 'emergency/supplies',
+                component: () => import('@/views/emergency/SuppliesManagement.vue'),
+                name: 'EmergencySupplies',
+                meta: { title: '应急物资' }
+            },
+            {
+                path: 'patrol',
+                component: () => import('@/views/patrol/PatrolManagement.vue'),
+                name: 'PatrolManage',
+                meta: { title: '电子巡检' }
+            }
+        ]
+    },
+    // 系统管理
+    {
+        path: '/system',
+        component: Layout,
+        redirect: '/system/user',
+        name: 'System',
+        meta: { title: '系统管理', icon: 'system' },
+        children: [
+            {
+                path: 'user',
+                component: () => import('@/views/system/user/index'),
+                name: 'SystemUser',
+                meta: { title: '用户管理' }
+            },
+            {
+                path: 'role',
+                component: () => import('@/views/system/role/index'),
+                name: 'SystemRole',
+                meta: { title: '角色管理' }
+            },
+            {
+                path: 'dept',
+                component: () => import('@/views/system/dept/index'),
+                name: 'SystemDept',
+                meta: { title: '部门管理' }
+            },
+            {
+                path: 'menu',
+                component: () => import('@/views/system/menu/index'),
+                name: 'SystemMenu',
+                meta: { title: '菜单管理' }
+            },
+            {
+                path: 'config',
+                component: () => import('@/views/system/config/index'),
+                name: 'SystemConfig',
+                meta: { title: '系统配置' }
+            }
+        ]
+    },
+    // ==================== 以下为隐藏路由（不影响导航） ====================
     {
         path: '/user',
         component: Layout,
@@ -162,11 +366,13 @@ export const constantRoutes = [
         component: () => import('@/views/system/hazardsource'),
         name: 'hazardsource',
         meta: { hideTop: true }
-    },{
+    },
+    {
         path: '/chanxian',
         component: () => import('@/views/chanxian/index'),
         name: 'chanxian'
     },
+    // 传感器相关隐藏路由
     {
         path: '/sensor/modalYc',
         component: Layout,
@@ -276,19 +482,6 @@ export const constantRoutes = [
         component: () => import('@/views/system/mapconfig'),
         name: 'mapconfig'
     },
-		/*{
-			path: '/unitmanage/site-plan',
-			component: Layout,
-			hidden: true,
-			children: [
-					{
-							path: 'index/:siteId(\\d+)',
-							component: () => import('@/views/unitmanage/site/plan'),
-							name: 'Plan',
-							meta: {title: '单元巡检计划', activeMenu: '/unitmanage/site'}
-					}
-			]
-		},*/
     {
         path: '/unitmanage/site-plan',
         component: Layout,
@@ -297,338 +490,102 @@ export const constantRoutes = [
             {
                 path: 'index/:siteId(\\d+)',
                 component: () => import('@/views/unitmanage/site/plan'),
-                name: 'plan',
+                name: 'Plan',
                 meta: {title: '单元巡检计划', activeMenu: '/unitmanage/site'}
             }
         ]
     },
-		{
-			path: '/unitmanage/site-task',
-			component: Layout,
-			hidden: true,
-			children: [
-					{
-							path: 'index/:siteId(\\d+)',
-							component: () => import('@/views/unitmanage/site/task'),
-							name: 'siteTask',
-							meta: {title: '单元巡检任务', activeMenu: '/unitmanage/site'}
-					}
-			]
-		},
-		{
-			path: '/energy/diagram-peidiantu',
-			component: Layout,
-			hidden: true,
-			children: [
-					{
-							path: 'index/:id(\\d+)',
-							component: () => import('@/views/energy/diagram/peidiantu'),
-							name: 'peidiantu',
-							meta: {title: '配电图', activeMenu: '/energy/diagram'}
-					}
-			]
-		},
-        {
-			path: '/industry/hxhb',
-			component: Layout,
-			hidden: true,
-			children: [
-					{
-							path: 'taoci',
-							component: () => import('@/views/industry/configure/hxhb/taoci'),
-							name: 'taoci',
-							meta: {title: '额尔古纳诚诚矿业', activeMenu: '/industry/hxhb'}
-					},
-                    {
+    {
+        path: '/unitmanage/site-task',
+        component: Layout,
+        hidden: true,
+        children: [
+            {
+                path: 'index/:siteId(\\d+)',
+                component: () => import('@/views/unitmanage/site/task'),
+                name: 'siteTask',
+                meta: {title: '单元巡检任务', activeMenu: '/unitmanage/site'}
+            }
+        ]
+    },
+    {
+        path: '/energy/diagram-piantua',
+        component: Layout,
+        hidden: true,
+        children: [
+            {
+                path: 'index/:id(\\d+)',
+                component: () => import('@/views/energy/diagram/peidiantu'),
+                name: 'peidiantu',
+                meta: {title: '配电图', activeMenu: '/energy/diagram'}
+            }
+        ]
+    },
+    {
+        path: '/industry/hxhb',
+        component: Layout,
+        hidden: true,
+        children: [
+            {
+                        path: 'taoci',
+                        component: () => import('@/views/industry/configure/hxhb/taoci'),
+                        name: 'taoci',
+                        meta: {title: '额尔古纳诚诚矿业', activeMenu: '/industry/hxhb'}
+                },
+                {
                         path: 'index',
                         component: () => import('@/views/industry/configure/hxhb/index'),
                         name: 'index',
                         meta: {title: '迁安市马兰庄镇南山铁矿', activeMenu: '/industry/hxhb'}
                 },
-                    {
+                {
                         path: 'taoci2',
                         component: () => import('@/views/industry/configure/hxhb/taoci2'),
                         name: 'taoci2',
                         meta: {title: '灵宝市金瑞选矿设备', activeMenu: '/industry/hxhb'}
-                  },
-                  {
+                },
+                {
                     path: 'gxxq',
                     component: () => import('@/views/industry/configure/hxhb/gxxq'),
                     name: 'gxxq',
                     meta: {title: '广西鑫琪矿业', activeMenu: '/industry/hxhb'}
-            }
-			]
-		},
-		{
-			path: '/system/yunxingjk/display',
-			component: () => import('@/views/system/yunxingjk/display'),
-			name: 'display'
-		},
-        {
-            path: '/display_v2',
-            component: () => import('@/views/display_v2'),
-            name: 'display_v2'
-        },
-		{
-			path: '/equipment/spotCheckMonth-detail',
-			component: Layout,
-			hidden: true,
-			children: [
-					{
-							path: 'index/:id(\\d+)',
-							component: () => import('@/views/equipment/spotCheck/detail'),
-							name: 'Plan',
-							meta: {title: '设备点检记录单', activeMenu: '/equipment/spotCheckMonth'}
-					}
-			]
-		},
-        {
-            path: '/system/visitor/index',
-            component: () => import('@/views/system/visitor/index.vue'),
-        },
-        {
-            path: '/system/visitor/form',
-            component: () => import('@/views/system/visitor/form.vue'),
-        },
-
-        {
-            path: '/system/visitor/card',
-            component: () => import('@/views/system/visitor/card.vue'),
-        },
-        // {
-		// 	path: '/industry/hxhb/taoci2',
-		// 	component: Layout,
-		// 	hidden: true,
-		// 	children: [
-
-		// 	]
-		// },
-        // {
-	// 	path: '/industry/hxhb/gxxq',
-	// 	component: Layout,
-	// 	hidden: true,
-	// 	children: [
-            
-	// 	]
-	// }
-    ,
-    {
-        path: '/training',
-        component: Layout,
-        redirect: '/training/plan',
-        name: 'Training',
-        meta: { title: '培训教育', icon: 'education' },
-        children: [
-            { path: 'plan', component: () => import('@/views/training/PlanList.vue'), name: 'TrainingPlan', meta: { title: '培训计划' } },
-            { path: 'course', component: () => import('@/views/training/CourseList.vue'), name: 'TrainingCourse', meta: { title: '课程管理' } },
-            { path: 'course/study', component: () => import('@/views/training/CourseStudy.vue'), name: 'CourseStudy', meta: { title: '课程学习' }, hidden: true },
-            { path: 'exam/:id(\\d+)', component: () => import('@/views/training/ExamRoom.vue'), name: 'TrainingExam', meta: { title: '在线考试' }, hidden: true },
-            { path: 'my', component: () => import('@/views/training/MyTraining.vue'), name: 'MyTraining', meta: { title: '我的学习' } },
-            { path: 'certificate', component: () => import('@/views/training/CertificateList.vue'), name: 'TrainingCertificate', meta: { title: '证书管理' } },
-            { path: 'statistics', component: () => import('@/views/training/Statistics.vue'), name: 'TrainingStatistics', meta: { title: '培训统计' } },
-            { path: 'stats-dashboard', component: () => import('@/views/training/TrainingStatsDashboard.vue'), name: 'TrainingStatsDashboard', meta: { title: '统计看板' } },
-            { path: 'three-level', component: () => import('@/views/training/ThreeLevelEducation.vue'), name: 'ThreeLevelEducation', meta: { title: '三级安全教育' } }
+                }
         ]
     },
-    // 作业许可管理（GB 30871-2022）
     {
-        path: '/work-permit',
+        path: '/system/yunxingjk/display',
+        component: () => import('@/views/system/yunxingjk/display'),
+        name: 'display'
+    },
+    {
+        path: '/display_v2',
+        component: () => import('@/views/display_v2'),
+        name: 'display_v2'
+    },
+    {
+        path: '/equipment/spotCheckMonth-detail',
         component: Layout,
-        redirect: '/work-permit/list',
-        name: 'WorkPermit',
-        meta: { title: '作业许可管理', icon: 'lock' },
+        hidden: true,
         children: [
             {
-                path: 'list',
-                component: () => import('@/views/safework/WorkTicketList.vue'),
-                name: 'WorkPermitList',
-                meta: { title: '作业票列表' }
-            },
-            {
-                path: 'apply',
-                component: () => import('@/views/safework/apply/index.vue'),
-                name: 'WorkPermitApply',
-                meta: { title: '作业票申请' }
-            },
-            {
-                path: 'hot-work',
-                component: () => import('@/views/safework/apply/HotWorkApply.vue'),
-                name: 'HotWork',
-                meta: { title: '动火作业' }
-            },
-            {
-                path: 'confined-space',
-                component: () => import('@/views/safework/apply/ConfinedSpaceApply.vue'),
-                name: 'ConfinedSpace',
-                meta: { title: '受限空间' }
-            },
-            {
-                path: 'high-work',
-                component: () => import('@/views/safework/apply/index.vue'),
-                name: 'HighWork',
-                meta: { title: '高处作业' }
-            },
-            {
-                path: 'electric-work',
-                component: () => import('@/views/safework/apply/index.vue'),
-                name: 'ElectricWork',
-                meta: { title: '电气作业' }
-            },
-            {
-                path: 'hoisting-work',
-                component: () => import('@/views/safework/apply/index.vue'),
-                name: 'HoistingWork',
-                meta: { title: '吊装作业' }
-            },
-            {
-                path: 'detail/:id',
-                component: () => import('@/views/safework/WorkTicketDetail.vue'),
-                name: 'WorkPermitDetail',
-                meta: { title: '作业票详情', hidden: true }
-            },
-            {
-                path: 'approval/:id',
-                component: () => import('@/views/safework/approval/ApprovalPage.vue'),
-                name: 'WorkPermitApproval',
-                meta: { title: '作业票审批', hidden: true }
+                path: 'index/:id(\\d+)',
+                component: () => import('@/views/equipment/spotCheck/detail'),
+                name: 'Plan',
+                meta: {title: '设备点检记录单', activeMenu: '/equipment/spotCheckMonth'}
             }
         ]
     },
-    // 双重预防机制
     {
-        path: '/risk-control',
-        component: Layout,
-        redirect: '/risk-control/points',
-        name: 'RiskControl',
-        meta: { title: '双重预防机制', icon: 'shield' },
-        children: [
-            {
-                path: 'points',
-                component: () => import('@/views/system/shuangchongyf/index.vue'),
-                name: 'RiskPoints',
-                meta: { title: '风险分级管控' }
-            },
-            {
-                path: 'risk-dashboard',
-                component: () => import('@/views/risk/RiskDashboard.vue'),
-                name: 'RiskDashboard',
-                meta: { title: '风险可视化大屏', icon: 'chart' }
-            },
-            {
-                path: 'hazards',
-                component: () => import('@/views/safework/investigate'),
-                name: 'HazardInvestigation',
-                meta: { title: '隐患排查治理' }
-            },
-            {
-                path: 'hazard-closed-loop',
-                component: () => import('@/views/risk/HazardClosedLoop.vue'),
-                name: 'HazardClosedLoop',
-                meta: { title: '隐患闭环管理', icon: 'loop' }
-            },
-            {
-                path: 'statistics',
-                component: () => import('@/views/system/statisticanalysis/index.vue'),
-                name: 'RiskStatistics',
-                meta: { title: '统计分析' }
-            }
-        ]
+        path: '/system/visitor/index',
+        component: () => import('@/views/system/visitor/index.vue'),
     },
-    // 气体监测
     {
-        path: '/gas-monitor',
-        component: Layout,
-        redirect: '/gas-monitor/index',
-        name: 'GasMonitor',
-        meta: { title: '气体监测', icon: 'monitor' },
-        children: [
-            {
-                path: 'index',
-                component: () => import('@/views/gasMonitor/index.vue'),
-                name: 'GasMonitorIndex',
-                meta: { title: '实时监测' }
-            }
-        ]
+        path: '/system/visitor/form',
+        component: () => import('@/views/system/visitor/form.vue'),
     },
-    // 综合管理
     {
-        path: '/comprehensive',
-        component: Layout,
-        redirect: '/comprehensive/equipment',
-        name: 'Comprehensive',
-        meta: { title: '综合管理', icon: 'folder' },
-        children: [
-            {
-                path: 'equipment',
-                component: () => import('@/views/unitmanage/device'),
-                name: 'EquipmentManage',
-                meta: { title: '设备管理' }
-            },
-            {
-                path: 'document',
-                component: () => import('@/views/system/safeproduction/index.vue'),
-                name: 'DocumentManage',
-                meta: { title: '文档管理' }
-            },
-            {
-                path: 'emergency',
-                component: () => import('@/views/safework/yingjiguanli/index.vue'),
-                name: 'EmergencyManage',
-                meta: { title: '应急管理' }
-            },
-            {
-                path: 'emergency/supplies',
-                component: () => import('@/views/emergency/SuppliesManagement.vue'),
-                name: 'EmergencySupplies',
-                meta: { title: '应急物资' }
-            },
-            {
-                path: 'patrol',
-                component: () => import('@/views/patrol/PatrolManagement.vue'),
-                name: 'PatrolManage',
-                meta: { title: '电子巡检' }
-            }
-        ]
-    },
-    // 系统管理
-    {
-        path: '/system',
-        component: Layout,
-        redirect: '/system/user',
-        name: 'System',
-        meta: { title: '系统管理', icon: 'system' },
-        children: [
-            {
-                path: 'user',
-                component: () => import('@/views/system/user/index'),
-                name: 'SystemUser',
-                meta: { title: '用户管理' }
-            },
-            {
-                path: 'role',
-                component: () => import('@/views/system/role/index'),
-                name: 'SystemRole',
-                meta: { title: '角色管理' }
-            },
-            {
-                path: 'dept',
-                component: () => import('@/views/system/dept/index'),
-                name: 'SystemDept',
-                meta: { title: '部门管理' }
-            },
-            {
-                path: 'menu',
-                component: () => import('@/views/system/menu/index'),
-                name: 'SystemMenu',
-                meta: { title: '菜单管理' }
-            },
-            {
-                path: 'config',
-                component: () => import('@/views/system/config/index'),
-                name: 'SystemConfig',
-                meta: { title: '系统配置' }
-            }
-        ]
+        path: '/system/visitor/card',
+        component: () => import('@/views/system/visitor/card.vue'),
     },
     // 统一作业票管理（旧路由兼容）
     {

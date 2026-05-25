@@ -1,13 +1,14 @@
-import store from '@/store'
+import { useSettingsStore } from '@/store/modules/settings'
 import defaultSettings from '@/settings'
 
 /**
  * 动态修改标题
  */
 export function useDynamicTitle() {
-    const siteName = store.state.settings.siteName || defaultSettings.title;
-    if (store.state.settings.dynamicTitle && store.state.settings.title) {
-        document.title = store.state.settings.title + ' - ' + siteName;
+    const settingsStore = useSettingsStore()
+    const siteName = settingsStore.siteName || defaultSettings.title;
+    if (settingsStore.dynamicTitle && settingsStore.title) {
+        document.title = settingsStore.title + ' - ' + siteName;
     } else {
         document.title = siteName;
     }

@@ -1,39 +1,39 @@
 <template>
   <div :class="classObj" class="app-wrapper" :style="{ '--current-color': theme }">
     <div v-if="device === 'mobile' && sidebar.opened" class="drawer-bg" @click="handleClickOutside"/>
-
     <sidebar v-if="!sidebar.hide" class="sidebar-container"/>
-
     <div :class="{ hasTagsView: needTagsView, sidebarHide: sidebar.hide }" class="main-container">
-
       <div :class="{ 'fixed-header': fixedHeader }" v-if="hide">
         <navbar @setLayout="setLayout"/>
         <tags-view v-if="needTagsView"/>
       </div>
-
       <app-main/>
       <settings ref="settingRef"/>
     </div>
-
   </div>
 </template>
 
 <script setup>
-import {useWindowSize} from '@vueuse/core'
+import { useWindowSize } from '@vueuse/core'
+import { computed, ref, watch, watchEffect } from 'vue'
+import { useRoute } from 'vue-router'
 import Sidebar from './components/Sidebar/index.vue'
-import {AppMain, Navbar, Settings, TagsView} from './components'
+import { AppMain, Navbar, Settings, TagsView } from './components'
 import defaultSettings from '@/settings'
+import { useSettingsStore } from '@/store/modules/settings'
+import { useAppStore } from '@/store/modules/app'
 
-const store = useStore();
+const settingsStore = useSettingsStore()
+const appStore = useAppStore()
 const route = useRoute();
-const theme = computed(() => store.state.settings.theme);
-const sidebar = computed(() => store.state.app.sidebar);
-const device = computed(() => store.state.app.device);
-const needTagsView = computed(() => store.state.settings.tagsView);
-const fixedHeader = computed(() => store.state.settings.fixedHeader);
+const theme = computed(() => settingsStore.theme);
+const sidebar = computed(() => appStore.sidebar);
+const device = computed(() => appStore.device);
+const needTagsView = computed(() => settingsStore.tagsView);
+const fixedHeader = computed(() => settingsStore.fixedHeader);
 
 const hide = computed(() => {
-  const h = store.state.app.hide;
+  const h = appStore.hide;
   return h !== false;
 });
 
@@ -49,32 +49,32 @@ const WIDTH = 992;
 
 watchEffect(() => {
   if (device.value === 'mobile' && sidebar.value.opened) {
-    store.dispatch('app/closeSideBar', {withoutAnimation: false})
+    appStore.closeSideBar(false)
   }
   if (width.value - 1 < WIDTH) {
-    store.dispatch('app/toggleDevice', 'mobile')
-    store.dispatch('app/closeSideBar', {withoutAnimation: true})
+    appStore.toggleDevice('mobile')
+    appStore.closeSideBar(true)
   } else {
-    store.dispatch('app/toggleDevice', 'desktop')
+    appStore.toggleDevice('desktop')
   }
-})
+});
 
 // 通过路由 meta 驱动布局显示/隐藏
 watch(() => route.path, () => {
   const meta = route.meta || {}
   // 控制顶部导航显示/隐藏
   const hideTop = meta.hideTop === true
-  store.dispatch('app/topHide', !hideTop).catch(() => {})
+  appStore.topHide(!hideTop)
   // 控制侧边栏显示/隐藏（若 meta 中有 hideSidebar）
   if (meta.hideSidebar === true) {
-    store.dispatch('app/toggleSideBarHide', true).catch(() => {})
+    appStore.setSidebarHide(true)
   } else if (meta.hideSidebar === false) {
-    store.dispatch('app/toggleSideBarHide', false).catch(() => {})
+    appStore.setSidebarHide(false)
   }
 }, { immediate: true });
 
 function handleClickOutside() {
-  store.dispatch('app/closeSideBar', {withoutAnimation: false})
+  appStore.closeSideBar(false)
 }
 
 const settingRef = ref(null);

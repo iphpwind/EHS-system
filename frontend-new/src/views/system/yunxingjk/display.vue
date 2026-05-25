@@ -115,7 +115,6 @@ export default {
   name: "display",
   data() {
     return {
-      store: useStore(),
       loginToken: "loginToken",
       maniHt: '',
       size: 'small',
@@ -264,9 +263,11 @@ export default {
         if (res.code == 200) {
           let data = res.data
           setToken(data.access_token)
-          this.store.commit('SET_TOKEN', data.access_token)
+          // TODO: 需要改为 Composition API 并使用 useUserStore()
+          // this.store.commit('SET_TOKEN', data.access_token)
           setExpiresIn(data.expires_in)
-          this.store.commit('SET_EXPIRES_IN', data.expires_in)
+          // TODO: 需要改为 Composition API 并使用 useUserStore()
+          // this.store.commit('SET_EXPIRES_IN', data.expires_in)
 
           this.topimageLoaded();  //设置主界面高度
           this.getScreen(); // 查询数据信息

@@ -4,7 +4,7 @@
   "description": "安全生产管理平台后端API服务",
   "main": "dist/app.js",
   "scripts": {
-    "dev": "nodemon --exec ts-node --transpile-only --expose-gc src/app.ts",
+    "dev": "nodemon --exec ts-node --transpile-only src/app.ts",
     "build": "tsc",
     "start": "node dist/app.js"
   },
@@ -22,6 +22,7 @@
     "multer": "^2.1.1",
     "mysql2": "^3.9.0",
     "node-cron": "^4.2.1",
+    "node-windows": "^1.0.0-beta.8",
     "puppeteer-core": "^24.4.0",
     "qrcode": "^1.5.4",
     "svg-captcha": "^1.4.0",

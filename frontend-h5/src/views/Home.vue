@@ -150,12 +150,22 @@ function doLogout() {
 }
 
 onMounted(async () => {
-  if (!localStorage.getItem('token')) {
-    router.push('/login')
-  } else {
+  try {
+    if (!localStorage.getItem('token')) {
+      router.push('/login')
+      return
+    }
     // 串行执行，避免并发风暴
     await loadKPI()
     await loadPendingTasks()
+  } catch (e) {
+    console.error('首页加载失败', e)
+    // 如果是认证错误，跳转登录页
+    if (e && (e.response?.status === 401 || e.message?.includes('401') || e.message?.includes('登录已过期'))) {
+      localStorage.removeItem('token')
+      localStorage.removeItem('userInfo')
+      router.push('/login')
+    }
   }
 })
 

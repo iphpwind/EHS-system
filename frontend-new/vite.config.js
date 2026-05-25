@@ -24,7 +24,7 @@ export default defineConfig(({ mode, command }) => {
       }
     },
     build: {
-      outDir: '../WWW',
+      outDir: '../../WWW',
       emptyOutDir: true,
       // 解决 Node.js heap out of memory 问题
       chunkSizeWarningLimit: 2000,

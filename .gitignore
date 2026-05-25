@@ -78,10 +78,48 @@ app-minimal.ts
 app_minimal.ts
 
 # Backup files
+*.bak
+*.bak2
 *.backup
 .backup/
 backups/
-backend/backups/
+
+# Test files (root & backend)
+test-*.ts
+test-*.js
+*-test.ts
+*-test.js
+src/test_*.ts
+src/ultimate-*.ts
+backend/test-*.ts
+backend/test-*.js
+backend/src/test_*.ts
+backend/src/ultimate-*.ts
+
+# Temporary app variants (keep only app.ts)
+backend/src/app-clean.ts
+backend/src/app-final.ts
+backend/src/app-simple.ts
+backend/src/app-working.ts
+backend/src/app-minimal.ts
+backend/src/app_minimal.ts
+backend/src/app.ts.bak
+backend/src/app.ts.bak2
+
+# WorkBuddy workspace (local only)
+.codebuddy/
+
+# Stray files
+console.log*
+
+# fronted-new specific
+frontend-new/dist/
+frontend-new/node_modules/
+frontend-new/*.local
+
+# frontend-h5 specific
+frontend-h5/dist/
+frontend-h5/node_modules/
 
 # 与网站运行无关的文件（文档、日志、备份、脚本等）
 # 文档文件（保留README.md）

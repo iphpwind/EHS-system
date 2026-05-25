@@ -1,45 +1,48 @@
 <template>
+  <div v-if="!isAuthenticated" class="not-authenticated">
+    <h2>请先登录</h2>
+    <p>访问此页面需要先登录系统。</p>
+    <button @click="goLogin">前往登录</button>
+  </div>
 </template>
 
 <script setup>
-import {display} from "@/api/login";
-import {setToken, setExpiresIn} from '@/utils/auth'
+import { ref, onMounted } from 'vue'
+import { useRouter } from 'vue-router'
+import { getToken } from '@/utils/auth'
+import { useUserStore } from '@/store/modules/user'
 
-const msg = ref("");
-const store = useStore();
-const {proxy} = getCurrentInstance();
-const router = useRouter();
+const router = useRouter()
+const userStore = useUserStore()
+const isAuthenticated = ref(false)
 
-function handleLogin() {
-	var query = window.location.search.substring(1);
-  var vars = query.split("&");
-	var username = "";
-	var password = "";
-	if(vars.length>1){
-		username = vars[0];
-		password = vars[1];
-	}else{
-			proxy.$modal.msgError("请输入正确用户名和密码");
-			return
-	}
-	// 调用action的登录方法
-	display(username, password).then(res => {
-		if(res.code == 200){
-			let data = res.data
-			setToken(data.access_token)
-			store.commit('SET_TOKEN', data.access_token)
-			setExpiresIn(data.expires_in)
-			store.commit('SET_EXPIRES_IN', data.expires_in)
-			router.push("/system/yunxingjk/display");
-		}else{
-			proxy.$modal.msgError("登录失败");
-		}
+onMounted(() => {
+  const token = getToken()
+  if (!token) {
+    isAuthenticated.value = false
+    return
+  }
+  isAuthenticated.value = true
+  // 已登录，正常展示大屏（原有展示逻辑在父路由/独立布局中处理）
+})
 
-	})
+function goLogin() {
+  router.push('/login')
 }
-
-handleLogin();
 </script>
 
-<style>
+<style scoped>
+.not-authenticated {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  font-size: 18px;
+}
+.not-authenticated button {
+  margin-top: 16px;
+  padding: 8px 24px;
+  cursor: pointer;
+}
 </style>

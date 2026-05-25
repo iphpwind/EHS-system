@@ -30,7 +30,7 @@ router.get('/menu/getRouters', async (req: express.Request, res: express.Respons
         alwaysShow: true,
         meta: { title: '首页', icon: 'dashboard', noCache: false, link: null },
         children: [
-          { name: 'HomeIndex', path: 'index', hidden: false, component: 'safework/index', meta: { title: '首页', icon: 'chart', noCache: false, link: null } }
+          { name: 'HomeIndex', path: 'index', hidden: false, component: 'index', meta: { title: '首页', icon: 'chart', noCache: false, link: null } }
         ]
       },
       {
@@ -44,7 +44,7 @@ router.get('/menu/getRouters', async (req: express.Request, res: express.Respons
         children: [
           { name: 'SafeworkHazareport', path: 'hazareport', hidden: false, component: 'safework/hazareport/index', meta: { title: '隐患上报', icon: 'form', noCache: false, link: null } },
           { name: 'SafeworkTask', path: 'task', hidden: false, component: 'safework/task/index', meta: { title: '安全检查', icon: 'edit', noCache: false, link: null } },
-          { name: 'SafeworkHazardList', path: 'hazard', hidden: false, component: 'safework/hazard/index', meta: { title: '隐患列表', icon: 'list', noCache: false, link: null } },
+          { name: 'SafeworkHazardList', path: 'hazard', hidden: false, component: 'safework/hazareport/index', meta: { title: '隐患列表', icon: 'list', noCache: false, link: null } },
           { name: 'SafeworkFirework', path: 'firework', hidden: false, component: 'safework/firework/index', meta: { title: '动火作业', icon: 'fire', noCache: false, link: null } },
           { name: 'SafeworkHighwork', path: 'highwork', hidden: false, component: 'safework/highwork/index', meta: { title: '高处作业', icon: 'top', noCache: false, link: null } },
           { name: 'SafeworkRestrictedwork', path: 'restrictedwork', hidden: false, component: 'safework/restrictedwork/index', meta: { title: '受限空间', icon: 'lock', noCache: false, link: null } },
@@ -192,7 +192,7 @@ router.get('/menu/getRouters', async (req: express.Request, res: express.Respons
         children: [
           { name: 'EquipmentList', path: 'equipment', hidden: false, component: 'equipment/equipment/index', meta: { title: '设备列表', icon: 'list', noCache: false, link: null } },
           { name: 'SpotCheckMonth', path: 'spotCheckMonth', hidden: false, component: 'equipment/spotCheckMonth/index', meta: { title: '设备点检', icon: 'form', noCache: false, link: null } },
-          { name: 'SpotCheckDay', path: 'spotCheckDay', hidden: false, component: 'equipment/spotCheckDay/index', meta: { title: '日常点检', icon: 'form', noCache: false, link: null } }
+          { name: 'SpotCheckDay', path: 'spotCheckDay', hidden: false, component: 'equipment/spotCheck/index', meta: { title: '日常点检', icon: 'form', noCache: false, link: null } }
         ]
       },
       {

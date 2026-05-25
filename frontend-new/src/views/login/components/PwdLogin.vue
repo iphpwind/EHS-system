@@ -1,8 +1,9 @@
 <script setup>
 import { ElMessage } from 'element-plus';
-import store from '@/store';
+import { useUserStore } from '@/store/modules/user';
 
 const emit = defineEmits(['register', 'forgot']);
+const userStore = useUserStore()
 
 const router = useRouter();
 const loginForm = reactive({
@@ -45,7 +46,7 @@ function handleLogin() {
   loginRef.value.validate(valid => {
     if (valid) {
       loading.value = true;
-      store.dispatch('Login', {
+      userStore.Login({
         username: loginForm.username,
         password: loginForm.password
       }).then(() => {

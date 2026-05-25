@@ -2,8 +2,8 @@
   <div class="login-page">
     <div class="login-header">
       <!-- logo.png 占位，未使用 -->
-      <h2>聚通安全生产平台</h2>
-      <p>移动作业管理系统</p>
+      <h2>安全生产移动作业</h2>
+      <p>登录以继续使用</p>
     </div>
 
     <van-form @submit="onSubmit" class="login-form">
@@ -23,17 +23,6 @@
           placeholder="请输入密码"
           :rules="[{ required: true, message: '请输入密码' }]"
         />
-        <van-field
-          v-model="form.captcha"
-          name="captcha"
-          label="验证码"
-          placeholder="请输入验证码"
-          :rules="[{ required: true, message: '请输入验证码' }]"
-        >
-          <template #button>
-            <div class="captcha-img" v-html="captchaImg" @click="loadCaptcha"></div>
-          </template>
-        </van-field>
       </van-cell-group>
 
       <div style="margin: 20px 16px;">
@@ -44,7 +33,7 @@
     </van-form>
 
     <div class="login-footer">
-      <p>© 2026 聚通安全生产平台 v1.0</p>
+      <p>安全生产移动作业 v1.0</p>
     </div>
   </div>
 </template>
@@ -57,27 +46,11 @@ import request from '../api/request'
 
 const router = useRouter()
 const loading = ref(false)
-const captchaImg = ref('')
-const captchaUuid = ref('')
 
 const form = ref({
   username: '',
-  password: '',
-  captcha: ''
+  password: ''
 })
-
-// 加载验证码
-async function loadCaptcha() {
-  try {
-    const res = await request.get('/code')
-    if (res.img) {
-      captchaImg.value = res.img || ''
-      captchaUuid.value = res.uuid || ''
-    }
-  } catch (error) {
-    console.error('加载验证码失败:', error)
-  }
-}
 
 // 提交登录
 async function onSubmit() {
@@ -87,9 +60,7 @@ async function onSubmit() {
   try {
     const res = await request.post('/auth/login', {
       username: form.value.username,
-      password: form.value.password,
-      code: form.value.captcha,
-      uuid: captchaUuid.value
+      password: form.value.password
     })
 
     if (res.data && res.data.access_token) {
@@ -101,11 +72,9 @@ async function onSubmit() {
       router.replace('/')
     } else {
       showNotify({ type: 'danger', message: res.msg || '登录失败' })
-      loadCaptcha()
     }
   } catch (error) {
     showNotify({ type: 'danger', message: error.message || '网络错误' })
-    loadCaptcha()
   } finally {
     loading.value = false
   }
@@ -115,8 +84,6 @@ onMounted(() => {
   // 如果已登录，跳转到首页
   if (localStorage.getItem('token')) {
     router.replace('/')
-  } else {
-    loadCaptcha()
   }
 })
 </script>
@@ -162,17 +129,6 @@ onMounted(() => {
 .login-form .van-cell-group {
   border-radius: 12px;
   overflow: hidden;
-}
-
-.captcha-img {
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-}
-
-.captcha-img :deep(svg) {
-  width: 120px;
-  height: 40px;
 }
 
 .login-footer {

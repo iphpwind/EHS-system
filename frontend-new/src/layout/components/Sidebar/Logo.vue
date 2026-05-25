@@ -19,7 +19,7 @@
 <script setup>
 import variables from '@/assets/styles/variables.module.scss'
 import defaultLogo from '@/assets/logo/logo.png'
-import { useStore } from 'vuex'
+import { useSettingsStore } from '@/store/modules/settings'
 
 defineProps({
   collapse: {
@@ -28,11 +28,11 @@ defineProps({
   }
 })
 
-const store = useStore();
-const title = computed(() => store.state.settings.siteName || '安全生产管理系统');
-const sideTheme = computed(() => store.state.settings.sideTheme);
+const settingsStore = useSettingsStore()
+const title = computed(() => settingsStore.siteName || '安全生产管理系统');
+const sideTheme = computed(() => settingsStore.sideTheme);
 // 优先使用后台配置的Logo，没有则使用默认logo.png
-const logos = computed(() => store.state.settings.siteLogo || defaultLogo);
+const logos = computed(() => settingsStore.siteLogo || defaultLogo);
 </script>
 
 <style lang="scss" scoped>

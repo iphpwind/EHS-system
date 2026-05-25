@@ -50,7 +50,7 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
 import { ElMessage } from 'element-plus'
 import { Upload, Delete, VideoPlay } from '@element-plus/icons-vue'
@@ -75,7 +75,7 @@ const uploadProgress = ref(0)
 
 // 上传地址
 const uploadUrl = computed(() => {
-  const baseUrl = (import.meta as any).env?.VITE_APP_BASE_API || ''
+  const baseUrl = import.meta.env.VITE_APP_BASE_API || ''
   return `${baseUrl}/api/tickets/${props.ticketId}/upload-video`
 })
 
@@ -89,7 +89,7 @@ const headers = computed(() => {
 // 视频 URL
 const videoUrl = computed(() => {
   if (!props.modelValue) return ''
-  const baseUrl = (import.meta as any).env?.VITE_APP_BASE_API || ''
+  const baseUrl = import.meta.env.VITE_APP_BASE_API || ''
   return props.modelValue.startsWith('http') ? props.modelValue : baseUrl + props.modelValue
 })
 

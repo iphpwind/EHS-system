@@ -11,11 +11,18 @@
 </template>
 
 <script setup>
-let store = useStore()
+import { useRoute } from 'vue-router'
+import { computed } from 'vue'
+import { useTagsViewStore } from '@/store/modules/tagsView'
+
 const route = useRoute()
-store.dispatch('tagsView/addCachedView', route)
+const tagsViewStore = useTagsViewStore()
+
+// 添加缓存视图
+tagsViewStore.addCachedView(route)
+
 const cachedViews = computed(() => {
-  return store.state.tagsView.cachedViews
+  return tagsViewStore.cachedViews
 })
 </script>
 

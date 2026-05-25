@@ -1,7 +1,7 @@
 import axios from 'axios'
 import {ElNotification, ElMessageBox, ElMessage, ElLoading} from 'element-plus'
-import store from '@/store'
 import {getToken} from '@/utils/auth'
+import { useUserStore } from '@/store/modules/user.ts'
 import errorCode from '@/utils/errorCode'
 import {tansParams, blobValidate} from '@/utils/ruoyi'
 import cache from '@/plugins/cache'
@@ -166,7 +166,7 @@ service.interceptors.response.use(res => {
                     }
                 ).then(() => {
                     isRelogin.show = false;
-                    store.dispatch('LogOut').then(() => {
+                    useUserStore().LogOut().then(() => {
                         location.href = '/login';
                     })
                 }).catch(() => {
@@ -204,7 +204,7 @@ service.interceptors.response.use(res => {
             if (shouldRefresh) {
                 if (!isRefreshing) {
                     isRefreshing = true
-                    return store.dispatch('RefreshToken').then((newToken) => {
+                    return useUserStore().RefreshToken().then((newToken) => {
                         isRefreshing = false
                         onTokenRefreshed(newToken)
                         // 重试原始请求
@@ -213,7 +213,7 @@ service.interceptors.response.use(res => {
                     }).catch(() => {
                         isRefreshing = false
                         refreshSubscribers = []
-                        store.dispatch('LogOut').then(() => {
+                        useUserStore().LogOut().then(() => {
                             location.href = '/login'
                         })
                         return Promise.reject(error)
