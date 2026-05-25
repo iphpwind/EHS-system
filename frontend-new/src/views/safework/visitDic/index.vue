@@ -132,7 +132,6 @@
 <script setup name="VisitDic">
 import { listVisitDic, getVisitDic, delVisitDic, addVisitDic, updateVisitDic } from "@/api/safework/visitDic";
 const userStore = useUserStore()
-const userStore = useUserStore()
 const { proxy } = getCurrentInstance();
 
 const visitDicList = ref([]);

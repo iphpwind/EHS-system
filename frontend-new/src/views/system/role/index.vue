@@ -49,7 +49,7 @@
         <el-button icon="Refresh" @click="resetQuery">重置</el-button>
       </el-form-item>
     </el-form>
-    <el-row :gutter="10" class="mb8 toolsline">
+    <el-row :gutter="10" class="mb8 toolbar">
       <el-col :span="1.5">
         <el-button
             type="primary"
@@ -60,17 +60,6 @@
         >新增
         </el-button>
       </el-col>
-<!--      <el-col :span="1.5">-->
-<!--        <el-button-->
-<!--            type="success"-->
-<!--            plain-->
-<!--            icon="Edit"-->
-<!--            :disabled="single"-->
-<!--            @click="handleUpdate"-->
-<!--            v-hasPermi="['system:role:edit']"-->
-<!--        >修改-->
-<!--        </el-button>-->
-<!--      </el-col>-->
       <el-col :span="1.5">
         <el-button
             type="danger"
@@ -98,7 +87,6 @@
     <!-- 表格数据 -->
     <el-table height="calc(100vh - 300px)" v-loading="loading" :data="roleList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center"/>
-<!--      <el-table-column label="角色编号" prop="roleId" width="120"/>-->
       <el-table-column label="角色名称" prop="roleName" :show-overflow-tooltip="true" width="150"/>
       <el-table-column label="权限字符" prop="roleKey" :show-overflow-tooltip="true" width="150"/>
       <el-table-column label="显示顺序" prop="roleSort" width="100"/>
@@ -125,6 +113,14 @@
                 icon="Edit"
                 @click="handleUpdate(scope.row)"
                 v-hasPermi="['system:role:edit']"
+            ></el-button>
+          </el-tooltip>
+          <el-tooltip content="复制" placement="top" v-if="userName == 'admin'">
+            <el-button
+                type="text"
+                icon="CopyDocument"
+                @click="handleCopy(scope.row)"
+                v-hasPermi="['system:role:add']"
             ></el-button>
           </el-tooltip>
           <el-tooltip content="删除" placement="top" v-if="scope.row.createBy == userName || userName == 'admin'">
@@ -163,63 +159,11 @@
         @pagination="getList"
     />
 
-    <!-- 添加或修改角色配置对话框 -->
-    <el-dialog :title="title" v-model="open" width="500px" append-to-body>
-      <el-form ref="roleRef" :model="form" :rules="rules" label-width="100px">
-        <el-form-item label="角色名称" prop="roleName">
-          <el-input v-model="form.roleName" placeholder="请输入角色名称"/>
-        </el-form-item>
-        <el-form-item prop="roleKey">
-          <template #label>
-                  <span>
-                     <el-tooltip content="控制器中定义的权限字符，如：@PreAuthorize(`@ss.hasRole('admin')`)" placement="top">
-                        <i class="el-icon-question"></i>
-                     </el-tooltip>
-                     权限字符
-                  </span>
-          </template>
-          <el-input v-model="form.roleKey" placeholder="请输入权限字符"/>
-        </el-form-item>
-        <el-form-item label="角色顺序" prop="roleSort">
-          <el-input-number v-model="form.roleSort" controls-position="right" :min="0"/>
-        </el-form-item>
-        <el-form-item label="状态">
-          <el-radio-group v-model="form.status">
-            <el-radio
-                v-for="dict in sys_normal_disable"
-                :key="dict.value"
-                :label="dict.value"
-            >{{ dict.label }}
-            </el-radio>
-          </el-radio-group>
-        </el-form-item>
-        <el-form-item label="菜单权限">
-          <el-checkbox v-model="menuExpand" @change="handleCheckedTreeExpand($event, 'menu')">展开/折叠</el-checkbox>
-          <el-checkbox v-model="menuNodeAll" @change="handleCheckedTreeNodeAll($event, 'menu')">全选/全不选</el-checkbox>
-          <el-checkbox v-model="form.menuCheckStrictly" @change="handleCheckedTreeConnect($event, 'menu')">父子联动
-          </el-checkbox>
-          <el-tree
-              class="tree-border"
-              :data="menuOptions"
-              show-checkbox
-              ref="menuRef"
-              node-key="id"
-              :check-strictly="!form.menuCheckStrictly"
-              empty-text="加载中..."
-              :props="{ label: 'label', children: 'children' }"
-          ></el-tree>
-        </el-form-item>
-        <el-form-item label="备注">
-          <el-input v-model="form.remark" type="textarea" placeholder="请输入内容"></el-input>
-        </el-form-item>
-      </el-form>
-      <template #footer>
-        <div class="dialog-footer">
-          <el-button type="primary" @click="submitForm">确 定</el-button>
-          <el-button @click="cancel">取 消</el-button>
-        </div>
-      </template>
-    </el-dialog>
+    <!-- 向导式角色配置组件 -->
+    <role-wizard ref="roleWizardRef" @success="getList" />
+
+    <!-- 复制角色对话框 -->
+    <role-copy-dialog ref="copyDialogRef" @success="getList" />
 
     <!-- 分配角色数据权限对话框 -->
     <el-dialog :title="title" v-model="openDataScope" width="500px" append-to-body>
@@ -269,18 +213,20 @@
 </template>
 
 <script setup name="Role">
-import {addRole, changeRoleStatus, dataScope, delRole, getRole, listRole, updateRole} from "@/api/system/role";
-import {roleMenuTreeselect, treeselect as menuTreeselect} from "@/api/system/menu";
-import {treeselect as deptTreeselect, roleDeptTreeselect} from "@/api/system/dept";
-import {h} from "vue";
+import { addRole, changeRoleStatus, dataScope, delRole, getRole, listRole, updateRole } from "@/api/system/role";
+import { treeselect as deptTreeselect, roleDeptTreeselect } from "@/api/system/dept";
+import { h } from "vue";
 import { useUserStore } from '@/store/modules/user'
+import RoleWizard from '@/components/RoleWizard/index.vue'
+import RoleCopyDialog from '@/components/RoleCopyDialog/index.vue'
 
 const router = useRouter();
-const {proxy} = getCurrentInstance();
-const {sys_normal_disable} = proxy.useDict("sys_normal_disable");
+const { proxy } = getCurrentInstance();
+const { sys_normal_disable } = proxy.useDict("sys_normal_disable");
 const userStore = useUserStore();
 const roleList = ref([]);
-const open = ref(false);
+const roleWizardRef = ref(null);
+const copyDialogRef = ref(null);
 const loading = ref(true);
 const showSearch = ref(true);
 const ids = ref([]);
@@ -289,28 +235,31 @@ const multiple = ref(true);
 const total = ref(0);
 const title = ref("");
 const dateRange = ref([]);
-const menuOptions = ref([]);
-const menuExpand = ref(false);
-const menuNodeAll = ref(false);
 const deptExpand = ref(true);
 const deptNodeAll = ref(false);
 const deptOptions = ref([]);
 const openDataScope = ref(false);
-const menuRef = ref(null);
 const deptRef = ref(null);
 const userName = ref(null);
 /** 数据范围选项*/
 const dataScopeOptions = ref([
   // {value: "1", label: "全部数据权限"},
-  {value: "2", label: "自定数据权限"},
-  {value: "3", label: "本部门数据权限"},
-  {value: "4", label: "本部门及以下数据权限"},
-  {value: "5", label: "仅本人数据权限"}
+  { value: "2", label: "自定义数据权限" },
+  { value: "3", label: "本部门数据权限" },
+  { value: "4", label: "本部门及以下数据权限" },
+  { value: "5", label: "仅本人数据权限" }
 ]);
 
 const data = reactive({
   form: {
-
+    roleId: undefined,
+    roleName: undefined,
+    roleKey: undefined,
+    roleSort: 0,
+    status: "0",
+    deptIds: [],
+    deptCheckStrictly: true,
+    remark: undefined
   },
   queryParams: {
     pageNum: 1,
@@ -320,13 +269,13 @@ const data = reactive({
     status: undefined
   },
   rules: {
-    roleName: [{required: true, message: "角色名称不能为空", trigger: "blur"}],
-    roleKey: [{required: true, message: "权限字符不能为空", trigger: "blur"}],
-    roleSort: [{required: true, message: "角色顺序不能为空", trigger: "blur"}]
-  },
+    roleName: [{ required: true, message: "角色名称不能为空", trigger: "blur" }],
+    roleKey: [{ required: true, message: "权限字符不能为空", trigger: "blur" }],
+    roleSort: [{ required: true, message: "角色顺序不能为空", trigger: "blur" }]
+  }
 });
 
-const {queryParams, form, rules} = toRefs(data);
+const { queryParams, form, rules } = toRefs(data);
 
 /** 查询角色列表 */
 function getList() {
@@ -409,13 +358,6 @@ function handleAuthUser(row) {
   router.push("/system/role-auth/user/" + row.roleId);
 }
 
-/** 查询菜单树结构 */
-function getMenuTreeselect() {
-  menuTreeselect().then(response => {
-    menuOptions.value = response.data;
-  });
-}
-
 /** 所有部门节点数据 */
 function getDeptAllCheckedKeys() {
   // 目前被选中的部门节点
@@ -428,11 +370,6 @@ function getDeptAllCheckedKeys() {
 
 /** 重置新增的表单以及其他数据  */
 function reset() {
-  if (menuRef.value != undefined) {
-    menuRef.value.setCheckedKeys([]);
-  }
-  menuExpand.value = false;
-  menuNodeAll.value = false;
   deptExpand.value = true;
   deptNodeAll.value = false;
   form.value = {
@@ -441,9 +378,7 @@ function reset() {
     roleKey: undefined,
     roleSort: 0,
     status: "0",
-    menuIds: [],
     deptIds: [],
-    menuCheckStrictly: true,
     deptCheckStrictly: true,
     remark: undefined
   };
@@ -453,40 +388,13 @@ function reset() {
 /** 添加角色 */
 function handleAdd() {
   reset();
-  getMenuTreeselect();
-  open.value = true;
-  title.value = "添加角色";
+  roleWizardRef.value.openAdd();
 }
 
 /** 修改角色 */
 function handleUpdate(row) {
-  reset();
   const roleId = row.roleId || ids.value;
-  const roleMenu = getRoleMenuTreeselect(roleId);
-  getRole(roleId).then(response => {
-    form.value = response.data;
-    form.value.roleSort = Number(form.value.roleSort);
-    open.value = true;
-    nextTick(() => {
-      roleMenu.then((res) => {
-        let checkedKeys = res.checkedKeys;
-        checkedKeys.forEach((v) => {
-          nextTick(() => {
-            menuRef.value.setChecked(v, true, false);
-          });
-        });
-      });
-    });
-    title.value = "修改角色";
-  });
-}
-
-/** 根据角色ID查询菜单树结构 */
-function getRoleMenuTreeselect(roleId) {
-  return roleMenuTreeselect(roleId).then(response => {
-    menuOptions.value = response.menus;
-    return response;
-  });
+  roleWizardRef.value.openEdit(roleId);
 }
 
 /** 根据角色ID查询部门树结构 */
@@ -499,12 +407,7 @@ function getRoleDeptTreeselect(roleId) {
 
 /** 树权限（展开/折叠）*/
 function handleCheckedTreeExpand(value, type) {
-  if (type == "menu") {
-    let treeList = menuOptions.value;
-    for (let i = 0; i < treeList.length; i++) {
-      menuRef.value.store.nodesMap[treeList[i].id].expanded = value;
-    }
-  } else if (type == "dept") {
+  if (type == "dept") {
     let treeList = deptOptions.value;
     for (let i = 0; i < treeList.length; i++) {
       deptRef.value.store.nodesMap[treeList[i].id].expanded = value;
@@ -514,59 +417,21 @@ function handleCheckedTreeExpand(value, type) {
 
 /** 树权限（全选/全不选） */
 function handleCheckedTreeNodeAll(value, type) {
-  if (type == "menu") {
-    menuRef.value.setCheckedNodes(value ? menuOptions.value : []);
-  } else if (type == "dept") {
+  if (type == "dept") {
     deptRef.value.setCheckedNodes(value ? deptOptions.value : []);
   }
 }
 
 /** 树权限（父子联动） */
 function handleCheckedTreeConnect(value, type) {
-  if (type == "menu") {
-    form.value.menuCheckStrictly = value ? true : false;
-  } else if (type == "dept") {
+  if (type == "dept") {
     form.value.deptCheckStrictly = value ? true : false;
   }
 }
 
-/** 所有菜单节点数据 */
-function getMenuAllCheckedKeys() {
-  // 目前被选中的菜单节点
-  let checkedKeys = menuRef.value.getCheckedKeys();
-  // 半选中的菜单节点
-  let halfCheckedKeys = menuRef.value.getHalfCheckedKeys();
-  checkedKeys.unshift.apply(checkedKeys, halfCheckedKeys);
-  return checkedKeys;
-}
-
-/** 提交按钮 */
-function submitForm() {
-  proxy.$refs["roleRef"].validate(valid => {
-    if (valid) {
-      if (form.value.roleId != undefined) {
-        form.value.menuIds = getMenuAllCheckedKeys();
-        updateRole(form.value).then(response => {
-          proxy.$modal.msgSuccess("修改成功");
-          open.value = false;
-          getList();
-        });
-      } else {
-        form.value.menuIds = getMenuAllCheckedKeys();
-        addRole(form.value).then(response => {
-          proxy.$modal.msgSuccess("新增成功");
-          open.value = false;
-          getList();
-        });
-      }
-    }
-  });
-}
-
-/** 取消按钮 */
-function cancel() {
-  open.value = false;
-  reset();
+/** 复制角色 */
+function handleCopy(row) {
+  copyDialogRef.value.open(row.roleId, row.roleName);
 }
 
 /** 选择角色权限范围触发 */
@@ -587,10 +452,7 @@ function handleDataScope(row) {
       roleDeptTreeselect.then(res => {
         nextTick(() => {
           if (deptRef.value) {
-
-
             console.log(res.checkedKeys)
-
             // deptRef.value.setCheckedKeys(res.checkedKeys);
             deptRef.value.setCheckedKeys([]);
           }
@@ -618,11 +480,13 @@ function cancelDataScope() {
   openDataScope.value = false;
   reset();
 }
+
 userName.value = userStore.user.userName
 getList();
 </script>
+
 <style>
-.toolsline{
+.toolbar{
   height: 30px;
 }
 </style>

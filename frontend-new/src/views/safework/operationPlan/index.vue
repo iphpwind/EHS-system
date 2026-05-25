@@ -475,7 +475,6 @@ import {h} from "vue";
 import {listOperationpro} from "@/api/safework/operationpro";
 
 const userStore = useUserStore()
-const userStore = useUserStore()
 const { proxy } = getCurrentInstance();
 const { status, safe_operation_type } = proxy.useDict('status', 'safe_operation_type');
 

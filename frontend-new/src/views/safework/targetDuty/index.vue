@@ -580,7 +580,6 @@ import {h, ref} from "vue";
 const { proxy } = getCurrentInstance();
 
 const userStore = useUserStore()
-const userStore = useUserStore()
 const targetDutyList = ref([]);
 const depts = ref([]);
 const deptList = ref([]);

@@ -174,7 +174,6 @@ import {getQrcode} from "@/api/safework/visitReservation"
 import {updateDept} from "@/api/system/dept"
 const { proxy } = getCurrentInstance();
 const userStore = useUserStore()
-const userStore = useUserStore()
 const visitorList = ref([]);
 const open = ref(false);
 const wxopen = ref(false);

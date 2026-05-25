@@ -109,3 +109,12 @@ export function authUserSelectAll(data) {
         params: data
     })
 }
+
+// 复制角色
+export function copyRole(data) {
+    return request({
+        url: '/system/role/copy',
+        method: 'post',
+        data: data
+    })
+}

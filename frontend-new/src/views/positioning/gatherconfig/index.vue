@@ -106,7 +106,6 @@ import Bjt3DClass from "@/utils/Bjt3DClass";
 import {getImgSrc, getLayerColor, getRiskColor} from "@/utils/pointUtil";
 const { proxy } = getCurrentInstance();
 const userStore = useUserStore()
-const userStore = useUserStore()
 
 const open = ref(false);
 const bjt3D = ref(null);

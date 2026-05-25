@@ -200,7 +200,6 @@ import { listVisitReservation, getVisitReservation, delVisitReservation, addVisi
 import { listVisitorUser } from "@/api/safework/visitorUser";
 import {parseTime} from "@/utils/ruoyi";
 const userStore = useUserStore()
-const userStore = useUserStore()
 const { proxy } = getCurrentInstance();
 
 const visitReservationList = ref([]);
