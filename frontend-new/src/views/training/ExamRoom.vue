@@ -47,6 +47,33 @@
         </div>
       </div>
 
+      <!-- 摄像头监控区域（防作弊） -->
+      <div v-if="cameraActive" class="camera-monitor mb-4">
+        <div class="camera-wrapper" :class="{ 'camera-warning': !faceDetected }">
+          <video ref="cameraVideo" autoplay muted class="camera-video"></video>
+          <div v-if="!faceDetected" class="camera-warning-text">
+            <el-icon><Warning /></el-icon>
+            未检测到面部，请保持正面朝向摄像头
+          </div>
+          <div class="camera-status">
+            <el-tag :type="faceDetected ? 'success' : 'danger'" size="small">
+              {{ faceDetected ? '面部已检测' : '未检测到面部' }}
+            </el-tag>
+            <el-tag :type="cameraActive ? 'success' : 'info'" size="small">
+              {{ cameraActive ? '摄像头已开启' : '摄像头未开启' }}
+            </el-tag>
+          </div>
+        </div>
+        <div class="camera-controls flex justify-center gap-2 mt-2">
+          <el-button v-if="!cameraActive" type="primary" size="small" @click="startCamera">
+            开启摄像头
+          </el-button>
+          <el-button v-else type="danger" size="small" @click="stopCamera">
+            关闭摄像头
+          </el-button>
+        </div>
+      </div>
+
       <!-- 题型筛选 & 进度 -->
       <div class="exam-progress mb-4 p-3 bg-gray-50 rounded">
         <div class="flex justify-between items-center flex-wrap gap-2">
