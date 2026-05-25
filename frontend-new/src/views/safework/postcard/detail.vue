@@ -91,7 +91,7 @@ export default {
         this.form = response.data;
         let img = this.form.safetyWarningSigns.split(",")
         img.forEach((j, index) => {
-          let aa = 'http://localhost:3001/post/'+j+'.png';
+          let aa = import.meta.env.VITE_APP_BASE_API + '/post/' + j + '.png';
           this.imgList.push(aa)
         })
       });
