@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
 import { RowDataPacket } from 'mysql2';
 import { getConnection } from '../config/database';
+import ExcelJS from 'exceljs';
 
 /**
  * 隐患统计报表
@@ -422,6 +423,328 @@ export const fullDashboard = async (req: Request, res: Response, next: NextFunct
     });
   } catch (error) {
     console.error('综合Dashboard错误:', error);
+    next(error);
+  } finally {
+    if (conn) conn.release();
+  }
+};
+
+/**
+ * 导出隐患统计报表为Excel
+ * GET /api/reports/hazard/export
+ */
+export const exportHazardReport = async (req: Request, res: Response, next: NextFunction) => {
+  let conn: any = null;
+  try {
+    const { startDate, endDate, department, level } = req.query;
+    conn = await getConnection();
+
+    let where = 'WHERE 1=1';
+    const params: any[] = [];
+
+    if (startDate) {
+      where += ' AND discovery_time >= ?';
+      params.push(startDate);
+    }
+    if (endDate) {
+      where += ' AND discovery_time <= ?';
+      params.push(endDate + ' 23:59:59');
+    }
+    if (department) {
+      where += ' AND department = ?';
+      params.push(department);
+    }
+    if (level) {
+      where += ' AND hazard_level = ?';
+      params.push(level);
+    }
+
+    // 获取详细数据
+    const [hazards] = await conn.execute<RowDataPacket[]>(
+      `SELECT 
+        id, hazard_description, hazard_level, department, 
+        hazard_location, status, discoverer_name,
+        DATE_FORMAT(discovery_time, '%Y-%m-%d %H:%i') as discovery_time,
+        DATE_FORMAT(rectification_deadline, '%Y-%m-%d') as rectification_deadline
+       FROM hazard_inspection ${where}
+       ORDER BY discovery_time DESC`,
+      params
+    );
+
+    // 创建工作簿
+    const workbook = new ExcelJS.Workbook();
+    workbook.creator = 'EHS安全生产管理系统';
+    workbook.created = new Date();
+
+    // 创建工作表
+    const worksheet = workbook.addWorksheet('隐患统计报表');
+
+    // 设置列
+    worksheet.columns = [
+      { header: 'ID', key: 'id', width: 10 },
+      { header: '隐患描述', key: 'hazard_description', width: 40 },
+      { header: '隐患级别', key: 'hazard_level', width: 12 },
+      { header: '部门', key: 'department', width: 15 },
+      { header: '位置', key: 'hazard_location', width: 20 },
+      { header: '状态', key: 'status', width: 12 },
+      { header: '发现人', key: 'discoverer_name', width: 12 },
+      { header: '发现时间', key: 'discovery_time', width: 18 },
+      { header: '整改期限', key: 'rectification_deadline', width: 15 }
+    ];
+
+    // 样式设置
+    worksheet.getRow(1).font = { bold: true };
+    worksheet.getRow(1).fill = {
+      type: 'pattern',
+      pattern: 'solid',
+      fgColor: { argb: 'FF4472C4' }
+    };
+    worksheet.getRow(1).font = { bold: true, color: { argb: 'FFFFFFFF' } };
+
+    // 添加数据
+    const levelMap: any = { 1: '重大隐患', 2: '较大隐患', 3: '一般隐患' };
+    const statusMap: any = { 1: '待整改', 2: '整改中', 3: '已完成', 4: '已关闭' };
+
+    (hazards as any[]).forEach((hazard: any) => {
+      worksheet.addRow({
+        id: hazard.id,
+        hazard_description: hazard.hazard_description,
+        hazard_level: levelMap[hazard.hazard_level] || '未知',
+        department: hazard.department,
+        hazard_location: hazard.hazard_location,
+        status: statusMap[hazard.status] || '未知',
+        discoverer_name: hazard.discoverer_name,
+        discovery_time: hazard.discovery_time,
+        rectification_deadline: hazard.rectification_deadline
+      });
+    });
+
+    // 设置响应头
+    res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+    res.setHeader('Content-Disposition', `attachment; filename=hazard_report_${new Date().getTime()}.xlsx`);
+
+    // 写入响应
+    await workbook.xlsx.write(res);
+    res.end();
+  } catch (error) {
+    console.error('导出隐患报表错误:', error);
+    next(error);
+  } finally {
+    if (conn) conn.release();
+  }
+};
+
+/**
+ * 导出作业票统计报表为Excel
+ * GET /api/reports/work-permits/export
+ */
+export const exportWorkPermitReport = async (req: Request, res: Response, next: NextFunction) => {
+  let conn: any = null;
+  try {
+    const { startDate, endDate, ticketType, status } = req.query;
+    conn = await getConnection();
+
+    let where = 'WHERE 1=1';
+    const params: any[] = [];
+
+    if (startDate) {
+      where += ' AND created_at >= ?';
+      params.push(startDate);
+    }
+    if (endDate) {
+      where += ' AND created_at <= ?';
+      params.push(endDate + ' 23:59:59');
+    }
+    if (ticketType) {
+      where += ' AND ticket_type = ?';
+      params.push(ticketType);
+    }
+    if (status) {
+      where += ' AND status = ?';
+      params.push(status);
+    }
+
+    // 获取详细数据
+    const [tickets] = await conn.execute<RowDataPacket[]>(
+      `SELECT 
+        id, ticket_no, ticket_type, applicant_name, department,
+        work_content, work_location, start_time, end_time,
+        status, DATE_FORMAT(created_at, '%Y-%m-%d %H:%i') as created_at
+       FROM work_permits ${where}
+       ORDER BY created_at DESC`,
+      params
+    );
+
+    // 创建工作簿
+    const workbook = new ExcelJS.Workbook();
+    workbook.creator = 'EHS安全生产管理系统';
+    workbook.created = new Date();
+
+    // 创建工作表
+    const worksheet = workbook.addWorksheet('作业票统计报表');
+
+    // 设置列
+    worksheet.columns = [
+      { header: 'ID', key: 'id', width: 10 },
+      { header: '作业票号', key: 'ticket_no', width: 20 },
+      { header: '作业类型', key: 'ticket_type', width: 15 },
+      { header: '申请人', key: 'applicant_name', width: 12 },
+      { header: '部门', key: 'department', width: 15 },
+      { header: '作业内容', key: 'work_content', width: 30 },
+      { header: '作业地点', key: 'work_location', width: 20 },
+      { header: '开始时间', key: 'start_time', width: 18 },
+      { header: '结束时间', key: 'end_time', width: 18 },
+      { header: '状态', key: 'status', width: 12 },
+      { header: '创建时间', key: 'created_at', width: 18 }
+    ];
+
+    // 样式设置
+    worksheet.getRow(1).font = { bold: true };
+    worksheet.getRow(1).fill = {
+      type: 'pattern',
+      pattern: 'solid',
+      fgColor: { argb: 'FF4472C4' }
+    };
+    worksheet.getRow(1).font = { bold: true, color: { argb: 'FFFFFFFF' } };
+
+    // 添加数据
+    const statusMap: any = { 
+      'pending': '待审批', 
+      'approved': '已批准', 
+      'rejected': '已拒绝',
+      'executing': '执行中',
+      'completed': '已完成',
+      'closed': '已关闭'
+    };
+
+    (tickets as any[]).forEach((ticket: any) => {
+      worksheet.addRow({
+        id: ticket.id,
+        ticket_no: ticket.ticket_no,
+        ticket_type: ticket.ticket_type,
+        applicant_name: ticket.applicant_name,
+        department: ticket.department,
+        work_content: ticket.work_content,
+        work_location: ticket.work_location,
+        start_time: ticket.start_time,
+        end_time: ticket.end_time,
+        status: statusMap[ticket.status] || ticket.status,
+        created_at: ticket.created_at
+      });
+    });
+
+    // 设置响应头
+    res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+    res.setHeader('Content-Disposition', `attachment; filename=work_permit_report_${new Date().getTime()}.xlsx`);
+
+    // 写入响应
+    await workbook.xlsx.write(res);
+    res.end();
+  } catch (error) {
+    console.error('导出作业票报表错误:', error);
+    next(error);
+  } finally {
+    if (conn) conn.release();
+  }
+};
+
+/**
+ * 导出培训统计报表为Excel
+ * GET /api/reports/training/export
+ */
+export const exportTrainingReport = async (req: Request, res: Response, next: NextFunction) => {
+  let conn: any = null;
+  try {
+    const { startDate, endDate } = req.query;
+    conn = await getConnection();
+
+    let where = 'WHERE 1=1';
+    const params: any[] = [];
+
+    if (startDate) {
+      where += ' AND training_date >= ?';
+      params.push(startDate);
+    }
+    if (endDate) {
+      where += ' AND training_date <= ?';
+      params.push(endDate + ' 23:59:59');
+    }
+
+    // 获取详细数据
+    const [sessions] = await conn.execute<RowDataPacket[]>(
+      `SELECT 
+        ts.id, ts.session_name, ts.training_type, ts.training_date,
+        ts.location, ts.instructor, ts.duration,
+        COUNT(tr.id) as participant_count,
+        SUM(IF(tr.is_passed=1,1,0)) as passed_count
+       FROM training_sessions ts
+       LEFT JOIN training_records tr ON ts.id = tr.session_id
+       ${where.replace('training_date', 'ts.training_date')}
+       GROUP BY ts.id
+       ORDER BY ts.training_date DESC`,
+      params
+    );
+
+    // 创建工作簿
+    const workbook = new ExcelJS.Workbook();
+    workbook.creator = 'EHS安全生产管理系统';
+    workbook.created = new Date();
+
+    // 创建工作表
+    const worksheet = workbook.addWorksheet('培训统计报表');
+
+    // 设置列
+    worksheet.columns = [
+      { header: 'ID', key: 'id', width: 10 },
+      { header: '培训名称', key: 'session_name', width: 30 },
+      { header: '培训类型', key: 'training_type', width: 12 },
+      { header: '培训日期', key: 'training_date', width: 15 },
+      { header: '地点', key: 'location', width: 20 },
+      { header: '讲师', key: 'instructor', width: 12 },
+      { header: '时长(小时)', key: 'duration', width: 12 },
+      { header: '参与人数', key: 'participant_count', width: 12 },
+      { header: '通过人数', key: 'passed_count', width: 12 },
+      { header: '通过率', key: 'pass_rate', width: 12 }
+    ];
+
+    // 样式设置
+    worksheet.getRow(1).font = { bold: true };
+    worksheet.getRow(1).fill = {
+      type: 'pattern',
+      pattern: 'solid',
+      fgColor: { argb: 'FF4472C4' }
+    };
+    worksheet.getRow(1).font = { bold: true, color: { argb: 'FFFFFFFF' } };
+
+    // 添加数据
+    (sessions as any[]).forEach((session: any) => {
+      const passRate = session.participant_count > 0 
+        ? ((session.passed_count / session.participant_count) * 100).toFixed(1) + '%'
+        : '0.0%';
+      
+      worksheet.addRow({
+        id: session.id,
+        session_name: session.session_name,
+        training_type: session.training_type === 'online' ? '线上' : '线下',
+        training_date: session.training_date,
+        location: session.location,
+        instructor: session.instructor,
+        duration: session.duration,
+        participant_count: session.participant_count,
+        passed_count: session.passed_count,
+        pass_rate: passRate
+      });
+    });
+
+    // 设置响应头
+    res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+    res.setHeader('Content-Disposition', `attachment; filename=training_report_${new Date().getTime()}.xlsx`);
+
+    // 写入响应
+    await workbook.xlsx.write(res);
+    res.end();
+  } catch (error) {
+    console.error('导出培训报表错误:', error);
     next(error);
   } finally {
     if (conn) conn.release();

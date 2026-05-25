@@ -5,7 +5,10 @@ import {
   workPermitReport,
   trainingReport,
   riskTips,
-  fullDashboard
+  fullDashboard,
+  exportHazardReport,
+  exportWorkPermitReport,
+  exportTrainingReport
 } from '../controllers/reportController';
 
 const router = Router();
@@ -17,16 +20,34 @@ const router = Router();
 router.get('/hazard', authenticateToken, hazardReport);
 
 /**
+ * 隐患统计报表导出
+ * GET /api/reports/hazard/export
+ */
+router.get('/hazard/export', authenticateToken, exportHazardReport);
+
+/**
  * 作业票统计报表
  * GET /api/reports/work-permits
  */
 router.get('/work-permits', authenticateToken, workPermitReport);
 
 /**
+ * 作业票统计报表导出
+ * GET /api/reports/work-permits/export
+ */
+router.get('/work-permits/export', authenticateToken, exportWorkPermitReport);
+
+/**
  * 培训统计报表
  * GET /api/reports/training
  */
 router.get('/training', authenticateToken, trainingReport);
+
+/**
+ * 培训统计报表导出
+ * GET /api/reports/training/export
+ */
+router.get('/training/export', authenticateToken, exportTrainingReport);
 
 /**
  * 风险智能提示

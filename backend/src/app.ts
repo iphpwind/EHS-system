@@ -99,8 +99,7 @@ import electricWorkRoutes from './routes/electricWork';
 import operationTemplateRoutes from './routes/operationTemplate';
 // 培训统计路由
 import trainingStatsRoutes from './routes/trainingStats';
-// Phase 3.3: 培训教育模块增强 - 视频上传云存储 + 考试防作弊
-import trainingVideoRoutes from './routes/trainingVideo';
+// 差点重复导入trainingVideoRoutes - 已在上面导入
 
 // 导入中间件
 import { authenticateToken } from './middleware/authMiddleware';

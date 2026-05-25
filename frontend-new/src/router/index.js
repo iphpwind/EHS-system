@@ -178,6 +178,22 @@ export const constantRoutes = [
             { path: 'three-level', component: () => import('@/views/training/ThreeLevelEducation.vue'), name: 'ThreeLevelEducation', meta: { title: '三级安全教育' } }
         ]
     },
+    // ==================== 4. 报表统计（新增） ====================
+    {
+        path: '/reports',
+        component: Layout,
+        redirect: '/reports/index',
+        name: 'Reports',
+        meta: { title: '报表统计', icon: 'chart' },
+        children: [
+            {
+                path: 'index',
+                component: () => import('@/views/reports/Index.vue'),
+                name: 'ReportsIndex',
+                meta: { title: '报表导出' }
+            }
+        ]
+    },
     // ==================== 其他模块 ====================
     // 气体监测
     {
