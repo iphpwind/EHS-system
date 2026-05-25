@@ -155,7 +155,13 @@
           <right-toolbar v-model:showSearch="showSearch" @queryTable="getList" :columns="columns"></right-toolbar>
         </el-row>
 
-        <el-table height="calc(100vh - 310px)" v-loading="loading" :data="userList" @selection-change="handleSelectionChange">
+        <!-- 骨架屏加载状态 -->
+        <div v-if="loading" style="padding: 20px;">
+          <el-skeleton :rows="8" animated />
+        </div>
+
+        <!-- 表格数据 -->
+        <el-table v-else height="calc(100vh - 310px)" :data="userList" @selection-change="handleSelectionChange">
           <template #empty>
             <el-empty description="暂无用户数据" />
           </template>
