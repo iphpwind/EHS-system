@@ -268,8 +268,8 @@ import {h} from "vue";
 const { proxy } = getCurrentInstance();
 const { status } = proxy.useDict('status');
 
-const store = useStore();
-const getters = computed(() => store.getters);
+const userStore = useUserStore()
+
 const fireworkList = ref([]);
 const open = ref(false);
 const cancelopen = ref(false);
@@ -560,7 +560,7 @@ function initTreeData() {
   }
 };
 
-userId.value = store.getters.user.userId
+userId.value = userStore.user.userId
 initTreeData();
 getList();
 </script>

@@ -379,6 +379,7 @@
 </template>
 
 <script>
+import { useUserStore } from '@/store/modules/user'
 
 import * as echarts from '@/utils/echarts'
 import { listChangeManagement } from "@/api/safework/changeManagement";
@@ -390,6 +391,10 @@ import {selectInPro} from "@/api/safework/allticket";
 
 
 export default {
+  setup() {
+    const userStore = useUserStore()
+    return { userStore }
+  },
   name: "全流程管理",
 
   data() {
@@ -524,8 +529,8 @@ export default {
   watch: {},
   created() {
 
-    const store = useStore();
-    this.deptName = store.getters.user.thirdDeptName==null?store.getters.user.dept.deptName:store.getters.user.thirdDeptName
+    
+    this.deptName = userStore.user.thirdDeptName==null?userStore.user.dept.deptName:userStore.user.thirdDeptName
     this.getLaw()
     this.getSecurity()
     this.getChangeManagement()

@@ -131,8 +131,8 @@
 
 <script setup name="VisitDic">
 import { listVisitDic, getVisitDic, delVisitDic, addVisitDic, updateVisitDic } from "@/api/safework/visitDic";
-const store = useStore();
-const getters = computed(() => store.getters);
+const userStore = useUserStore()
+const userStore = useUserStore()
 const { proxy } = getCurrentInstance();
 
 const visitDicList = ref([]);
@@ -162,7 +162,7 @@ const { queryParams, form, rules } = toRefs(data);
 /** 查询访问事由字典列表 */
 function getList() {
   loading.value = true;
-  queryParams.value.enterpriseCode = store.getters.user.dept.thirdDeptId == null ? store.getters.user.dept.deptId : store.getters.user.dept.thirdDeptId
+  queryParams.value.enterpriseCode = userStore.user.dept.thirdDeptId == null ? userStore.user.dept.deptId : userStore.user.dept.thirdDeptId
   listVisitDic(queryParams.value).then(response => {
     visitDicList.value = response.rows;
     total.value = response.total;

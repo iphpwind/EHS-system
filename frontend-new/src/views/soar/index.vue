@@ -160,6 +160,7 @@
 </template>
 
 <script>
+import { useUserStore } from '@/store/modules/user'
 import 'echarts/extension/bmap/bmap'
 import axios from 'axios'
 import {parseTime} from '@/utils/ruoyi'
@@ -175,6 +176,10 @@ import geoCoordMap from '@/utils/area.js'
 import {alarmTrend} from '@/api/index'
 
 export default {
+  setup() {
+    const userStore = useUserStore()
+    return { userStore }
+  },
   name: "青岛索尔",
   data() {
     return {
@@ -215,11 +220,11 @@ export default {
   watch: {},
   created() {
     this.history.push({cityName: this.chinaName, cityId: this.chinaId})
-    const store = useStore();
-    const getters = computed(() => store.getters);
+    
+    
 
 		setTimeout(() => {
-		  this.deptName = store.getters.user.dept.deptName + '云平台';
+		  this.deptName = userStore.user.dept.deptName + '云平台';
 		}, 500)
   },
 

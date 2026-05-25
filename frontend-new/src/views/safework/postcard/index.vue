@@ -434,7 +434,7 @@ const obOptions = ref([]);
 const erweimaimgUrl = ref("");
 const eqerweimamo = ref(false);
 
-const store = useStore();
+const userStore = useUserStore()
 
 const data = reactive({
   wsObj: null,
@@ -746,7 +746,7 @@ function handleExport() {
 }
 
 function startSocket() {
-  let url = import.meta.env.VITE_WS_BASE_API + '/safework/websocket/' + store.getters.user.userId
+  let url = import.meta.env.VITE_WS_BASE_API + '/safework/websocket/' + userStore.user.userId
   this.wsObj = new WebSocket(url);
   websocketCommand(this.wsObj, 'create', 5000, function () {
     wsObj.send('')

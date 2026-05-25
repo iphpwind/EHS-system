@@ -4,9 +4,10 @@
 <script setup>
 import {display} from "@/api/login";
 import {setToken, setExpiresIn} from '@/utils/auth'
+import { useUserStore } from '@/store/modules/user'
 
 const msg = ref("");
-const store = useStore();
+const userStore = useUserStore()
 const {proxy} = getCurrentInstance();
 const router = useRouter();
 
@@ -29,9 +30,9 @@ function handleLogin() {
     if (res.code == 200) {
       let data = res.data
       setToken(data.access_token)
-      store.commit('SET_TOKEN', data.access_token)
+      userStore.token = data.access_token
       setExpiresIn(data.expires_in)
-      store.commit('SET_EXPIRES_IN', data.expires_in)
+      userStore.expires_in = data.expires_in
       console.log(redirect)
 
       router.push(redirect);

@@ -579,8 +579,8 @@ import {h, ref} from "vue";
 
 const { proxy } = getCurrentInstance();
 
-const store = useStore();
-const getters = computed(() => store.getters);
+const userStore = useUserStore()
+const userStore = useUserStore()
 const targetDutyList = ref([]);
 const depts = ref([]);
 const deptList = ref([]);
@@ -894,8 +894,8 @@ function handleAdd() {
   form.value.delFlag = '0'
   form.value.status = '1'
 
-  form.value.formulateUser = store.getters.user.nickName
-  form.value.formulateDept = store.getters.user.dept.deptName
+  form.value.formulateUser = userStore.user.nickName
+  form.value.formulateDept = userStore.user.dept.deptName
   open.value = true;
   title.value = "添加目标责任制定信息";
 }

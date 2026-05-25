@@ -127,8 +127,8 @@ import {treeselect} from "@/api/system/dept";
 const { proxy } = getCurrentInstance();
 const { safe_operation_state } = proxy.useDict('safe_operation_state');
 
-const store = useStore();
-const getters = computed(() => store.getters);
+const userStore = useUserStore()
+
 const electricworkList = ref([]);
 const open = ref(false);
 const loading = ref(true);
@@ -311,7 +311,7 @@ function initTreeData() {
   }
 };
 
-userId.value = store.getters.user.userId
+userId.value = userStore.user.userId
 initTreeData();
 getList();
 </script>

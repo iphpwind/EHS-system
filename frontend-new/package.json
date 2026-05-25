@@ -47,8 +47,7 @@
     "vue-cropper": "1.0.2",
     "vue-demi": "^0.12.5",
     "vue-router": "^4.5.0",
-    "vue3-print-nb": "^0.1.4",
-    "vuex": "4.0.2"
+    "vue3-print-nb": "^0.1.4"
   },
   "devDependencies": {
     "@rushstack/eslint-patch": "^1.7.0",

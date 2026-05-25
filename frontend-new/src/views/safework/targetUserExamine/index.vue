@@ -433,7 +433,7 @@ import {listPost, addPost, delPost, getPost, updatePost} from "@/api/system/post
 import {parseTime} from '@/utils/ruoyi'
 
 const { proxy } = getCurrentInstance();
-const store = useStore();
+const userStore = useUserStore()
 const targetUserExamineList = ref([]);
 const exampleopen = ref(false);
 const open = ref(false);
@@ -712,8 +712,8 @@ function handleSelectionChange(selection) {
 function handleAdd() {
   reset();
   form.value.delFlag = '0'
-  form.value.fillinUserName = store.getters.user.nickName
-  form.value.fillinDeptName = store.getters.user.dept.deptName
+  form.value.fillinUserName = userStore.user.nickName
+  form.value.fillinDeptName = userStore.user.dept.deptName
   form.value.fillinTime = formatDate(new Date())
 
   exampleopen.value = true;

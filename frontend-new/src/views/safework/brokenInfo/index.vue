@@ -258,8 +258,8 @@ import {h} from "vue";
 
 const { proxy } = getCurrentInstance();
 
-const store = useStore();
-const getters = computed(() => store.getters);
+const userStore = useUserStore()
+
 const brokenInfoList = ref([]);
 const open = ref(false);
 const loading = ref(true);
@@ -523,6 +523,6 @@ function handleExport() {
   }, `brokenInfo_${new Date().getTime()}.xlsx`)
 }
 
-userId.value = store.getters.user.userId
+userId.value = userStore.user.userId
 getList();
 </script>

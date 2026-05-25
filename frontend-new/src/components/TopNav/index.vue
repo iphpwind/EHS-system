@@ -25,14 +25,16 @@ const currentIndex = ref(null);
 // 隐藏侧边栏路由
 const hideList = ['/index', '/user/profile'];
 
-const store = useStore();
+const appStore = useAppStore()
+const settingsStore = useSettingsStore()
+const permissionStore = usePermissionStore()
 const route = useRoute();
 const router = useRouter();
 
 // 主题颜色
-const theme = computed(() => store.state.settings.theme);
+const theme = computed(() => settingsStore.theme);
 // 所有的路由信息
-const routers = computed(() => store.state.permission.topbarRouters);
+const routers = computed(() => permissionStore.topbarRouters);
 
 // 顶部显示菜单
 const topMenus = computed(() => {
@@ -78,10 +80,10 @@ const activeMenu = computed(() => {
   if (path !== undefined && path.lastIndexOf("/") > 0 && hideList.indexOf(path) === -1) {
     const tmpPath = path.substring(1, path.length);
     activePath = "/" + tmpPath.substring(0, tmpPath.indexOf("/"));
-    store.dispatch('app/toggleSideBarHide', false);
+    appStore.setSidebarHide(false);
   } else if (!route.children) {
     activePath = path;
-    store.dispatch('app/toggleSideBarHide', true);
+    appStore.setSidebarHide(true);
   }
   activeRoutes(activePath);
   return activePath;
@@ -96,11 +98,11 @@ function handleSelect(key, keyPath) {
   } else if (!route || !route.children) {
     // 没有子路由路径内部打开
     router.push({path: key});
-    store.dispatch('app/toggleSideBarHide', true);
+    appStore.setSidebarHide(true);
   } else {
     // 显示左侧联动菜单
     activeRoutes(key);
-    store.dispatch('app/toggleSideBarHide', false);
+    appStore.setSidebarHide(false);
   }
 }
 
@@ -114,7 +116,7 @@ function activeRoutes(key) {
     });
   }
   if (routes.length > 0) {
-    store.commit("SET_SIDEBAR_ROUTERS", routes);
+    permissionStore.sidebarRouters = routes;
   }
   return routes;
 }

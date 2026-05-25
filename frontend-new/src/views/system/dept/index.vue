@@ -311,7 +311,7 @@ const citys = ref([]);
 const dists = ref([]);
 const isExpandAll = ref(true);
 const refreshTable = ref(true);
-const store = useStore();
+
 const parentId = ref("");
 const serviceAndUsers = ref(true);
 const store_disable = ref([{value:'1',label:'是'},{value:'0',label:'否'}]);

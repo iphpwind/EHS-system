@@ -105,8 +105,8 @@ import {getMapConfig} from "@/api/system/positioning";
 import Bjt3DClass from "@/utils/Bjt3DClass";
 import {getImgSrc, getLayerColor, getRiskColor} from "@/utils/pointUtil";
 const { proxy } = getCurrentInstance();
-const store = useStore();
-const getters = computed(() => store.getters);
+const userStore = useUserStore()
+const userStore = useUserStore()
 
 const open = ref(false);
 const bjt3D = ref(null);
@@ -328,8 +328,8 @@ function submitForm() {
 
 getUserList();
 form.value.isHeatMap = '0';
-deptName.value = store.getters.user.thirdDeptName==null?store.getters.user.dept.deptName:store.getters.user.thirdDeptName
-form.value.deptId = store.getters.user.thirdDeptId==null?store.getters.user.dept.deptId:store.getters.user.thirdDeptId
+deptName.value = userStore.user.thirdDeptName==null?userStore.user.dept.deptName:userStore.user.thirdDeptName
+form.value.deptId = userStore.user.thirdDeptId==null?userStore.user.dept.deptId:userStore.user.thirdDeptId
 
 </script>
 

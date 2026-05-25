@@ -2,11 +2,11 @@
 import { ElMessage, ElMessageBox } from 'element-plus';
 import { User, Lock } from '@element-plus/icons-vue';
 import { register } from '@/api/login';
-import store from '@/store';
+import { useSettingsStore } from '@/store/modules/settings'
 import WaveBg from './login/components/WaveBg.vue';
 
 const router = useRouter();
-const siteName = computed(() => store.state.settings.siteName || '安全生产管理平台');
+const siteName = computed(() => useSettingsStore().siteName || '安全生产管理平台');
 
 const registerForm = reactive({
   username: '',

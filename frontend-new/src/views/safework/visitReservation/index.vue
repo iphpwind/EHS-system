@@ -199,8 +199,8 @@
 import { listVisitReservation, getVisitReservation, delVisitReservation, addVisitReservation, updateVisitReservation } from "@/api/safework/visitReservation";
 import { listVisitorUser } from "@/api/safework/visitorUser";
 import {parseTime} from "@/utils/ruoyi";
-const store = useStore();
-const getters = computed(() => store.getters);
+const userStore = useUserStore()
+const userStore = useUserStore()
 const { proxy } = getCurrentInstance();
 
 const visitReservationList = ref([]);
@@ -223,7 +223,7 @@ const data = reactive({
   queryParams: {
     pageNum: 1,
     pageSize: 10,
-    enterpriseCode: store.getters.user.thirdDeptId == null ? store.getters.user.deptId:store.getters.user.thirdDeptId ,
+    enterpriseCode: userStore.user.thirdDeptId == null ? userStore.user.deptId:userStore.user.thirdDeptId ,
     name: null,
     phone: null,
     sex: null,
@@ -296,13 +296,13 @@ function getList() {
 
 function getUser() {
 
-  console.log(store.getters.user)
+  console.log(userStore.user)
 
   queryParams.value.staffId = null
-  staffid.value = store.getters.user.userId
+  staffid.value = userStore.user.userId
   listVisitorUser().then(response => {
     userList.value = response.rows;
-    let userId = store.getters.user.userId
+    let userId = userStore.user.userId
     let a=false
     userList.value.forEach(function (arr, index) {
       if(arr.userId == userId){

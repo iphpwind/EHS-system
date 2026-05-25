@@ -273,12 +273,12 @@ import {addRole, changeRoleStatus, dataScope, delRole, getRole, listRole, update
 import {roleMenuTreeselect, treeselect as menuTreeselect} from "@/api/system/menu";
 import {treeselect as deptTreeselect, roleDeptTreeselect} from "@/api/system/dept";
 import {h} from "vue";
+import { useUserStore } from '@/store/modules/user'
 
 const router = useRouter();
 const {proxy} = getCurrentInstance();
 const {sys_normal_disable} = proxy.useDict("sys_normal_disable");
-const store = useStore();
-const getters = computed(() => store.getters);
+const userStore = useUserStore();
 const roleList = ref([]);
 const open = ref(false);
 const loading = ref(true);
@@ -618,7 +618,7 @@ function cancelDataScope() {
   openDataScope.value = false;
   reset();
 }
-userName.value = store.getters.user.userName
+userName.value = userStore.user.userName
 getList();
 </script>
 <style>

@@ -474,8 +474,8 @@ import { listPersonnel } from "@/api/contractorManage/personnel";
 import {h} from "vue";
 import {listOperationpro} from "@/api/safework/operationpro";
 
-const store = useStore();
-const getters = computed(() => store.getters);
+const userStore = useUserStore()
+const userStore = useUserStore()
 const { proxy } = getCurrentInstance();
 const { status, safe_operation_type } = proxy.useDict('status', 'safe_operation_type');
 
@@ -842,5 +842,5 @@ getUserList1();
 getContractorList();
 getList();
 getUser();
-userId.value = store.getters.user.userId
+userId.value = userStore.user.userId
 </script>

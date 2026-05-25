@@ -614,7 +614,7 @@ const data = reactive({
 
 const { queryParams, form, rules,queryParam1s,detailform } = toRefs(data);
 const {sys_normal_disable} = proxy.useDict("sys_normal_disable");
-const store = useStore();
+
 
 
 /** 部门搜索按钮操作 */

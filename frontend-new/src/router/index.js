@@ -587,58 +587,6 @@ export const constantRoutes = [
         path: '/system/visitor/card',
         component: () => import('@/views/system/visitor/card.vue'),
     },
-    // 统一作业票管理（旧路由兼容）
-    {
-        path: '/safework',
-        component: Layout,
-        hidden: true,
-        children: [
-            {
-                path: 'apply',
-                component: () => import('@/views/safework/apply/index.vue'),
-                name: 'WorkTicketApply',
-                meta: { title: '作业票申请' }
-            },
-            {
-                path: 'apply/confined-space',
-                component: () => import('@/views/safework/apply/ConfinedSpaceApply.vue'),
-                name: 'ConfinedSpaceApply',
-                meta: { title: '受限空间作业申请' }
-            },
-            {
-                path: 'apply/hot-work',
-                component: () => import('@/views/safework/apply/HotWorkApply.vue'),
-                name: 'HotWorkApply',
-                meta: { title: '动火作业申请' }
-            },
-            {
-                path: 'detail',
-                component: () => import('@/views/safework/WorkTicketDetail.vue'),
-                name: 'WorkTicketDetail',
-                meta: { title: '作业票详情' }
-            },
-            {
-                path: 'list',
-                component: () => import('@/views/safework/WorkTicketList.vue'),
-                name: 'WorkTicketList',
-                meta: { title: '作业票列表' }
-            }
-        ]
-    },
-    // 培训统计页面（P2-3 Statistics.vue）
-    {
-        path: '/training/statistics',
-        component: Layout,
-        hidden: true,
-        children: [
-            {
-                path: 'index',
-                component: () => import('@/views/training/Statistics.vue'),
-                name: 'TrainingStatistics',
-                meta: { title: '培训统计' }
-            }
-        ]
-    }
 ];
 
 const router = createRouter({

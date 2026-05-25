@@ -68,7 +68,8 @@
 </template>
 
 <script setup>
-import store from "@/store";
+import { useUserStore } from '@/store/modules/user'
+import { useSettingsStore } from '@/store/modules/settings'
 import { ElMessage } from "element-plus";
 
 const router = useRouter();
@@ -87,14 +88,15 @@ const loading = ref(false);
 const redirect = ref(undefined);
 const loginRef = ref(null);
 
-const siteName = computed(() => store.state.settings.siteName || '安全生产管理平台');
+const siteName = computed(() => useSettingsStore().siteName || '安全生产管理平台');
 
 function handleLogin() {
   if (!loginRef.value) return;
   loginRef.value.validate(valid => {
     if (valid) {
       loading.value = true;
-      store.dispatch("Login", {
+      const userStore = useUserStore()
+      userStore.Login({
         username: loginForm.username,
         password: loginForm.password,
       }).then(() => {

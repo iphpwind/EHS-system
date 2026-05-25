@@ -158,12 +158,17 @@
 </template>
 
 <script>
+import { useUserStore } from '@/store/modules/user'
 import * as echarts from '@/utils/echarts'
 import { onLine } from "@/api/energy/energyoverview";
 import { analysisReport,analysisReportAlertTotal,getReportTimePowerByArea,getReportTimePowerRankByArea,analysisReportAlertDetail,analysisReportAlertRank} from "@/api/report/index";
 import { ElLoading } from 'element-plus'
 
 export default {
+  setup() {
+    const userStore = useUserStore()
+    return { userStore }
+  },
   name: "用电分析报告",
   data() {
     return {
@@ -204,10 +209,10 @@ export default {
 
   },
   created() {
-    const store = useStore();
-	const getters = computed(() => store.getters);
-	this.deptName = store.getters.user.dept.deptName;
-	this.userName = store.getters.user.nickName;
+    
+	
+	this.deptName = userStore.user.dept.deptName;
+	this.userName = userStore.user.nickName;
   },
 
   mounted: function () {

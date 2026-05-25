@@ -85,7 +85,7 @@
 <!--          v-hasPermi="['safework:visitor:remove']"-->
 <!--        >删除</el-button>-->
 <!--      </el-col>-->
-      <el-col v-if="store.getters.user.dept.parentId == 157 || store.getters.user.dept.parentId == 2509 || store.getters.user.dept.parentId == 110" :span="1.5">
+      <el-col v-if="userStore.user.dept.parentId == 157 || userStore.user.dept.parentId == 2509 || userStore.user.dept.parentId == 110" :span="1.5">
         <el-button
           plain
           @click="getqrcode"
@@ -173,8 +173,8 @@ import { listVisitor, getVisitor, delVisitor, addVisitor, updateVisitor } from "
 import {getQrcode} from "@/api/safework/visitReservation"
 import {updateDept} from "@/api/system/dept"
 const { proxy } = getCurrentInstance();
-const store = useStore();
-const getters = computed(() => store.getters);
+const userStore = useUserStore()
+const userStore = useUserStore()
 const visitorList = ref([]);
 const open = ref(false);
 const wxopen = ref(false);
@@ -209,8 +209,8 @@ const { queryParams, form, rules } = toRefs(data);
 
 
 function getqrcode() {
-  let img = store.getters.user.dept.visitorImg;
-console.log(store.getters.user.dept)
+  let img = userStore.user.dept.visitorImg;
+console.log(userStore.user.dept)
   if (img != null && img != ''){
     wxopen.value = true;
     wximg.value = img;
@@ -220,10 +220,10 @@ console.log(store.getters.user.dept)
       wximg.value = res
 
       let dept = {
-        parentId : store.getters.user.dept.parentId,
-        deptId : store.getters.user.dept.deptId,
-        orderNum : store.getters.user.dept.orderNum,
-        deptName : store.getters.user.dept.deptName,
+        parentId : userStore.user.dept.parentId,
+        deptId : userStore.user.dept.deptId,
+        orderNum : userStore.user.dept.orderNum,
+        deptName : userStore.user.dept.deptName,
         visitorImg : res
       }
 
@@ -238,7 +238,7 @@ console.log(store.getters.user.dept)
 /** 查询访客信息列表 */
 function getList() {
   loading.value = true;
-  queryParams.value.enterpriseCode = store.getters.user.dept.thirdDeptId == null ? store.getters.user.dept.deptId : store.getters.user.dept.thirdDeptId
+  queryParams.value.enterpriseCode = userStore.user.dept.thirdDeptId == null ? userStore.user.dept.deptId : userStore.user.dept.thirdDeptId
   listVisitor(queryParams.value).then(response => {
     visitorList.value = response.rows;
     total.value = response.total;

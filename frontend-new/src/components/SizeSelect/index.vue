@@ -18,9 +18,12 @@
 
 <script setup>
 import {ElMessage} from 'element-plus'
+import { useAppStore } from '@/store/modules/app'
+import { useTagsViewStore } from '@/store/modules/tagsView'
 
-const store = useStore();
-const size = computed(() => store.getters.size);
+const appStore = useAppStore();
+const tagsViewStore = useTagsViewStore();
+const size = computed(() => appStore.size);
 const route = useRoute();
 const router = useRouter();
 const {proxy} = getCurrentInstance();
@@ -32,7 +35,7 @@ const sizeOptions = ref([
 
 function refreshView() {
   // In order to make the cached page re-rendered
-  store.dispatch('tagsView/delAllCachedViews', route)
+  tagsViewStore.delAllCachedViews()
 
   const {fullPath} = route
 
@@ -45,7 +48,7 @@ function refreshView() {
 
 function handleSetSize(size) {
   proxy.$modal.loading("�������ò��ִ�С�����Ժ�...");
-  store.dispatch('app/setSize', size)
+  appStore.setSize(size)
   setTimeout("window.location.reload()", 1000)
 };
 </script>

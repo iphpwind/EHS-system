@@ -379,14 +379,16 @@ import { createModuleLogger } from "@/utils/logger"
 
 const log = createModuleLogger('Dashboard')
 
-const store = useStore()
+const appStore = useAppStore()
+const settingsStore = useSettingsStore()
+const permissionStore = usePermissionStore()
 const router = useRouter()
 
 // 设备类型
-const device = computed(() => store.state.app.device)
+const device = computed(() => appStore.device)
 // 站点名称
-const siteName = computed(() => store.state.settings.siteName || '安全生产管理系统')
-const routers = computed(() => store.state.permission.topbarRouters)
+const siteName = computed(() => settingsStore.siteName || '安全生产管理系统')
+const routers = computed(() => permissionStore.topbarRouters)
 
 const data = reactive({
   user: { avatar: '', deptName: '', dept: {}, postGroup: null },
@@ -709,7 +711,7 @@ const h5Hazards = ref([
 
 function handleH5Nav(path) {
   router.push({ path })
-  store.dispatch('app/toggleSideBarHide', true)
+  appStore.setSidebarHide(true)
 }
 
 // ===== 共用逻辑 =====
@@ -810,10 +812,10 @@ function handleSelect(key) {
     window.open(key, "_blank")
   } else if (!route || !route.children) {
     router.push({ path: key })
-    store.dispatch('app/toggleSideBarHide', true)
+    appStore.setSidebarHide(true)
   } else {
     activeRoutes(key)
-    store.dispatch('app/toggleSideBarHide', false)
+    appStore.setSidebarHide(false)
   }
 }
 
@@ -826,7 +828,7 @@ function activeRoutes(key) {
     })
   }
   if (routes.length > 0) {
-    store.commit("SET_SIDEBAR_ROUTERS", routes)
+    permissionStore.sidebarRouters = routes
   }
   return routes
 }

@@ -91,24 +91,26 @@ import {ElLoading, ElMessage} from 'element-plus'
 import {useDynamicTitle} from '@/utils/dynamicTitle'
 
 const {proxy} = getCurrentInstance();
-const store = useStore();
+const settingsStore = useSettingsStore()
+const appStore = useAppStore()
+const permissionStore = usePermissionStore()
 const showSettings = ref(false);
-const theme = ref(store.state.settings.theme);
-const sideTheme = ref(store.state.settings.sideTheme);
-const storeSettings = computed(() => store.state.settings);
+const theme = ref(settingsStore.theme);
+const sideTheme = ref(settingsStore.sideTheme);
+const storeSettings = computed(() => settingsStore);
 const predefineColors = ref(["#09bec5", "#ff4500", "#ff8c00", "#ffd700", "#90ee90", "#00ced1", "#1e90ff", "#c71585"]);
 
 /** 是否需要topnav */
 const topNav = computed({
   get: () => storeSettings.value.topNav,
   set: (val) => {
-    store.dispatch('settings/changeSetting', {
+    manageSetting( {
       key: 'topNav',
       value: val
     })
     if (!val) {
-      store.dispatch('app/toggleSideBarHide', false);
-      store.commit("SET_SIDEBAR_ROUTERS", store.state.permission.defaultRoutes);
+      appStore.setSidebarHide(false);
+      permissionStore.sidebarRouters = permissionStore.defaultRoutes;
     }
   }
 })
@@ -116,7 +118,7 @@ const topNav = computed({
 const tagsView = computed({
   get: () => storeSettings.value.tagsView,
   set: (val) => {
-    store.dispatch('settings/changeSetting', {
+    manageSetting( {
       key: 'tagsView',
       value: val
     })
@@ -126,7 +128,7 @@ const tagsView = computed({
 const fixedHeader = computed({
   get: () => storeSettings.value.fixedHeader,
   set: (val) => {
-    store.dispatch('settings/changeSetting', {
+    manageSetting( {
       key: 'fixedHeader',
       value: val
     })
@@ -136,7 +138,7 @@ const fixedHeader = computed({
 const sidebarLogo = computed({
   get: () => storeSettings.value.sidebarLogo,
   set: (val) => {
-    store.dispatch('settings/changeSetting', {
+    manageSetting( {
       key: 'sidebarLogo',
       value: val
     })
@@ -146,7 +148,7 @@ const sidebarLogo = computed({
 const dynamicTitle = computed({
   get: () => storeSettings.value.dynamicTitle,
   set: (val) => {
-    store.dispatch('settings/changeSetting', {
+    manageSetting( {
       key: 'dynamicTitle',
       value: val
     })
@@ -156,7 +158,7 @@ const dynamicTitle = computed({
 })
 
 function themeChange(val) {
-  store.dispatch('settings/changeSetting', {
+  manageSetting( {
     key: 'theme',
     value: val
   })
@@ -164,7 +166,7 @@ function themeChange(val) {
 }
 
 function handleTheme(val) {
-  store.dispatch('settings/changeSetting', {
+  manageSetting( {
     key: 'sideTheme',
     value: val
   })
